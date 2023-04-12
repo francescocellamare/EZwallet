@@ -38,25 +38,32 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 # Stakeholders
 
 
-| Stakeholder name  | Description | 
-| ----------------- |:-----------:|
-|   Stakeholder x..     |             | 
+| Stakeholder name  | Description 											 | 
+| ----------------- |:------------------------------------------------------:|
+| users				| individuals that want to keep track of their expenses  | 
+| Customer support  | manages user accounts              					 |
+| IT admins   		| manages application and database              		 | 
+| COO 				| business developer             						 | 
+| Competitors   	| other companies that offer the same service            | 
+| Google Ads   	    | 3rd party Ads provider for the frontend             	 | 
+| Host   			| 3rd party hosting service              				 | 
+<!-- | GDPR					| legal requirements (data and privacy)| -->
 
 # Context Diagram and interfaces
 
 ## Context Diagram
-\<Define here Context diagram using UML use case diagram>
 
-\<actors are a subset of stakeholders>
+![context diagram](code/images/context_diagram.jpeg "context diagram")
 
 ## Interfaces
-\<describe here each interface in the context diagram>
-
-\<GUIs will be described graphically in a separate document>
 
 | Actor | Logical Interface | Physical Interface  |
 | ------------- |:-------------:| -----:|
-|   Actor x..     |  |  |
+|   User     | GUI (to be defined – key functions, add and delete transactions/categories) | Smartphone or PC (web browser) |
+|   Customer support     | GUI (to be defined – key functions, same as normal users + the ability to manage user accounts) | Smartphone or PC (web browser) |
+| IT Admin | CLI of the hosting service | PC |
+|   COO     | Gui (to be defined, all functions + analytics) | Smartphone or PC (web browser) |
+|   Google Ads     | API  | Internet link |
 
 # Stories and personas
 \<A Persona is a realistic impersonation of an actor. Define here a few personas and describe in plain text how a persona interacts with the system>
@@ -70,26 +77,33 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 ## Functional Requirements
 
-\<In the form DO SOMETHING, or VERB NOUN, describe high level capabilities of the system>
-
-\<they match to high level use cases>
 
 | ID        | Description  |
-| ------------- |:-------------:| 
-|  FR1     |  |
-|  FR2     |   |
-| FRx..  | | 
+| :------------- |:-------------| 
+| FR1     |  Authorize and authenticate |
+| FR1.1     |  Login as old user |
+| FR1.2     |  Log out |
+| FR1.3| Register as a new user|
+| FR1.4 | get user details |
+| FR2 | Manage transactions |
+| FR2.1 | Create transaction and specify its category |
+| FR2.2 | Delete transaction |
+| FR2.3 | View transactions and their categories |
+| FR3 | Create category |
+| FR5 | Manage users |
+| FR5.1 | Get users by username |
+| FR6 | Receive and show Ads |
 
 ## Non Functional Requirements
 
-\<Describe constraints on functional requirements>
-
 | ID        | Type (efficiency, reliability, ..)           | Description  | Refers to |
 | ------------- |:-------------:| :-----:| -----:|
-|  NFR1     |   |  | |
-|  NFR2     | |  | |
-|  NFR3     | | | |
-| NFRx .. | | | | 
+|  NFR1     |  Usability | Users should use the core functions after following a simple tutorial on first login | |
+|  NFR2     | Compatibility | The website (frontend) should run on all browsers | |
+|  NFR3     | Security | Protection from malicious access, user authorization, comply with data safety and privacy laws such as GDPR | |
+|  NFR4 | Efficiency | website load time should be less than 3s from PC and 5s for mobile, server response time should be less than 0.5s | | 
+|  NFR5 | Maintainability | fix defects in less than 1hr, add/modify/or cancel a software function within 24hrs | | 
+|  NFR6 | Availability | The server should not go down for more than 30 mins at a time | | 
 
 
 # Use case diagram and use cases
