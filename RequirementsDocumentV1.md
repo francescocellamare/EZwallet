@@ -108,17 +108,17 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 ### Use case 1, REGISTRATION
 | Actors Involved        | User |
 | ------------- |:-------------:| 
-|  Precondition     | The User has no account |
-|  Post condition     | The User has a new account |
+|  Precondition     | User has no account |
+|  Post condition     | User has a new account |
 |  Nominal Scenario     | System stores the account |
-|  Variants     | The User does not fill in all required fields |
+|  Variants     | User does not fill in all required fields |
 |  Exceptions     | The email is not available |
 <!-- |  Exceptions     | The email is not available or a server error occurs | -->
 
 | Scenario 1.1 | Nominal |
 | ------------- |:-------------:| 
-|  Precondition     | The User has no account |
-|  Post condition     | The User has a new account |
+|  Precondition     | User has no account |
+|  Post condition     | User has a new account |
 | Step#        | Description  |
 |  1     | User asks to sign up |  
 |  2     | System asks the asks for username, email and the password |
@@ -130,7 +130,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 | Scenario 1.2 | Exception |
 | ------------- |:-------------:| 
-|  Precondition     | The User has an account |
+|  Precondition     | User has an account |
 |  Post condition     | The operation ends with an error message |
 | Step#        | Description  |
 |  1     | User asks to sign up |  
@@ -147,85 +147,83 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  Precondition     | -- |
 |  Post condition     | The operation ends with an error message |
 | Step#        | Description  |
-|  1     | The User asks to sign up |  
-|  2     | The system shows the page where to enter the data |
-|  3     | The User inserts the username, the email, and the password |
-|  4     | The User submits form |
+|  1     | User asks to sign up |  
+|  2     | System shows the page where to enter the data |
+|  3     | User inserts the username, the email, and the password |
+|  4     | User submits form |
 |  5     | An error occurs inside the server |
-|  6     | The system notifies the User that an error occurred | -->
+|  6     | System notifies the User that an error occurred | -->
 
 
 ### Use case 2, LOGIN
 | Actors Involved        | User |
 | ------------- |:-------------:| 
-|  Precondition     | The User has an account |
-|  Post condition     | The User is authorized |
+|  Precondition     | User has an account |
+|  Post condition     | User is authorized |
 |  Nominal Scenario     | The email and password are correct |
-|  Variants     | The User does not fill in both required fields |
+|  Variants     | User does not fill in both required fields |
 |  Exceptions     | The email and password do not match or email does not exist |
 <!-- |  Exceptions     | The email and password do not match or email does not exist or a server error occurs | -->
 
 
 | Scenario 2.1 | Nominal|
 | ------------- |:-------------:| 
-|  Precondition     | The User has an account |
-|  Post condition     | The User is authorized |
+|  Precondition     | User has an account |
+|  Post condition     | User is authorized |
 | Step#        | Description  |
 |  1     | User asks to login |  
 |  2     | System asks for email and password |
 |  3     | User enters email and password |
 |  4     | System checks if email and password are correct|
-|5       | The User is authorized |
+|  5     | User is authorized |
 
 
 | Scenario 2.2 | Exception |
 | ------------- |:-------------:| 
-|  Precondition     | The User does not have an account |
-|  Post condition     | The User is not authorized |
+|  Precondition     | User does not have an account |
+|  Post condition     | User is not authorized |
 | Step#        | Description  |
-|  1     | The User asks to login |  
+|  1     | User asks to login |  
 |  2     | System asks email and password |
-|  3     | The User enters email and password |
+|  3     | User enters email and password |
 |  4     | System checks if email and password are correct|
-|5		 | Email and password do not match, so the User is not authorized |
+|  5	 | Email and password do not match, so User is not authorized |
 
 | Scenario 2.3 | Exception |
 | ------------- |:-------------:| 
-|  Precondition     | The User has an account |
-|  Post condition     | The User is not authorized |
+|  Precondition     | User has an account |
+|  Post condition     | User is not authorized |
 | Step#        | Description  |
-|  1     | The User asks to login |  
+|  1     | User asks to login |  
 |  2     | System asks email and password |
-|  3     | The User enters email and password |
-|  4     | System checks if email and password are correct, but the email does not exist, so the User is not authorized |
+|  3     | User enters email and password |
+|  4     | System checks if email and password are correct, but the email does not exist, so User is not authorized |
 
 <!-- ##### Scenario 2.4
 | Scenario 2.4 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | -- |
-|  Post condition     | The User is not authorized |
+|  Post condition     | User is not authorized |
 | Step#        | Description  |
-|  1     | The User asks to login |  
+|  1     | User asks to login |  
 |  2     | System asks email and password |
-|  3     | The User enters email and password |
-|  4     | System checks if email and password are correct, but the email does not exist, so the User is not authorized | -->
+|  3     | User enters email and password |
+|  4     | System checks if email and password are correct, but the email does not exist, so User is not authorized | -->
 
 
 ### Use case 3, LOGOUT
 | Actors Involved        | User |
 | ------------- |:-------------:| 
-|  Precondition     | The User is logged in |
-|  Post condition     | The User is logged out |
+|  Precondition     | User is logged in |
+|  Post condition     | User is logged out |
 |  Nominal Scenario     | The operation is successful |
 |  Variants     | --- |
-|  Exceptions     | The user does not have an account or a server error arrests the operation |
-<!-- |  Exceptions     | The user does not have an account or a server error arrests the operation | -->
-
+|  Exceptions     | User does not have an account or a server error arrests the operation |
 
 | Scenario 3.1 | Nominal |
 | ------------- |:-------------:| 
-|  Precondition     | The User is logged in |
-|  Post condition     | The User is logged out |
+|  Precondition     | User is logged in |
+|  Post condition     | User is logged out |
 | Step#        | Description  |
 |  1     | User asks to logout |  
 |  2     | System allows the operation |
@@ -233,18 +231,18 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 | Scenario 3.2| Exception |
 | ------------- |:-------------:| 
-|  Precondition     | The User is logged in |
-|  Post condition     | The User is not logged out |
+|  Precondition     | User is logged in |
+|  Post condition     | User is not logged out |
 | Step#        | Description  |
 |  1     | User asks to logout |  
 |  2     | System deny the operation because of a server error |
-| 3      | Error message is sent to the user |
+|  3     | Error message is sent to the user |
 
 <!-- ##### Scenario 3.3
 | Scenario 3.2| Exception |
 | ------------- |:-------------:| 
-|  Precondition     | The User is logged in |
-|  Post condition     | The User is not logged out |
+|  Precondition     | User is logged in |
+|  Post condition     | User is not logged out |
 | Step#        | Description  |
 |  1     | User asks to logout |  
 |  2     | System deny the operation because of a server error | -->
@@ -253,44 +251,59 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 
 
-### Use case 4, READ USERS Veronica
+### Use case 4, READ USERS
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | User's details are shown |
+|  Nominal Scenario     | User can read the account's details successfully |
+|  Variants     | --- |
+|  Exceptions     | --- |
 
+
+| Scenario 4.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | User's details are shown |
+| Step#        | Description  |
+|  1     | User asks for reading user's details |  
+|  2     | System shows required information |
 
 
 ### Use case 5, CREATE TRANSACTION
 | Actors Involved        | User |
 | ------------- |:-------------:| 
-|  Precondition     | The User is logged in |
-|  Post condition     | transaction is created |
+|  Precondition     | User is logged in |
+|  Post condition     | Transaction is created |
 |  Nominal Scenario     | User creates a transaction successfully |
 |  Variants     | --- |
 |  Exceptions     | --- |
 
 
-| Scenario 3.1 | Nominal |
+| Scenario 5.1 | Nominal |
 | ------------- |:-------------:| 
-|  Precondition     | The User is logged in |
+|  Precondition     | User is logged in |
 |  Post condition     | A transaction is created |
 | Step#        | Description  |
 |  1     | System asks to specify name, amount and type of transaction|  
 |  2     | User specify required fields |
-|3       | User submits					|
-| 4     | System creates the transaction |
+|  3     | User submits					|
+|  4     | System creates the transaction |
 
 ### Use case 6, DELETE TRANSACTION
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
-|  Precondition     | The User is logged in |
+|  Precondition     | User is logged in |
 |  Post condition     | A transaction is deleted |
 |  Nominal Scenario     | User deletes a transaction successfully |
 |  Variants     | --- |
 |  Exceptions     | --- |
 
 
-| Scenario 3.1 | Nominal |
+| Scenario 6.1 | Nominal |
 | ------------- |:-------------:| 
-|  Precondition     | The User is logged in |
+|  Precondition     | User is logged in |
 |  Post condition     | A transaction is created |
 | Step#        | Description  |
 |  1     | User asks to delete a transaction|  
