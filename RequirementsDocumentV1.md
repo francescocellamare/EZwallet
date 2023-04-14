@@ -115,29 +115,28 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  Exceptions     | The email is not available |
 <!-- |  Exceptions     | The email is not available or a server error occurs | -->
 
-##### Scenario 1.1 
 | Scenario 1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | The User has no account |
 |  Post condition     | The User has a new account |
 | Step#        | Description  |
-|  1     | The User asks to sign up |  
-|  2     | The system shows the page where to enter the data |
-|  3     | The User inserts the username, the email, and the password |
-|  4     | The User submits form |
+|  1     | User asks to sign up |  
+|  2     | System asks the asks for username, email and the password |
+|  3     | User inserts required fields |
+|  4     | User submits form |
 |  5     | System checks if the User account already exists |
 |  6     | System stores the account |
 
-##### Scenario 1.2 
+
 | Scenario 1.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | The User has an account |
 |  Post condition     | The operation ends with an error message |
 | Step#        | Description  |
-|  1     | The User asks to sign up |  
-|  2     | The system shows the page where to enter the data |
-|  3     | The User inserts the username, the email, and the password |
-|  4     | The User submits form |
+|  1     | User asks to sign up |  
+|  2     | System shows the page where to enter the data |
+|  3     | User inserts the username, the email, and the password |
+|  4     | User submits form |
 |  5     | System checks if the User account already exists |
 |  6     | The email is already in use |
 |  7     | System notifies the User that he/she is already registered |
@@ -166,7 +165,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  Exceptions     | The email and password do not match or email does not exist |
 <!-- |  Exceptions     | The email and password do not match or email does not exist or a server error occurs | -->
 
-##### Scenario 2.1 
+
 | Scenario 2.1 | Nominal|
 | ------------- |:-------------:| 
 |  Precondition     | The User has an account |
@@ -175,20 +174,21 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  1     | User asks to login |  
 |  2     | System asks for email and password |
 |  3     | User enters email and password |
-|  4     | System checks if email and password are correct; so the User is authorized |
+|  4     | System checks if email and password are correct|
+|5       | The User is authorized |
 
-##### Scenario 2.2
+
 | Scenario 2.2 | Exception |
 | ------------- |:-------------:| 
-|  Precondition     | The User has an account |
+|  Precondition     | The User does not have an account |
 |  Post condition     | The User is not authorized |
 | Step#        | Description  |
 |  1     | The User asks to login |  
 |  2     | System asks email and password |
 |  3     | The User enters email and password |
-|  4     | System checks if email and password are correct, but the email and password do not match, so the User is not authorized |
+|  4     | System checks if email and password are correct|
+|5		 | Email and password do not match, so the User is not authorized |
 
-##### Scenario 2.3
 | Scenario 2.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | The User has an account |
@@ -221,7 +221,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  Exceptions     | The user does not have an account or a server error arrests the operation |
 <!-- |  Exceptions     | The user does not have an account or a server error arrests the operation | -->
 
-##### Scenario 3.1 
+
 | Scenario 3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | The User is logged in |
@@ -230,7 +230,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  1     | User asks to logout |  
 |  2     | System allows the operation |
 
-##### Scenario 3.2
+
 | Scenario 3.2| Exception |
 | ------------- |:-------------:| 
 |  Precondition     | The User is logged in |
@@ -238,6 +238,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Step#        | Description  |
 |  1     | User asks to logout |  
 |  2     | System deny the operation because of a server error |
+| 3      | Error message is sent to the user |
 
 <!-- ##### Scenario 3.3
 | Scenario 3.2| Exception |
@@ -254,11 +255,52 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 ### Use case 4, READ USERS Veronica
 
-### Use case 5, CREATE TRANSACTION Inaam
 
-### Use case 6, READ TRANSACTIONS DETAILS Kamel
 
-### Use case 7, DELETE TRANSACTION Inaam
+### Use case 5, CREATE TRANSACTION
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | The User is logged in |
+|  Post condition     | transaction is created |
+|  Nominal Scenario     | User creates a transaction successfully |
+|  Variants     | --- |
+|  Exceptions     | --- |
+
+
+| Scenario 3.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | The User is logged in |
+|  Post condition     | A transaction is created |
+| Step#        | Description  |
+|  1     | System asks to specify name, amount and type of transaction|  
+|  2     | User specify required fields |
+|3       | User submits					|
+| 4     | System creates the transaction |
+
+### Use case 6, DELETE TRANSACTION
+
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | The User is logged in |
+|  Post condition     | A transaction is deleted |
+|  Nominal Scenario     | User deletes a transaction successfully |
+|  Variants     | --- |
+|  Exceptions     | --- |
+
+
+| Scenario 3.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | The User is logged in |
+|  Post condition     | A transaction is created |
+| Step#        | Description  |
+|  1     | User asks to delete a transaction|  
+|  2     | System deletes the transaction|
+
+
+
+### Use case 7, READ TRANSACTIONS DETAILS Kamel
+
+
 
 ### Use case 8, CREATE CATEGORY Francesco
 
