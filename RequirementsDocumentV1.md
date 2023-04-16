@@ -65,12 +65,22 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 
 # Stories and personas
-\<A Persona is a realistic impersonation of an actor. Define here a few personas and describe in plain text how a persona interacts with the system>
 
-\<Persona is-an-instance-of actor>
+* Persona 1: low income student, male, single, 21 years old
+	* story: would like to keep track of how much is he spending to stay within budget
 
-\<stories will be formalized later as scenarios in use cases>
+* Persona 2: high income professional, female, engaged, 30 years old
+	* story: trying to keep track of her investments 
 
+* Persona 3: average income professional, male, married, 45 years old 
+	* story: wants his children to use a budget tracking application, so they can 
+	learn how to manage their money
+
+* Persona 4: low income professional, female, single, 28 years old 
+	* story: wants to save money, so she would like to know where is she overspending or making unneccessary payments
+
+* Persona 5: average income freelancer, male, single, 32 years old
+	* story: wants to keep track of all transactions related to his small bussiness 
 
 # Functional and non functional requirements
 
