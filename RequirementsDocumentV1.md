@@ -12,23 +12,30 @@ Version: V1 - description of EZWallet in CURRENT form (as received by teachers)
 
 # Contents
 
+- [Requirements Document - current EZWallet](#requirements-document---current-ezwallet)
+- [Contents](#contents)
 - [Informal description](#informal-description)
 - [Stakeholders](#stakeholders)
 - [Context Diagram and interfaces](#context-diagram-and-interfaces)
-	+ [Context Diagram](#context-diagram)
-	+ [Interfaces](#interfaces) 
-	
+	- [Context Diagram](#context-diagram)
+	- [Interfaces](#interfaces)
 - [Stories and personas](#stories-and-personas)
 - [Functional and non functional requirements](#functional-and-non-functional-requirements)
-	+ [Functional Requirements](#functional-requirements)
-	+ [Non functional requirements](#non-functional-requirements)
+	- [Functional Requirements](#functional-requirements)
+	- [Non Functional Requirements](#non-functional-requirements)
 - [Use case diagram and use cases](#use-case-diagram-and-use-cases)
-	+ [Use case diagram](#use-case-diagram)
-	+ [Use cases](#use-cases)
-    	+ [Relevant scenarios](#relevant-scenarios)
+	- [Use case diagram](#use-case-diagram)
+		- [Use case 1, REGISTRATION](#use-case-1-registration)
+		- [Use case 2, LOGIN](#use-case-2-login)
+		- [Use case 3, LOGOUT](#use-case-3-logout)
+		- [Use case 4, READ USERS](#use-case-4-read-users)
+		- [Use case 5, CREATE TRANSACTION](#use-case-5-create-transaction)
+		- [Use case 6, DELETE TRANSACTION](#use-case-6-delete-transaction)
+		- [Use case 7, READ TRANSACTIONS DETAILS Kamel](#use-case-7-read-transactions-details-kamel)
+		- [Use case 8, CREATE CATEGORY](#use-case-8-create-category)
 - [Glossary](#glossary)
-- [System design](#system-design)
-- [Deployment diagram](#deployment-diagram)
+- [System Design](#system-design)
+- [Deployment Diagram](#deployment-diagram)
 
 # Informal description
 EZWallet (read EaSy Wallet) is a software application designed to help individuals and families keep track of their expenses. Users can enter and categorize their expenses, allowing them to quickly see where their money is going. EZWallet is a powerful tool for those looking to take control of their finances and make informed decisions about their spending.
@@ -315,10 +322,24 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 
 
-### Use case 8, CREATE CATEGORY Francesco
+### Use case 8, CREATE CATEGORY
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | Category is created |
+|  Nominal Scenario     | User creates a category successfully |
+|  Variants     | --- |
+|  Exceptions     | --- |
 
-
-
+| Scenario 8.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | Category is created |
+| Step#        | Description  |
+|  1     | System asks for type and color of category|  
+|  2     | User specifies required fields |
+|  3     | User submits					|
+|  4     | System creates the category |
 
 
 
