@@ -1,10 +1,16 @@
 # Graphical User Interface Prototype  - CURRENT
 
-Authors:
+Authors: 
+* Kamel Fakih
+* Veronica Mattei
+* Francesco Pio Cellamare
+* Inaam ElHelwe
 
-Date:
+Date: 16/04/2023
 
-Version:
+Version: 1
 
-\<Report here the GUI that you propose for EZWallet in CURRENT form, as received by teachers. You are free to organize it as you prefer. A suggested presentation matches the Use cases and scenarios defined in the Requirement document. The GUI can be shown as a sequence of graphical files (jpg, png)  >
-
+![Login page](code/images/Log%20in%20Page.png "login Page")
+![Registration page](code/images/Registration%20Page.png "Registration Page")
+![Home page](code/images/Home%20Page.png "HomePage")
+![Users page](code/images/Users%20page.png "Users Page")
