@@ -10,7 +10,7 @@ Consider the EZWallet  project in CURRENT version (as received by the teachers),
 ### 
 |             | Estimate                        |             
 | ----------- | ------------------------------- |  
-| NC =  Estimated number of classes to be developed   | 4 |             
+| NC =  Estimated number of modules to be developed   | 4 |             
 |  A = Estimated average size per class, in LOC       | 80 | 
 | S = Estimated size of project, in LOC (= NC * A) | 320 |
 | E = Estimated effort, in person hours (here use productivity 10 LOC per person hour)  |   8 |   
@@ -21,13 +21,14 @@ Consider the EZWallet  project in CURRENT version (as received by the teachers),
 ### 
 |         component name    | Estimated effort (person hours)   |             
 | ----------- | ------------------------------- | 
-|requirement document    | 6 |
-| GUI prototype | 1 |
+|requirement document    | 7 |
+| GUI prototype | 5 |
 |design document | 8 |
-|code | 8 |
-| unit tests | 6 |
-| api tests | 6 |
-| management documents  | 5 |
+|code | 30 |
+| unit tests | 15 |
+| api tests | 20 |
+| management documents  | 15 |
+
 
 
 
@@ -35,21 +36,21 @@ Consider the EZWallet  project in CURRENT version (as received by the teachers),
 ### 
 |         Activity name    | Estimated effort (person hours)   |             
 | ----------- | ------------------------------- | 
-| Perform work flow  analysis | 0.5 |
-| Identify user requirements | 1 |
-| Identify interface requirements| 1 |
-| Prepare requirements document | 3.5 |
-| Prepare GUI prototype | 1 |
-| Design units and classes | 2 |
-| Design database | 2 |
-| Development user's functionalities | 4 |
-| Development admin's functionalities | 2 |
-| Testing user's functionalities | 2 |
-| Testing admin's functionalities | 1 |
-| System test | 1 |
+| Perform work flow  analysis | 2 |
+| Identify user requirements | 4 |
+| Identify interface requirements| 4 |
+| Prepare requirements document | 14 |
+| Prepare GUI prototype | 4 |
+| Design units and classes | 8 |
+| Design database | 8 |
+| Development user's functionalities | 16 |
+| Development admin's functionalities | 8 |
+| Testing user's functionalities | 8 |
+| Testing admin's functionalities | 4 |
+| System test | 12 |
 ###
 Insert here Gantt chart with above activities
-![Gantt Diagram](code/images/GanttV1.png)
+![Gantt Diagram](code/images/ganttV1.png)
 # Summary
 
 Report here the results of the three estimation approaches. The  estimates may differ. Discuss here the possible reasons for the difference
@@ -57,8 +58,8 @@ Report here the results of the three estimation approaches. The  estimates may d
 |             | Estimated effort                        |   Estimated duration |          
 | ----------- | ------------------------------- | ---------------|
 | estimate by size |8 person hours|0.2 calendar weeks|
-| estimate by product decomposition |10 person hours|0.25 calendar weeks|
-| estimate by activity decomposition |16 person hours|0.4 calendar weeks|
+| estimate by product decomposition |100 person hours| 0.7 calendar weeks|
+| estimate by activity decomposition | 92 person hours| 0.6 calendar weeks|
 
 
 
