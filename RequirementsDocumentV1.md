@@ -25,13 +25,13 @@ Version: V1 - description of EZWallet in CURRENT form (as received by teachers)
 	- [Non Functional Requirements](#non-functional-requirements)
 - [Use case diagram and use cases](#use-case-diagram-and-use-cases)
 	- [Use case diagram](#use-case-diagram)
-		- [Use case 1, REGISTRATION](#use-case-1-registration)
+		- [Use case 1, REGISTER](#use-case-1-register)
 		- [Use case 2, LOGIN](#use-case-2-login)
 		- [Use case 3, LOGOUT](#use-case-3-logout)
 		- [Use case 4, READ USERS](#use-case-4-read-users)
 		- [Use case 5, CREATE TRANSACTION](#use-case-5-create-transaction)
 		- [Use case 6, DELETE TRANSACTION](#use-case-6-delete-transaction)
-		- [Use case 7, READ TRANSACTIONS DETAILS Kamel](#use-case-7-read-transactions-details-kamel)
+		- [Use case 7, READ TRANSACTIONS](#use-case-7-read-transactions)
 		- [Use case 8, CREATE CATEGORY](#use-case-8-create-category)
 - [Glossary](#glossary)
 - [System Design](#system-design)
@@ -347,7 +347,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  Variants     | the user has no transactions |
 |  Exceptions     |  |
 
-| Scenario 6.1 | Nominal |
+| Scenario 7.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in  |
 |  Post condition     | User receives a list of all of his transactions |
@@ -356,7 +356,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  2     | System looks up all transactions and the catogries they belong to |
 |  3     | System returns a list of transactions and their categories to the user |
 
-| Scenario 6.1 | Variant |
+| Scenario 7.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | User receives an empty list |
