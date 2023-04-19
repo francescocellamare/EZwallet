@@ -50,7 +50,7 @@ Consider the EZWallet  project in CURRENT version (as received by the teachers),
 | System test | 12 |
 ###
 Insert here Gantt chart with above activities
-![Gantt Diagram](code/images/ganttV1.png)
+![Gantt Diagram](code/images/GanttV1.png)
 # Summary
 
 Report here the results of the three estimation approaches. The  estimates may differ. Discuss here the possible reasons for the difference
