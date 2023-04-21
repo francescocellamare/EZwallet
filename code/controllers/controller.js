@@ -74,7 +74,8 @@ export const get_labels = (req, res) => {
             $unwind: "$categories_info"
         }
     ]).then(result => {
-        let data = result.map(v => Object.assign({}, { _id: v._id, name: v.name, amount: v.amount, type: v.type, color: v.color }))
+        let data = result.map(v => Object.assign({}, { _id: v._id, name: v.name, 
+            amount: v.amount, type: v.type, color: v.color }))
         res.json(data);
     }).catch(error => {
         res.status(400).json(error)
