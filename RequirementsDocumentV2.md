@@ -40,7 +40,11 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 | Stakeholder name  | Description | 
 | ----------------- |:-----------:|
-|   Stakeholder x..     |             | 
+|     User   |        individual who wants to keep track of their expenses      | 
+| Admin| Manages users' accounts|
+|Exchange rate API| API for converting to the specified default currency|
+|Google ads| Third party service for providing ads|
+
 
 # Context Diagram and interfaces
 
@@ -56,7 +60,8 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 | Actor | Logical Interface | Physical Interface  |
 | ------------- |:-------------:| -----:|
-|   Actor x..     |  |  |
+|   User    |GUI(to be defined -Manage transactions, budget categories, view reports, etc...)  | Smartphone or PC (Web browser) |
+| Admin | GUI(to be defined - same functionalities as user + Manage users' accounts) | Smartphone or PC (Web browser)|
 
 # Stories and personas
 \<A Persona is a realistic impersonation of an actor. Define here a few personas and describe in plain text how a persona interacts with the system>
