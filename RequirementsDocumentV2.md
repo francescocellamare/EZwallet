@@ -40,28 +40,29 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 | Stakeholder name  | Description | 
 | ----------------- |:-----------:|
-|     User   |        individual who wants to keep track of their expenses      | 
+|     User   |        Individual who wants to keep track of their expenses or their family expenses| 
 | Admin| Manages users' accounts|
-|Exchange rate API| API for converting to the specified default currency|
+|Currency exchange service| API for converting transaction's currency to the specified default currency|
 |Google ads| Third party service for providing ads|
+|Start up company| Company that develops the software and provides the service|
+|Competitors| Companies that provide the same service|
+
 
 
 # Context Diagram and interfaces
 
 ## Context Diagram
-\<Define here Context diagram using UML use case diagram>
 
-\<actors are a subset of stakeholders>
 
 ## Interfaces
-\<describe here each interface in the context diagram>
-
-\<GUIs will be described graphically in a separate document>
 
 | Actor | Logical Interface | Physical Interface  |
 | ------------- |:-------------:| -----:|
 |   User    |GUI(to be defined -Manage transactions, budget categories, view reports, etc...)  | Smartphone or PC (Web browser) |
 | Admin | GUI(to be defined - same functionalities as user + Manage users' accounts) | Smartphone or PC (Web browser)|
+|Google ads| Internet link | Google ads' API|
+|Currency exchange service| Internet link| Currency exchange service's API|
+
 
 # Stories and personas
 \<A Persona is a realistic impersonation of an actor. Define here a few personas and describe in plain text how a persona interacts with the system>
@@ -75,15 +76,90 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 ## Functional Requirements
 
-\<In the form DO SOMETHING, or VERB NOUN, describe high level capabilities of the system>
 
-\<they match to high level use cases>
 
 | ID        | Description  |
 | ------------- |:-------------:| 
-|  FR1     |  |
-|  FR2     |   |
-| FRx..  | | 
+| FR1     | Authorize and authenticate 		|
+|FR1.1|  Log in|
+| FR1.1.1  | Log in using email and password |
+| FR1.1.2   |	Log in using 3rd party agent    |
+| FR1.3   | Reset password                  |
+| FR1.4   | Register as a new user          |
+| FR1.5   | Verify email                    |
+| FR1.6   | Log out                         |
+| FR2     | Manage personal account				    |
+| FR2.1   | Delete personal account					|
+| FR2.2  | Edit profile picture            |
+| FR2.3   | Change password 				|
+|FR2.4| Change application's settings|
+| FR2.4.1  | Change theme      |
+| FR2.4.2   | Change language   |
+| FR2.4.3  | Change default currency            | 
+| FR2.4.4  | Change date format              | 
+| FR3 | Manage categories           | 
+| FR3.1 | Create category             | 
+| FR3.2 | Delete category             | 
+| FR3.3| View categories|
+| FR3.4 | Edit Category           | 
+| FR3.4.1 | Edit name          | 
+| FR3.4.2 | Edit color         | 
+|FR3.5| Label important categories|
+|  FR4     |  Manage transaction  | 
+|  FR4.1     |  Add a new transaction | 
+|  FR4.2     |  Edit a transaction| 
+|  FR4.3     |  Delete a transaction |
+|FR4.4| View transactions|
+|  FR4.4.1     |  Filter transactions|
+|  FR4.4.1.1    |  Filter by date|
+|  FR4.4.1.2   |  Filter by category|
+|  FR4.4.1.3    |  Filter by amount spent|
+|  FR4.4.2    |  Sort transactions|
+|  FR4.4.2.1    |  Sort by date|
+|  FR4.4.2.2    |  Sort by amount spent|
+|  FR4.4.3    |  Group transactions|
+|  FR4.4.3.1    |  Filter by date|
+|  FR4.4.3.2   |  Filter by category|
+|  FR5     | Manage expenses |    
+|  FR5.1     |  Add a new balance |        
+|  FR5.2     |  Delete a balance |        
+|  FR5.3  |  Specify income and recurrent income for a balance |
+|  FR5.4  |  Specify expenses and recurrent expenses for a balance |
+|  FR5.5  |  Allocate budget for a category |
+|  FR5.6  |  Transfer budget from one category to another category |
+|  FR5.7  |  Get notified when exceeding the allocated budget of a category |
+| FR5.8| Transfer money from one balance to another|
+|FR6| Manage family accounts|
+|FR6.1| Create a family account|
+|FR6.2| Delete a family account|
+|FR6.3| Invite users to a family account|
+|FR6.4| Manage roles in family account|
+|FR6.4.1| Notify parents when kids exceed budgets|
+|FR6.4.2| Add income to a kid account|
+|FR7| View statistical reports |
+|FR7.1| Visualize trends over time|
+|FR7.1.1| View amount of selected balances|
+|FR7.1.2| View total amount of all balances|
+|FR7.1.3| View expenses|
+|FR7.1.4| View expenses per category|
+|FR7.1.5| View income|
+|FR7.2| View percentage of spendings by category in a specific time range|
+|FR7.3|View overall expenses |
+|FR7.3.1|Group by day|
+|FR7.3.2|Group by month|
+|FR7.3.3|Group by year|
+|FR7.4|View overall income |
+|FR7.4.1|Group by day|
+|FR7.4.2|Group by month|
+|FR7.4.3|Group by year|
+|FR7.5|View available budget for each category|
+|FR7.6|View percentage of amount spent from the available budget for each category|
+| FR8         | Manage users' accounts |
+| FR8.1      | View users' accounts |
+|FR8.2| View a user's account|
+| FR8.2       | Update a user's account |
+| FR8.3       | Delete a user'sD account |
+
 
 ## Non Functional Requirements
 
