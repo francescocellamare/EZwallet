@@ -155,10 +155,10 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |FR7.5|View available budget for each category|
 |FR7.6|View percentage of amount spent from the available budget for each category|
 | FR8         | Manage users' accounts |
-| FR8.1      | View users' accounts |
+| FR8.1      | View list of users |
 |FR8.2| View a user's account|
 | FR8.2       | Update a user's account |
-| FR8.3       | Delete a user'sD account |
+| FR8.3       | Delete a user's account |
 
 
 ## Non Functional Requirements
