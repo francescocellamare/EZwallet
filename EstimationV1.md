@@ -11,7 +11,7 @@ Consider the EZWallet  project in CURRENT version (as received by the teachers),
 |             | Estimate                        |             
 | ----------- | ------------------------------- |  
 | NC =  Estimated number of modules to be developed   | 9 |             
-|  A = Estimated average size per class, in LOC       | 84  | 
+|  A = Estimated average size per module, in LOC       | 84  | 
 | S = Estimated size of project, in LOC (= NC * A) | 756  |
 | E = Estimated effort, in person hours (here use productivity 10 LOC per person hour)  |   75.6  |   
 | C = Estimated cost, in euro (here use 1 person hour cost = 30 euro) | 2268 | 
