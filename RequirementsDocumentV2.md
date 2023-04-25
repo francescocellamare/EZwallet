@@ -85,7 +85,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | FR1.1.1  | Log in using email and password |
 | FR1.1.2   |	Log in using 3rd party agent    |
 | FR1.3   | Reset password                  |
-| FR1.4   | Register as a new user          |	<!-- create default category (others) / add a default balance / password validation >
+| FR1.4   | Register as a new user          |	<!-- password validation >
 | FR1.4   | Register as a new user using 3rd party service           | <!-- use case not written >
 | FR1.5   | Verify email                    |
 | FR1.6   | Log out                         |
@@ -107,9 +107,9 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | FR3.4.1 | Edit name          | 
 | FR3.4.2 | Edit color         | 
 |FR3.5| Label important category|
-|FR3.6| Remove important label from a category |  <!-- use case not written >
+|FR3.6| Unlabel a category |
 |  FR4     |  Manage transaction  | 
-|  FR4.1     |  Add a new transaction | <!-- add notifications here>
+|  FR4.1     |  Add a new transaction | 
 |  FR4.2     |  Edit a transaction| 
 |  FR4.3     |  Delete a transaction |
 |FR4.4| View transactions|
@@ -126,18 +126,16 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  FR5     | Manage expenses |    
 |  FR5.1     |  Add a new balance |        
 |  FR5.2     |  Delete a balance |        
-<!-- |  FR5.3  |  Specify income and recurrent income for a balance |  ### merge into transactions !!!! ####
-|  FR5.4  |  Specify expenses and recurrent expenses for a balance | -->
-|  FR5.5  |  Allocate budget for a category |  <!-- use case not written > 
-|  FR5.6  |  Transfer budget from one category to another category |  <!-- use case not written (do not keep history) >
+|  FR5.5  |  Allocate budget for a category |
+|  FR5.6  |  Transfer budget from one category to another category | 
 |FR6| Manage family accounts|
 |FR6.1| Create a family account|
 |FR6.2| Delete a family account|
 |FR6.3| Invite users to a family account|
 |FR6.4| Add income to a kid account| <!-- use case not written >
 |FR6.5| Join family account | 
-|FR6.6| leave family account | <!-- use case not written >
-|FR6.7| remove family account | <!-- use case not written >
+|FR6.6| leave family account | 
+|FR6.7| remove family account | 
 |FR6.8| View child's dashboard |
 |FR7| View statistical reports |
 |FR7.1| Visualize trends over time|
@@ -195,7 +193,9 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  3     | User inserts required fields 							  |
 |  4     | User submits form 										  |
 |  5     | System verifies that the email is not in use 			  |
-|  6     | System stores the account 								  |
+|  6     | System creates the account 								  |
+|  7     | System adds a default category "Others" to the account and sets its budget to 0    |
+|  7     | System adds a default balance "Default" to the account     |
 |  7     | System redirects user to the home page 					  |
 
 
@@ -313,7 +313,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in 					|
-|  Post condition     | User changes his password 			|
+|  Post condition     | User changes his/her password 			|
 |  Nominal Scenario   | User is logged in				    |
 |  Variants     	  | --- |
 |  Exceptions     	  | user provides an incorrect current password, user uses the same password					|
@@ -321,7 +321,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Scenario 4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 		  |
-|  Post condition     | User changes his password |
+|  Post condition     | User changes his/her password |
 | Step#  | Description  |
 |  1     | User asks to change his/her password 					|  
 |  2     | System aks for current and new password  |
@@ -331,7 +331,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Scenario 4.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 				  |
-|  Post condition     | User does not change his password |
+|  Post condition     | User does not change his/her password |
 | Step#  | Description  |
 |  1     | User asks to change his/her password 					|  
 |  2     | System aks for current and new password  |
@@ -341,7 +341,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Scenario 4.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 				  |
-|  Post condition     | User does not change his password |
+|  Post condition     | User does not change his/her password |
 | Step#  | Description  |
 |  1     | User asks to change his/her password 					|  
 |  2     | System aks for current and new password  |
@@ -353,7 +353,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is not logged in 	 |
-|  Post condition     | User resets his password |
+|  Post condition     | User resets his/her password |
 |  Nominal Scenario   | user changes to a new password within the allowed time 	 |
 |  Variants     	  | |
 |  Exceptions     	  | email expired, user uses the current password as a new password |
@@ -361,7 +361,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Scenario 5.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is not logged in 	 |
-|  Post condition     | User resets his password |
+|  Post condition     | User resets his/her password |
 | Step#  | Description  |
 |  1     | User asks to reset his/her password						|  
 |  2     | System sends an email to user for resetting the password |
@@ -371,7 +371,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Scenario 5.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is not logged in 			 |
-|  Post condition     | User does not reset his password |
+|  Post condition     | User does not reset his/her password |
 | Step#  | Description  |
 |  1     | User asks to reset his/her password 						|	  
 |  2     | System sends an email to user for resetting the password |
@@ -381,7 +381,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Scenario 5.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is not logged in 			 |
-|  Post condition     | User does not reset his password |
+|  Post condition     | User does not reset his/her password |
 | Step#  | Description  |
 |  1     | User asks to reset his/her password 						|	  
 |  2     | System sends an email to user for resetting the password |
@@ -392,15 +392,15 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in 					 |
-|  Post condition     | User verifies his email 			 |
-|  Nominal Scenario   | user verifies his email within the allowed time limit					 |
+|  Post condition     | User verifies his/her email 			 |
+|  Nominal Scenario   | user verifies his/her email within the allowed time limit					 |
 |  Variants     	  | |
 |  Exceptions     	  | email expired |
 
 | Scenario 6.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in		|
-|  Post condition     | User verifies his email |
+|  Post condition     | User verifies his/her email |
 | Step#  | Description  |
 |  1     | User asks for verifying his/her email					 |  
 |  2     | System sends an email to the user for verifying the email |
@@ -410,7 +410,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Scenario 6.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 			   |
-|  Post condition     | User does not verify his email |
+|  Post condition     | User does not verify his/her email |
 | Step#  | Description  |
 |  1     | User asks for verifying his/her email 					 |  
 |  2     | System sends an email to the user for verifying the email |
@@ -469,7 +469,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Scenario 8.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in	 		|
-|  Post condition     | User still have his account |
+|  Post condition     | User still have his/her account |
 | Step#  | Description  |
 |  1     | User asks to delete his/her account			   |  
 |  2     | System requests for the password 			   |
@@ -501,7 +501,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in 				 |
-|  Post condition     | User updates his profile picture |
+|  Post condition     | User updates his/her profile picture |
 |  Nominal Scenario   | User is logged in				 |
 |  Variants     	  | --- |
 |  Exceptions     	  | --- |
@@ -613,7 +613,8 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  3     | User inserts required fields |
 |  4     | User submits form |
 |  5     | System verifies that the chosen name is not in use|
-|  6   | System stores new category |
+|  6     | system sets the budget for the category to 0 |
+|  7   | System stores new category |
 
 
 | Scenario 15.2 | Exception |
@@ -626,7 +627,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  3     | User inserts required fields |
 |  4     | User submits form |
 |  5     | System verifies that the chosen name is in use|
-|  6   | System notifies the user that he has to choose another name for the category |
+|  6   | System notifies the user that he/she has to choose another name for the category |
 
 
 
@@ -723,7 +724,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  2     | System ask user to change name or/and color|
 |  3     | User apply changes |
 |  4     | System verifies that chosen name is in use|
-|  5   | System notifies the user that he has to choose another name for the category |
+|  5   | System notifies the user that he/she has to choose another name for the category |
 
 
 | Scenario 18.2 | Exception |
@@ -764,8 +765,34 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  2     | System verifies that the category is already labeled|
 |  3    | System notifies the user that the category is already labeled|
 
+### Use Case 4: UNLABEL A CATEGORY
 
-### Use Case 20: remove important label from a categories
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | A categoty is unlabeled|
+|  Nominal Scenario     | User is logged in and asks to unlabel a category that has a label|
+|  Variants     | ---|
+|  Exceptions     |User is logged in and asks to unlabel a category that has no label|
+
+| Scenario 4.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in and asks to unlabel a category that has a label|
+|  Post condition     | A category is unlabeled |
+| Step#        | Description  |
+|  1     | User asks to unlabel a category|  
+|  2     | System verifies that the category is labeled|
+|  3     | System unlabels the category|
+
+| Scenario 4.1 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in and asks to unlabel a category that has no label|
+|  Post condition     | Operation ends with an error message |
+| Step#        | Description  |
+|  1     | User asks to unlabel a category|  
+|  2     | System verifies that the category is already unlabeled|
+|  3     | System denies the operation and notifies the user that the category does not have a label |
+
 
 ### Use case 19, Add a new transaction
 
@@ -774,7 +801,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  Precondition     | User is logged in |
 |  Post condition     | A new transaction is added to the user's list of transactions |
 |  Nominal Scenario     | The information entered by user is valid |
-|  Variants     | User didn't specify a category |
+|  Variants     | User asks to create a recurrent transaction, User didn't specify a category |
 |  Exceptions     | User provided invalid information |
 
 
@@ -784,12 +811,30 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  Post condition     | A new transaction is added to the user's list of transactions |
 | Step#        | Description  |
 |  1     | user asks to add a new transaction |  
-|  2     | system asks the user to provide transaction date, amount, direction, category, balance, and an optional description  |
-|  3     | user fills all required fields |
+|  2     | system asks the user to provide transaction date, amount, direction, category, balance, an optional description, wether to make it a recurrent transaction, and the period in days of the recurrent transaction  |
+|  3     | user fills all required fields and does not select the recurrent transaction option |
 |  4	 | user submits form		|
 |  5     | system validates all input fields					|
 |  6     | system creates transaction |
-|  7     | system returns the new transaction and a message indicating that the operation was successful					|
+|  7     | system calculates the remaining budget for the selected category |
+|  8     | system notifies the user if the budget for that category was exceeded and also notifies parents if the user is a child in a family |
+|  9     | system returns the new transaction and a message indicating that the operation was successful					|
+
+| Scenario 19.1 | Variant |
+| ------------- |:-------------:| 
+|  Precondition     |  User is logged in  |
+|  Post condition     | A new recurrent transaction is added to the user's list of transactions after a specific period of time |
+| Step#        | Description  |
+|  1     | user asks to add a new transaction |  
+|  2     | system asks the user to provide transaction date, amount, direction, category, balance, an optional description, wether to make it a recurrent transaction, and the period of the recurrent transaction  |
+|  3     | user fills all required fields, selects the recurrent transaction option, and sets the period to the desired amount of days  |
+|  4	 | user submits form		|
+|  5     | system validates all input fields					|
+|  6     | system creates transaction |
+|  7     | system calculates the remaining budget for the selected category |
+|  8     | system notifies the user if the budget for that category was exceeded and also notifies parents if the user is a child in a family |
+|  9     | system returns the new transaction and a message indicating that the operation was successful					|
+| 10     | system adds the same transaction to the user's transaction list each time the specified number of days passes |
 
 | Scenario 19.2 | Variant |
 | ------------- |:-------------:| 
@@ -797,11 +842,13 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  Post condition     | A new transaction is added to the user's list of transactions |
 | Step#        | Description  |
 |  1     | user asks to add a new transaction |  
-|  2     | system asks the user to provide transaction date, amount, direction, category, balance, and an optional description  |
+|  2     | system asks the user to provide transaction date, amount, direction, category, balance, an optional description, wether to make it a recurrent transaction, and the period of the recurrent transaction  |
 |  3     | user fills all required fields but doesn't select a category |
 |  4	 | user submits the form		|
 |  5     | system validates all input fields and finds out that the category is not specified |
 |  6     | system sets the category to the "Others" default catgeory  |
+|  7     | system calculates the remaining budget for the "Others" category |
+|  8     | system notifies the user if the budget for that category was exceeded and also notifies parents if the user is a child in a family |
 |  7     | system returns the new transaction and a message indicating that the operation was successful					|
 
 | Scenario 19.3 | Exception |
@@ -810,7 +857,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  Post condition     | transaction is not created and the user receives an error message |
 | Step#        | Description  |
 |  1     | user asks to add a new transaction |  
-|  2     | system asks the user to provide transaction date, amount, direction, category, balance, and an optional description  |
+|  2     | system asks the user to provide transaction date, amount, direction, category, balance, an optional description, wether to make it a recurrent transaction, and the period of the recurrent transaction  |
 |  3     | user fills all the required fields |
 |  4	 | user submits the form		|
 |  5     | system validates all the input fields					|
@@ -882,7 +929,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  1     | user selects one or more transactions |  
 |  2     | user asks to delete transactions |
 |  3     | system asks the user to confirm the operation |
-|  4     | user confirms his intent to delete the selected transactions |
+|  4     | user confirms his/her intent to delete the selected transactions |
 |  5     | system deletes the transactions |
 |  6     | system informs the user that the operation was successful and displays an undo popup |
 |  7     | system waits for a couple of seconds before hiding the undo button |
@@ -895,7 +942,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  1     | user selects one or more transactions |  
 |  2     | user asks to delete transactions |
 |  3     | system asks the user to confirm the operation |
-|  4     | user does not confirm his intent to delete the selected transactions |
+|  4     | user does not confirm his/her intent to delete the selected transactions |
 |  5     | The system does not delete the selected transactions |
 
 | Scenario 21.3 | Exception |
@@ -906,7 +953,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  1     | user selects one or more transactions |  
 |  2     | user asks to delete transactions |
 |  3     | system asks the user to confirm the operation |
-|  4     | user confirms his intent to delete the selected transactions |
+|  4     | user confirms his/her intent to delete the selected transactions |
 |  5     | system deletes the transactions |
 |  6     | system informs the user that the operation was successful and displays an undo popup |
 |  7     | user decides to undo the operation |
@@ -926,9 +973,9 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Scenario 22.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and at least has one transaction |
-|  Post condition     | user views all of his transactions in the default order |
+|  Post condition     | user views all of his/her transactions in the default order |
 | Step#        | Description  |
-|  1     | user asks to view his transactions |  
+|  1     | user asks to view his/her transactions |  
 | 2		 | system retrieves all transactions and orders them starting from the most recent transaction |
 |  3     | systems returns the retrieved list of transactions |
 
@@ -938,7 +985,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  Post condition     | user views a modified list of transactions based on the selected filter, order, and grouping options  |
 | Step#        | Description  |
 |  1     | user asks to view his/her transactions |  
-|  2     | system returns a list of all of his transactions ordered by starting from the most recent  transaction |
+|  2     | system returns a list of all of his/her transactions ordered by starting from the most recent  transaction |
 |  3 	|  user asks to change transactions order, group by category or time, or to filter by date, type, amount spent, or category |
 | 4		| system retrieves a new list of transactions based on the selected filters, order, and grouping		|
 | 5     | system returns the new list of transactions |
@@ -1021,7 +1068,7 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Step#        | Description  |
 |  1     | user asks to delete a balance |  
 |  2     | system asks the user to confirm the operation and informs the user that existing transactions will still belong to this balance |
-|  3     | user confirms his intent to delete balance |  
+|  3     | user confirms his/her intent to delete balance |  
 |  4     | system deletes balance |
 |  5     | system returns a message indicating that the operation was successful |  
 
@@ -1043,27 +1090,48 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  2     | system refuses to delete balance | 
 |  3     | system informs the kid that he/she cannot delete the default allowance balance |
 
-
-### Use case 24, Specify income and recurrent income for a balance
+### Use case 24, Allocate budget for a catgory
 
 | Actors Involved | User (Parent or Child) |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
-|  Post condition     | Income is added to user's available to budget category |
+|  Post condition     | Provided amount of money is added to the specified category's budget |
+|  Nominal Scenario     | --- |
+|  Variants     | --- |
+|  Exceptions     | --- |
+
+| Scenario 23.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     |  User is logged in |
+|  Post condition     | Provided amount of money is added to the specified category's budget |
+| Step#        | Description  |
+|  1     | user asks to set a budget for a category |  
+|  2     | system asks the user to select a category and input the amount|
+|  3     | user provides all the required information |  
+|  4     | system adds the provided amount to the existing budget of the selected category  |
+|  5     | system returns a message indicating that the operation was successful |  
+
+### Use case 24, Transfer budget from one category to another category
+
+| Actors Involved | User (Parent or Child) |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | Provided amount of money is moved from the budget of one category to another |
 |  Nominal Scenario     | User is logged in |
 |  Variants     | --- |
 |  Exceptions     | --- |
 
-| Scenario 24.1 | Nominal |
+| Scenario 23.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in |
-|  Post condition     | Income is added to user's available to budget category  |
+|  Post condition     | Provided amount of money is moved from the budget of one category to another  |
 | Step#        | Description  |
-|  1     | user asks to add income |  
-|  2     | system asks user to input amount, date, and select balance | 
-|  3     | user provides all the required information and submits form |
-|  4     | system validates the provided information |
-|  4     | system adds the income amount to the user's available to budget  |
+|  1     | user asks to transfer budget |  
+|  2     | system asks the user to select amount, source category, and destination category|
+|  3     | user provides all the required information |  
+|  4     | system adds the provided amount to the destination category's budget and subtracts it from the source directory's budget  |
+|  5     | system notifies the user if the budget for the source directory is now negative |
+|  5     | system returns a message indicating that the operation was successful |  
 
 ### Use Case 1: Create a family account
 
@@ -1093,21 +1161,21 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Step#        | Description  |
 |  1     | User asks to create a family account |  
 |  2     | System verifies that the user already belongs to a family account|
-|  3     | System notifies the user that he can't create a family account unless he/she exits the current family account he/she belongs to|
+|  3     | System notifies the user that he/she can't create a family account unless he/she exits the current family account he/she belongs to|
 
 ### Use Case 2: Delete a family account
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
-|  Precondition     | User is logged in and his role is parent in the family account |
+|  Precondition     | User is logged in and his/her role is parent in the family account |
 |  Post condition     | The family account is deleted |
-|  Nominal Scenario     | User is logged in and his role is parent in the family account|
+|  Nominal Scenario     | User is logged in and his/her role is parent in the family account|
 |  Variants     | ---|
 |  Exceptions     | User role is child in the family account |
 
 | Scenario 2.1 | Nominal |
 | ------------- |:-------------:| 
-|  Precondition     | User is logged in and his role is parent in the family account |
+|  Precondition     | User is logged in and his/her role is parent in the family account |
 |  Post condition     | The family account is deleted |
 | Step#        | Description  |
 |  1     | User asks to delete the family account |  
@@ -1123,14 +1191,14 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | Step#        | Description  |
 |  1     | User asks to create a family account |  
 |  2     | System verifies that the user's role is child in the family account|
-|  3     | System notifies the user that he can't delete the account|
+|  3     | System notifies the user that he/she can't delete the account|
 
 
 ### Use Case 3: Invite a user to family account
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
-|  Precondition     | User is logged in and his role is parent in the family account |
+|  Precondition     | User is logged in and his/her role is parent in the family account |
 |  Post condition     | A user is invited to the family account |
 |  Nominal Scenario     | User is logged in and his/her role is parent in the family account and the email entered correspond to a registered user |
 |  Variants     | ---|
@@ -1212,28 +1280,142 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 |  1     | User receives an invititation to be a parent in a family account |  
 |  2     | User accepts this invitation|
 |  3     | System verifies that user already belongs to a family account|
-|  5    | System notifies user that he/she can't join this family account unless he exits the current one|
+|  5    | System notifies user that he/she can't join this family account unless he/she exits the current one|
 
-<!--
-
-Use Case 4: Notify Parents when kid exceed his budget
+Use Case 4: Leave a family account
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
-|  Precondition     | User is logged in, partent in a family account and a kid in the family exceeds his budget |
-|  Post condition     | Parent users receives a notiifcation |
-|  Nominal Scenario     | Kid exceeds budget in a specific category|
+|  Precondition     | User is logged in and is a member of a family account |
+|  Post condition     | user is removed from family account |
+|  Nominal Scenario     | User is not the only parent in the family account|
 |  Variants     | ---|
-|  Exceptions     |---|
+|  Exceptions     |User is a child in the family account, User is the only parent in the family account|
 
 | Scenario 4.1 | Nominal |
 | ------------- |:-------------:| 
-|  Precondition     | User is logged in as a parent in a family account|
-|  Post condition     |Parent users receive a notification |
+|  Precondition     | User is logged in as a parent in a family account and is not the only parent|
+|  Post condition     | User is removed from family account |
 | Step#        | Description  |
-|  1     | kid exceeds allocated budget for a category|  
-|  2     | System send notification for parents in the same family account| -->
+|  1     | User asks to leave the family account|  
+|  2     | System verifies that user is a parent in the family account|
+|  3     | System asks user to confirm the opertaion|
+|  4     | User confirms his/her intent to leave the family account|
+|  5     | System verifies that user is not the only parent in the family account|
+|  6     | System removes user from the family account|
 
+
+| Scenario 4.2 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in as the only parent in the family account|
+|  Post condition     | User is removed from family account and the family account is deleted |
+| Step#        | Description  |
+|  1     | User asks to leave the family account|  
+|  2     | System verifies that user is a parent in the family account|
+|  3     | System asks user to confirm the opertaion|
+|  4     | User confirms his/her intent to leave the family account|
+|  5     | System verifies that user is the only parent in the family account|
+|  6     | System remoces user from the family account|
+|  7     | System deletes the family account|
+
+
+
+| Scenario 4.3 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User is a child in the family account|
+|  Post condition     | Operation ends with an error |
+| Step#        | Description  |
+|  1     | User asks to leave the family account|  
+|  2     | System verifies that user is a child in the family account|
+|  3     | System denies the operation and notifies user that he/she can't leave the family account|
+
+
+### Use Case 5: Remove a child from family account
+
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in and is a member of a family account |
+|  Post condition     | specified user is removed from family account |
+|  Nominal Scenario     | User is a parent in the family account|
+|  Variants     | ---|
+|  Exceptions     |User does not confirm the operation, User is a child in the family account, User is trying to remove another parent in the family account|
+
+| Scenario 4.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in as a parent in a family account and asks to remove a child from the family account|
+|  Post condition     | A specifies user is removed from family account |
+| Step#        | Description  |
+|  1     | User asks to remove a user from the family account|  
+|  2     | System verifies that user is a parent in the family account|
+|  3     | System asks user to confirm the opertaion|
+|  4     | User confirms his/her intent to remove a user from family account|
+|  5     | System verifies that the specifies user is a child|
+|  6     | System removes the specified user from the family account|
+
+
+| Scenario 4.1 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in as a parent in a family account and try to remove another parent in the family account |
+|  Post condition     | specified user is not removed from the family account |
+| Step#        | Description  |
+|  1     | User asks to remove a user from the family account|  
+|  2     | System verifies that user is a parent in the family account|
+|  3     | System asks user to confirm the opertaion|
+|  4     | User does not confirm this operation|
+|  5     | System does not remove the specified user from the family account|
+
+
+| Scenario 4.1 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in as a parent in a family account and try to remove another parent in the family account |
+|  Post condition     | Operation ends with an error message |
+| Step#        | Description  |
+|  1     | User asks to remove a user from the family account|  
+|  2     | System verifies that user is a parent in the family account|
+|  3     | System asks user to confirm the opertaion|
+|  4     | User confirms his/her intent to remove a user from family account|
+|  5     | System verifies that the specified user is a parent|
+|  6     | System denies the operation and notifies user that he/she cannot remove another parent in the family account|
+
+
+| Scenario 4.1 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in as a child in the family account |
+|  Post condition     | Operation ends with an error message |
+| Step#        | Description  |
+|  1     | User asks to remove a user from the family account|  
+|  2     | System verifies that user is a child in the family account|
+|  3     | System denies the operation and notifies user that he/she can't make this operation|
+
+### Use Case 4: VIEW CHILD'S DASHBOARD
+
+| Actors Involved        | Parent |
+| ------------- |:-------------:| 
+|  Precondition     | Parent is logged in |
+|  Post condition     | Sytem displays child's dashboard|
+|  Nominal Scenario     | User is logged in and ask to see a child's dashboard in his family account|
+|  Variants     | ---|
+|  Exceptions     |Parent is logged in and ask to see another parent's dashboard in his family account|
+
+| Scenario 4.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | Parent is logged in and ask to see a child's dashboard in his family account|
+|  Post condition     | System shows child's dashboard |
+| Step#        | Description  |
+|  1     | Parent asks to see another family member's dashboard|  
+|  2     | System verifies that user is a parent in the family account|
+|  3     | System verifies that the specified user is a child in the family account|
+|  4     | System displayes child's dashboard|
+
+| Scenario 4.1 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | Parent is logged in and ask to see a parent's dashboard in his family account|
+|  Post condition     | Operation ends with an error message |
+| Step#        | Description  |
+|  1     | Parent asks to see another family member's dashboard|  
+|  2     | System verifies that user is a parent in the family account|
+|  3     | System verifies that the specified user is a parent in the family account|
+|  4     | System denies the operation and notifies the parent that he/she can't view another parent's dashboard |
 
 ### Use case 1, VIEW THE AMOUNT OF SELECTED BALANCES OVER TIME
 | Actors Involved        | User |
@@ -1567,7 +1749,7 @@ Use Case 4: Notify Parents when kid exceed his budget
 |  1     | The admin asks for reading users' accounts |  
 |  2     | System shows users' accounts |
 |  3     | The admin asks for deleting an user's account |  
-|  4     | systems asks the admin to confirm his intent of deleting user's account |
+|  4     | systems asks the admin to confirm his/her intent of deleting user's account |
 |  4     | The admin confirms |  
 |  5     | System deletes the user's account |
 
