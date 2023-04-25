@@ -33,7 +33,12 @@ Version: V2 - description of EZWallet in FUTURE form (as proposed by the team)
 # Informal description
 EZWallet (read EaSy Wallet) is a software application designed to help individuals and families keep track of their expenses. Users can enter and categorize their expenses, allowing them to quickly see where their money is going. EZWallet is a powerful tool for those looking to take control of their finances and make informed decisions about their spending.
 
-
+<!--- 
+TODO:
+	context diagram
+	fix actor
+	discuss personas
+ --->
 
 # Stakeholders
 
@@ -65,11 +70,19 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 
 # Stories and personas
-\<A Persona is a realistic impersonation of an actor. Define here a few personas and describe in plain text how a persona interacts with the system>
+- Persona 1: 20 years old student
+  - wants to keep track of his monthly expenses and identify problem areas in his spendings and fix them by changing his financial habbits. 
+- Persona 2: 50 years old Business man who travels a lot
+  - wants to keep track of his expenses that are in different currenies without doing the exchange each time he wants to add a new transaction to his account.
+- Persona 3: 38 years old single mother of 2 boys
+  -  wants to keep track of her kids' expenses and teach them to be responsible.
+- Persona 4: 10 years old kid who is spending a lot of money on toys
+  - his parents want to monitor his purshases and limit them.
+- Persona 5: 30 years old man, with average income
+  - would like to keep historical reports of his spendings and monitor trends to limit his expenses in some unecessary categories and keep an organized view of his financial state.
+- Persona 6: 25 years old newley employed male 
+  - would like to budget his salary so that he avoids debt and save money to buy a car.
 
-\<Persona is-an-instance-of actor>
-
-\<stories will be formalized later as scenarios in use cases>
 
 
 # Functional and non functional requirements
@@ -160,14 +173,14 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 
 ## Non Functional Requirements
 
-\<Describe constraints on functional requirements>
-
 | ID        | Type (efficiency, reliability, ..)           | Description  | Refers to |
 | ------------- |:-------------:| :-----:| -----:|
-|  NFR1     |   |  | |
-|  NFR2     | |  | |
-|  NFR3     | | | |
-| NFRx .. | | | | 
+|  NFR1     |  Usability | Users should use the core functions after following a simple tutorial on first login | all FR|
+|  NFR2     | Compatibility | The website (frontend) should run on all browsers | all FR|
+|  NFR3     | Security | Protection from malicious access, user authorization, comply with data safety and privacy laws such as GDPR | all FR|
+|  NFR4 | Efficiency | website load time should be less than 3s from PC and 5s for mobile, server response time should be less than 0.5s | all FR| 
+|  NFR5 | Maintainability | fix defects in less than 1hr, add/modify/or cancel a software function within 24hrs | all FR| 
+|  NFR6 | Availability | The server should not go down for more than 30 mins at a time | all FR| 
 
 
 # Use case diagram and use cases
@@ -1758,18 +1771,16 @@ Use Case 4: Leave a family account
 
 # Glossary
 
-\<use UML class diagram to define important terms, or concepts in the domain of the application, and their relationships> 
 
-\<concepts must be used consistently all over the document, ex in use cases, requirements etc>
+![Glossary Diagram](code/images/glossaryV2.png)
 
 # System Design
-\<describe here system design>
 
-\<must be consistent with Context diagram>
+![System Design](code/images/system_diagram.png)
 
 # Deployment Diagram 
 
-\<describe here deployment diagram >
+![Deployment Diagram](code/images/deployment_diagramV2.png)
 
 
 
