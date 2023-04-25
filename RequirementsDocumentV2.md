@@ -73,7 +73,7 @@ TODO:
 - Persona 1: 20 years old student
   - wants to keep track of his monthly expenses and identify problem areas in his spendings and fix them by changing his financial habbits. 
 - Persona 2: 50 years old Business man who travels a lot
-  - wants to keep track of his expenses that are in different currenies without doing the exchange each time he wants to add a new transaction to his account.
+  - wants to keep track of his expenses that are in different currenies without doing the exchange each time adds a new transaction to his account.
 - Persona 3: 38 years old single mother of 2 boys
   -  wants to keep track of her kids' expenses and teach them to be responsible.
 - Persona 4: 10 years old kid who is spending a lot of money on toys
