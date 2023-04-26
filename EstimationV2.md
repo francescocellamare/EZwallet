@@ -1,11 +1,11 @@
 # Project Estimation - FUTURE
-Date:
+Date: 26/04/2023
 
-Version:
+Version: 2
 
 
 # Estimation approach
-Consider the EZWallet  project in FUTURE version (as proposed by the team), assume that you are going to develop the project INDEPENDENT of the deadlines of the course
+<!-- Consider the EZWallet  project in FUTURE version (as proposed by the team), assume that you are going to develop the project INDEPENDENT of the deadlines of the course -->
 
 <!--- modules - old ones plus: manage account, manage expenses, manage families, manage statistics chart, admin's functionalities--->
 # Estimate by size
@@ -54,15 +54,17 @@ Consider the EZWallet  project in FUTURE version (as proposed by the team), assu
 
 
 # Summary
-
-Report here the results of the three estimation approaches. The  estimates may differ. Discuss here the possible reasons for the difference
+<!-- 
+Report here the results of the three estimation approaches. The  estimates may differ. Discuss here the possible reasons for the difference -->
 
 |             | Estimated effort                        |   Estimated duration |          
 | ----------- | ------------------------------- | ---------------|
-| estimate by size | 280 person hours | 1.8 calendar week |
-| estimate by product decomposition | 303 person hours| 1.9 calendar week |
-| estimate by activity decomposition | 292 person hours | 7.6 calendar week |
+| estimate by size | 280 person hours | 1.8 calendar weeks |
+| estimate by product decomposition | 303 person hours| 1.9 calendar weeks |
+| estimate by activity decomposition | 292 person hours | 1.8 calendar weeks |
 
 
-
+## Discussion
+----
+The estimated effort and duration vary depending on the method used, and this is due to the  fact that it's more accurate to estimate these values when more details are available. For example, the estimated effort by size is only based on the LOC number, while the estimatd effort by product decoposition is based on multiple phases such as the code development, api test, and unit tests. 
 

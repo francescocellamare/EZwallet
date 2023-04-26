@@ -1,11 +1,11 @@
 # Project Estimation - CURRENT
-Date:
+Date: 20/04/2023
 
-Version:
+Version:1
 
 
 # Estimation approach
-Consider the EZWallet  project in CURRENT version (as received by the teachers), assume that you are going to develop the project INDEPENDENT of the deadlines of the course
+<!-- Consider the EZWallet  project in CURRENT version (as received by the teachers), assume that you are going to develop the project INDEPENDENT of the deadlines of the course -->
 # Estimate by size
 ### 
 |             | Estimate                        |             
