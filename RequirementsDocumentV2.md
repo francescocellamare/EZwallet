@@ -97,9 +97,9 @@ TODO:
 |FR1.1|  Log in|
 | FR1.1.1  | Log in using email and password |
 | FR1.1.2   |	Log in using 3rd party agent    |
-| FR1.3   | Reset password                  |
-| FR1.4   | Register as a new user          |	<!-- password validation >
-| FR1.4   | Register as a new user using 3rd party service           | <!-- use case not written >
+| FR1.2   | Reset password                  |
+| FR1.3   | Register as a new user          |	<!-- password validation >
+| FR1.4   | Register as a new user using 3rd party service | 
 | FR1.5   | Verify email                    |
 | FR1.6   | Log out                         |
 | FR2     | Manage personal account				    |
@@ -107,20 +107,21 @@ TODO:
 | FR2.2  | Edit profile picture            |
 | FR2.3   | Change password 				|
 | FR2.4   | Edit personal information 				|
-|FR2.4| Change application's settings|
-| FR2.4.1  | Change theme      |
-| FR2.4.2   | Change language   |
-| FR2.4.3  | Change default currency            | 
-| FR2.4.4  | Change date format              | 
+|FR2.5| Change application's settings|
+| FR2.5.1   | Change language   |
+| FR2.5.2  | Change display currency            | 
+| FR2.5.3  | Change date format              | 
 | FR3 | Manage categories           | 
-| FR3.1 | Create category             | 
-| FR3.2 | Delete category             | 
+| FR3.1 | Create a category             | 
+| FR3.2 | Delete a category             | 
 | FR3.3| View categories|
-| FR3.4 | Edit Category           | 
+| FR3.4 | Edit a category           | 
 | FR3.4.1 | Edit name          | 
 | FR3.4.2 | Edit color         | 
 |FR3.5| Label important category|
 |FR3.6| Unlabel a category |
+|FR3.7  |  Allocate budget for a category |
+|FR3.8  |  Transfer budget from one category to another category | 
 |  FR4     |  Manage transaction  | 
 |  FR4.1     |  Add a new transaction | 
 |  FR4.2     |  Edit a transaction| 
@@ -136,38 +137,36 @@ TODO:
 |  FR4.4.3    |  Group transactions|
 |  FR4.4.3.1    |  Filter by date|
 |  FR4.4.3.2   |  Filter by category|
-|  FR5     | Manage expenses |    
+|  FR5     | Manage balances |    
 |  FR5.1     |  Add a new balance |        
 |  FR5.2     |  Delete a balance |        
-|  FR5.5  |  Allocate budget for a category |
-|  FR5.6  |  Transfer budget from one category to another category | 
-|FR6| Manage family accounts|
-|FR6.1| Create a family account|
-|FR6.2| Delete a family account|
-|FR6.3| Invite users to a family account|
-|FR6.4| Add income to a kid account| <!-- use case not written >
-|FR6.5| Join family account | 
-|FR6.6| leave family account | 
-|FR6.7| remove family account | 
-|FR6.8| View child's dashboard |
-|FR7| View statistical reports |
-|FR7.1| Visualize trends over time|
-|FR7.1.1| View amount of selected balances|
-|FR7.1.2| View total amount of all balances|
-|FR7.1.3| View expenses|
-|FR7.1.4| View expenses per category|
-|FR7.1.5| View income|
-|FR7.2  | View percentage of spendings by category in a specific time range|
-|FR7.3  | View overall expenses |
-|FR7.4  | View overall expenses per category |
-|FR7.5  | View overall income |
-|FR7.6  | View available budget for each category|
-|FR7.7  | View percentage of amount spent from the available budget for each category|
-| FR8         | Manage users' accounts |
-| FR8.1      | View list of users |
-|FR8.2| View a user's account|
-| FR8.2       | Update a user's account |
-| FR8.3       | Delete a user's account |
+|FR6| Join family account | 
+|FR7| Create a family account|
+|FR8| Manage family accounts|
+|FR8.1| Delete a family account|
+|FR8.2| Invite users to a family account|
+|FR8.3| Add income to a child's account| 
+|FR8.4| leave family account | 
+|FR8.5| remove user from family account | 
+|FR8.6| View child's dashboard |
+|FR9| View reports |
+|FR9.1| Visualize trends over time|
+|FR9.1.1| View amount of selected balances|
+|FR9.1.2| View total amount of all balances|
+|FR9.1.3| View expenses|
+|FR9.1.4| View expenses per category|
+|FR9.1.5| View income|
+|FR9.2  | View percentage of spendings by category in a specific time range|
+|FR9.3  | View overall expenses |
+|FR9.4  | View overall expenses per category |
+|FR9.5  | View overall income |
+|FR9.6  | View available budget for each category|
+|FR9.7  | View percentage of amount spent from the available budget for each category|
+| FR10         | Manage users' accounts |
+| FR10.1      | View list of users |
+|FR10.2| View a user's account|
+| FR10.3       | Update a user's account |
+| FR10.4       | Delete a user's account |
 
 
 
@@ -186,8 +185,9 @@ TODO:
 # Use case diagram and use cases
 
 ## Use case diagram
-\<define here UML Use case diagram UCD summarizing all use cases, and their relationships>
 
+
+![use case diagram](code/images/Use_case_diagram_version2.png "use case diagram")
 
 ### Use case 1, REGISTER
 | Actors Involved | User |
@@ -211,8 +211,8 @@ TODO:
 |  5     | System verifies that the email is not in use 			  |
 |  6     | System creates the account 								  |
 |  7     | System adds a default category "Others" to the account and sets its budget to 0    |
-|  7     | System adds a default balance "Default" to the account     |
-|  7     | System redirects user to the home page 					  |
+|  8     | System adds a default balance "Default" to the account     |
+|  9     | System redirects user to the home page 					  |
 
 
 | Scenario 1.2 | Exception |
@@ -257,8 +257,8 @@ TODO:
 |  2     | System asks for email and password 						   |
 |  3     | User enters email and password          					   |
 |  4     | System verifies that email and password do not match		   |
-|  6   	 | User is not authorized									   |
-|  7     | System notifies the user that he/she used wrong credentials |
+|  5   	 | User is not authorized									   |
+|  6     | System notifies the user that he/she used wrong credentials |
 
 | Scenario 2.3 | Exception |
 | ------------- |:-------------:| 
@@ -288,12 +288,12 @@ TODO:
 |  1     | User asks to login using a 3rd party service 				  |  
 |  2     | System asks for the service to be used 						  |
 |  3     | User chooses the service 									  |
-|  5     | System redirect the user to the 3rd party service login form   |
-|  6     | 3rd party authentication service asks the user to login		  |
-|  7     | user provides all the necessary information to login 		  |
-|  8     | 3rd party authentication service authorizes the user			  | 
-|  9     | System checks if the user is authorized with 3rd party service |
-|  10    | User is authorized 											  |
+|  4     | System redirect the user to the 3rd party service login form   |
+|  5     | 3rd party authentication service asks the user to login		  |
+|  6     | user provides all the necessary information to login 		  |
+|  7     | 3rd party authentication service authorizes the user			  | 
+|  8     | System checks if the user is authorized with 3rd party service |
+|  9    | User is authorized 											  |
 
 | Scenario 3.2 | Exception |
 | ------------- |:-------------:| 
@@ -303,13 +303,13 @@ TODO:
 |  1     | User asks to login using a 3rd party service 				  |  
 |  2     | System asks for the service to be used 						  |
 |  3     | User chooses the service 									  |
-|  5     | System redirect the user to the 3rd party service login form   |
-|  6     | 3rd party authentication service asks the user to login		  |
-|  7     | user provides all the necessary information to login 		  |
-|  8     | 3rd party authentication service authorizes the user			  | 
-|  9     | System checks if the user is authorized with 3rd party service |
-|  10    | System finds out that the user is not registerd using the 3rd party authenitcation service |
-|  11   | System informs the user that the account does no exist |
+|  4     | System redirect the user to the 3rd party service login form   |
+|  5     | 3rd party authentication service asks the user to login		  |
+|  6     | user provides all the necessary information to login 		  |
+|  7     | 3rd party authentication service authorizes the user			  | 
+|  8     | System checks if the user is authorized with 3rd party service |
+|  9    | System finds out that the user is not registerd using the 3rd party authenitcation service |
+|  10   | System informs the user that the account does no exist |
 
 | Scenario 3.3 | Exception |
 | ------------- |:-------------:| 
@@ -319,53 +319,16 @@ TODO:
 |  1     | User asks to login using a 3rd party service 				  |  
 |  2     | System asks for the service to be used 						  |
 |  3     | User chooses the service 									  |
-|  5     | System redirect the user to the 3rd party service login form   |
-|  6     | 3rd party authentication service asks the user to login		  |
-|  7     | user provides all the necessary information to login 		  |
-|  8     | 3rd party authentication service does not authorizes the user			  | 
-|  9     | user is not authorized |
-
-### Use case 4, CHANGE PASSWORD
-| Actors Involved        | User |
-| ------------- |:-------------:| 
-|  Precondition    	  | User is logged in 					|
-|  Post condition     | User changes his/her password 			|
-|  Nominal Scenario   | User is logged in				    |
-|  Variants     	  | --- |
-|  Exceptions     	  | user provides an incorrect current password, user uses the same password					|
-
-| Scenario 4.1 | Nominal |
-| ------------- |:-------------:| 
-|  Precondition       | User is logged in 		  |
-|  Post condition     | User changes his/her password |
-| Step#  | Description  |
-|  1     | User asks to change his/her password 					|  
-|  2     | System aks for current and new password  |
-|  3     | User provides all the required information	|
-|  4     | System updates the user's password 						|
-
-| Scenario 4.2 | Exception |
-| ------------- |:-------------:| 
-|  Precondition       | User is logged in 				  |
-|  Post condition     | User does not change his/her password |
-| Step#  | Description  |
-|  1     | User asks to change his/her password 					|  
-|  2     | System aks for current and new password  |
-|  3     | User provides inputs an incorrect current password	|
-|  4     | System does not update the password and informs user that password is incorrect 						|
-
-| Scenario 4.2 | Exception |
-| ------------- |:-------------:| 
-|  Precondition       | User is logged in 				  |
-|  Post condition     | User does not change his/her password |
-| Step#  | Description  |
-|  1     | User asks to change his/her password 					|  
-|  2     | System aks for current and new password  |
-|  3     | User provides all the required information, but uses the current password as a new password	|
-|  4     | System does not update the password and informs user that password is incorrect 						|
+|  4     | System redirect the user to the 3rd party service login form   |
+|  5     | 3rd party authentication service asks the user to login		  |
+|  6     | user provides all the necessary information to login 		  |
+|  7     | 3rd party authentication service does not authorizes the user			  | 
+|  8     | user is not authorized |
 
 
-### Use case 5, RESET PASSWORD
+
+
+### Use case 4, RESET PASSWORD WHEN FORGOTTEN
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is not logged in 	 |
@@ -374,7 +337,7 @@ TODO:
 |  Variants     	  | |
 |  Exceptions     	  | email expired, user uses the current password as a new password |
 
-| Scenario 5.1 | Nominal |
+| Scenario 4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is not logged in 	 |
 |  Post condition     | User resets his/her password |
@@ -384,9 +347,9 @@ TODO:
 |  3     | User confirms the request and changes his/her password	|
 |  4     | System updates the user's password 						|
 
-| Scenario 5.2 | Exception |
+| Scenario 4.2 | Exception |
 | ------------- |:-------------:| 
-|  Precondition       | User is not logged in 			 |
+|  Precondition       | User is not logged in |
 |  Post condition     | User does not reset his/her password |
 | Step#  | Description  |
 |  1     | User asks to reset his/her password 						|	  
@@ -394,9 +357,9 @@ TODO:
 |  3     | User confirms the request but received email is expired	|
 |  4     | System does not reset password and shows an error message 							|
 
-| Scenario 5.2 | Exception |
+| Scenario 4.3 | Exception |
 | ------------- |:-------------:| 
-|  Precondition       | User is not logged in 			 |
+|  Precondition       | User is not logged in |
 |  Post condition     | User does not reset his/her password |
 | Step#  | Description  |
 |  1     | User asks to reset his/her password 						|	  
@@ -404,7 +367,7 @@ TODO:
 |  3     | User confirms the request but the user uses the current password as a new password	|
 |  4     | System does not reset password and shows an error message 							|
 
-### Use case 6, VERIFY EMAIL
+### Use case 5, VERIFY EMAIL
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in 					 |
@@ -413,7 +376,7 @@ TODO:
 |  Variants     	  | |
 |  Exceptions     	  | email expired |
 
-| Scenario 6.1 | Nominal |
+| Scenario 5.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in		|
 |  Post condition     | User verifies his/her email |
@@ -423,7 +386,7 @@ TODO:
 |  3     | User confirms the request 								 |
 |  4     | System updates the user's data 							 |
 
-| Scenario 6.2 | Exception |
+| Scenario 5.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 			   |
 |  Post condition     | User does not verify his/her email |
@@ -433,7 +396,7 @@ TODO:
 |  3     | User confirms the request but received email is expired	 |
 |  4     | System shows an error message 							 |
 
-### Use case 7, LOGOUT
+### Use case 6, LOGOUT
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in  |
@@ -442,7 +405,7 @@ TODO:
 |  Variants       | --- |
 |  Exceptions     | User does not have an account |
 
-| Scenario 7.1 | Nominal |
+| Scenario 6.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User has an account |
 |  Post condition   | User is logged out  |
@@ -451,7 +414,7 @@ TODO:
 |  2     | System allows the operation |
 
 
-| Scenario 7.2| Exception |
+| Scenario 6.2| Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User does not have an account	|
 |  Post condition   | User receives an error message|
@@ -461,8 +424,9 @@ TODO:
 |  3     | Error message is sent to the user 								  |
 
 
+### Use Case 7, MANAGE PERSONAL ACCOUNT
 
-### Use case 8, DELETE PERSONAL ACCOUNT
+#### Use case 7.1, DELETE PERSONAL ACCOUNT
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in				|
@@ -471,7 +435,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | User does not delete his/her account because he/she used wrong credentials |
 
-| Scenario 8.1 | Nominal |
+| Scenario 7.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in				|
 |  Post condition     | User has not an account anymore |
@@ -482,7 +446,7 @@ TODO:
 |  4     | System checks the password			|
 |  5     | System deletes user's account 		|
 
-| Scenario 8.2 | Exception |
+| Scenario 7.1.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in	 		|
 |  Post condition     | User still have his/her account |
@@ -494,7 +458,7 @@ TODO:
 |  5    | System shows an error message 				   |
 
 
-### Use case 9, EDIT PERSONAL INFORMATION
+#### Use case 7.2, EDIT PERSONAL INFORMATION
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in		  	  |
@@ -503,7 +467,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | --- |
 
-| Scenario 9.1 | Nominal |
+| Scenario 7.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in |
 |  Post condition     | User updates his/her information |
@@ -513,7 +477,7 @@ TODO:
 |  3     | User modifies his/her information							|
 |  4     | System updates user's information							|
 
-### Use case 10, EDIT PROFILE PICTURE
+#### Use case 7.3, EDIT PROFILE PICTURE
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in 				 |
@@ -522,7 +486,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | --- |
 
-| Scenario 10.1 | Nominal |
+| Scenario 7.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 				 |
 |  Post condition     | User updates his/her profile picture |
@@ -530,18 +494,59 @@ TODO:
 |  1     | User asks to modifies his/her account's profile picture	|  
 |  2     | System requests the new profile picture 					|
 |  3     | User uploads the image 									|
-|  4     | System updates user's profile picture 					|
+|  4     | System updates user's profile picture 
 
-### Use case 11, CHANGE DEFAULT DISPLAY CURRENCY
+
+#### Use case 7.4, CHANGE PASSWORD
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition    	  | User is logged in 					|
+|  Post condition     | User changes his/her password 			|
+|  Nominal Scenario   | User is logged in				    |
+|  Variants     	  | --- |
+|  Exceptions     	  | user provides an incorrect current password, user uses the same password					|
+
+| Scenario 7.4.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition       | User is logged in 		  |
+|  Post condition     | User changes his/her password |
+| Step#  | Description  |
+|  1     | User asks to change his/her password 					|  
+|  2     | System aks for current and new password  |
+|  3     | User provides all the required information	|
+|  4     | System updates the user's password 						|
+
+| Scenario 7.4.2 | Exception |
+| ------------- |:-------------:| 
+|  Precondition       | User is logged in 				  |
+|  Post condition     | User does not change his/her password |
+| Step#  | Description  |
+|  1     | User asks to change his/her password 					|  
+|  2     | System aks for current and new password  |
+|  3     | User provides inputs an incorrect current password	|
+|  4     | System does not update the password and informs user that password is incorrect 						|
+
+| Scenario 7.4.3 | Exception |
+| ------------- |:-------------:| 
+|  Precondition       | User is logged in 				  |
+|  Post condition     | User does not change his/her password |
+| Step#  | Description  |
+|  1     | User asks to change his/her password 					|  
+|  2     | System aks for current and new password  |
+|  3     | User provides all the required information, but uses the current password as a new password	|
+|  4     | System does not update the password and informs user that password is incorrect 						|
+					|
+### Use Case 7.5, CHANGE APPLICATION'S SETTINGS
+#### Use case 7.5.1, CHANGE DEFAULT DISPLAY CURRENCY
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in				|
 |  Post condition     | User changes default diplay currency	|
 |  Nominal Scenario   | User is logged in				|
-|  Variants     	  |  |
-|  Exceptions     	  |  |
+|  Variants     	  | --- |
+|  Exceptions     	  | --- |
 
-| Scenario 11.1 | Nominal |
+| Scenario 7.5.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 				|
 |  Post condition     | User changes default display currency	|
@@ -551,7 +556,7 @@ TODO:
 |  3     | User chooses a new currency 																		 |
 |  4     | System updates each amount of money with the new currency using a 3rd party currency exchange service |
 
-### Use case 12, CHANGE DATE FORMAT
+#### Use case 7.5.2, CHANGE DATE FORMAT
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in 					  |
@@ -560,7 +565,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | --- |
 
-| Scenario 12.1 | Nominal |
+| Scenario 7.5.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 		 |
 |  Post condition     | User changes date format |
@@ -570,26 +575,7 @@ TODO:
 |  3     | User enters the new format 									|
 |  4     | System updates date format in application's settings |
 
-### Use case 13, CHANGE THEME
-| Actors Involved        | User |
-| ------------- |:-------------:| 
-|  Precondition    	  | User is logged in	|
-|  Post condition     | User changes theme	|
-|  Nominal Scenario   | User is logged in	|
-|  Variants     	  | --- |
-|  Exceptions     	  | --- |
-
-| Scenario 13.1 | Nominal |
-| ------------- |:-------------:| 
-|  Precondition       | User is logged in	|
-|  Post condition     | User changes theme	|
-| Step#  | Description  |
-|  1     | User asks to change theme for the whole application	|  
-|  2     | System show the toggle to the user 					|
-|  3     | User switches it 									|
-|  4     | System updates application's theme in settings |
-
-### Use case 14, CHANGE LANGUAGE
+#### Use case 7.5.3, CHANGE LANGUAGE
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in		|
@@ -598,7 +584,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | --- |
 
-| Scenario 14.1 | Nominal |
+| Scenario 7.5.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 		|
 |  Post condition     | User changes language	|
@@ -608,7 +594,10 @@ TODO:
 |  3     | User selects a new language 				|
 |  4     | System updates application's language 		|
 
-### Use Case 15: Create a Category
+
+### Use Case 8, MANAGE CATEGORIES
+
+#### Use Case 8.1: CREATE A CATEGORY
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -619,7 +608,7 @@ TODO:
 |  Exceptions     |  User specifies a category name that is already in use |
 
 
-| Scenario 15.1 | Nominal |
+| Scenario 8.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | User has a new account |
@@ -633,7 +622,7 @@ TODO:
 |  7   | System stores new category |
 
 
-| Scenario 15.2 | Exception |
+| Scenario 8.1.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in but specifies a categoty name that is already in use |
 |  Post condition     | Operation ends with an error message |
@@ -647,7 +636,7 @@ TODO:
 
 
 
-### Use Case 16: Delete a Category
+#### Use Case 8.2: DELETE A CATEGORY
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -658,7 +647,7 @@ TODO:
 |  Exceptions     | User tries to delete the default "Others" category, User does not confirm the operation  |
 
 
-| Scenario 16.1 | Nominal |
+| Scenario 8.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | A category is deleted and all its corresponding transactions become associated to the default category (others...) |
@@ -671,7 +660,7 @@ TODO:
  
 
 
-| Scenario 16.2 | Exception |
+| Scenario 8.2.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | No changes made |
@@ -681,7 +670,7 @@ TODO:
 |  3     | User does not confirm the operation | 
 |  4     | System does not delete the category | 
 
-| Scenario 16.2 | Exception |
+| Scenario 8.2.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | No changes made and the user receives an error message |
@@ -690,7 +679,7 @@ TODO:
 |  2     | System rejects the request and shows an error message  |
 
 
-### Use Case 17: View categories
+#### Use Case 8.3: VIEW CATEGORIES
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -700,7 +689,7 @@ TODO:
 |  Variants     | --- |
 |  Exceptions     | --- |
 
-| Scenario 7.1 | Nominal |
+| Scenario 8.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and he/she has at least one category |
 |  Post condition     | User receives a list of all of his/her categories |
@@ -709,7 +698,7 @@ TODO:
 |  2     | System looks up all categories|
 |  3     | System returns a list of categories |
 
-### Use Case 18: Edit a category
+#### Use Case 8.4: EDIT A CATEGORY
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -719,7 +708,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     | User tries to update the default "Others" category, User changes name to a name already associated to another category |
 
-| Scenario 18.1 | Nominal |
+| Scenario 8.4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and does not change the name of a non-default category to name already in use |
 |  Post condition     | A category is updated |
@@ -731,7 +720,7 @@ TODO:
 |  5     | System applies changes|
 
 
-| Scenario 18.2 | Exception |
+| Scenario 8.4.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and he/she changes the category name to a name already in use|
 |  Post condition     | Operation ends with an error message |
@@ -743,7 +732,7 @@ TODO:
 |  5   | System notifies the user that he/she has to choose another name for the category |
 
 
-| Scenario 18.2 | Exception |
+| Scenario 8.4.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and he/she changes the category name to a name already in use|
 |  Post condition     | Operation ends with an error message |
@@ -751,7 +740,7 @@ TODO:
 |  1     | User asks to edit a default category |  
 |  2     | System rejects the request and returns an error message |
 
-### Use Case 19: Label important category
+#### Use Case 8.5: LABEL IMPORTANT CATEGORIES
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -761,7 +750,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     | Category is already labeled as important |
 
-| Scenario 7.1 | Nominal |
+| Scenario 8.5.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and the category is not already labeled |
 |  Post condition     | A category is labeled as important |
@@ -772,7 +761,7 @@ TODO:
 
 
 
-| Scenario 7.1 | Exception |
+| Scenario 8.5.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and the category is already labeled |
 |  Post condition     | Operation ends with an error message |
@@ -781,7 +770,7 @@ TODO:
 |  2     | System verifies that the category is already labeled|
 |  3    | System notifies the user that the category is already labeled|
 
-### Use Case 4: UNLABEL A CATEGORY
+#### Use Case 8.6: UNLABEL A CATEGORY
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -791,7 +780,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     |User is logged in and asks to unlabel a category that has no label|
 
-| Scenario 4.1 | Nominal |
+| Scenario 8.6.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and asks to unlabel a category that has a label|
 |  Post condition     | A category is unlabeled |
@@ -800,7 +789,7 @@ TODO:
 |  2     | System verifies that the category is labeled|
 |  3     | System unlabels the category|
 
-| Scenario 4.1 | Exception |
+| Scenario 8.6.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and asks to unlabel a category that has no label|
 |  Post condition     | Operation ends with an error message |
@@ -809,19 +798,65 @@ TODO:
 |  2     | System verifies that the category is already unlabeled|
 |  3     | System denies the operation and notifies the user that the category does not have a label |
 
-
-### Use case 19, Add a new transaction
+#### Use case 8.7, ALLOCATE A BUDGET FOR A CATEGORY
 
 | Actors Involved | User (Parent or Child) |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
+|  Post condition     | Provided amount of money is added to the specified category's budget |
+|  Nominal Scenario     | --- |
+|  Variants     | --- |
+|  Exceptions     | --- |
+
+| Scenario 8.7.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     |  User is logged in |
+|  Post condition     | Provided amount of money is added to the specified category's budget |
+| Step#        | Description  |
+|  1     | user asks to set a budget for a category |  
+|  2     | system asks the user to select a category and input the amount|
+|  3     | user provides all the required information |  
+|  4     | system adds the provided amount to the existing budget of the selected category  |
+|  5     | system returns a message indicating that the operation was successful |  
+
+#### Use case 8.8, TRANSFER BUDGET FROM ONE CATEGORY TO ANOTHER
+
+| Actors Involved | User (Parent or Child) |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | Provided amount of money is moved from the budget of one category to another |
+|  Nominal Scenario     | User is logged in |
+|  Variants     | --- |
+|  Exceptions     | --- |
+
+| Scenario 8.1.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     |  User is logged in |
+|  Post condition     | Provided amount of money is moved from the budget of one category to another  |
+| Step#        | Description  |
+|  1     | user asks to transfer budget |  
+|  2     | system asks the user to select amount, source category, and destination category|
+|  3     | user provides all the required information |  
+|  4     | system adds the provided amount to the destination category's budget and subtracts it from the source directory's budget  |
+|  5     | system notifies the user if the budget for the source directory is now negative |
+|  6     | system returns a message indicating that the operation was successful |  
+
+
+
+### Use case 9, MANAGE TRANSACTIONS
+
+#### Use case 9.1, ADD A NEW TRANSACTION
+
+| Actors Involved | User  |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
 |  Post condition     | A new transaction is added to the user's list of transactions |
 |  Nominal Scenario     | The information entered by user is valid |
-|  Variants     | User asks to create a recurrent transaction, User didn't specify a category |
+|  Variants     | User asks to create a recurrent transaction, User didn't specify a category | <!--transaction in != currency is not covered-->
 |  Exceptions     | User provided invalid information |
 
 
-| Scenario 19.1 | Nominal |
+| Scenario 9.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in  |
 |  Post condition     | A new transaction is added to the user's list of transactions |
@@ -836,7 +871,7 @@ TODO:
 |  8     | system notifies the user if the budget for that category was exceeded and also notifies parents if the user is a child in a family |
 |  9     | system returns the new transaction and a message indicating that the operation was successful					|
 
-| Scenario 19.1 | Variant |
+| Scenario 9.1.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in  |
 |  Post condition     | A new recurrent transaction is added to the user's list of transactions after a specific period of time |
@@ -852,7 +887,7 @@ TODO:
 |  9     | system returns the new transaction and a message indicating that the operation was successful					|
 | 10     | system adds the same transaction to the user's transaction list each time the specified number of days passes |
 
-| Scenario 19.2 | Variant |
+| Scenario 9.1.3 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in  |
 |  Post condition     | A new transaction is added to the user's list of transactions |
@@ -865,9 +900,9 @@ TODO:
 |  6     | system sets the category to the "Others" default catgeory  |
 |  7     | system calculates the remaining budget for the "Others" category |
 |  8     | system notifies the user if the budget for that category was exceeded and also notifies parents if the user is a child in a family |
-|  7     | system returns the new transaction and a message indicating that the operation was successful					|
+|  9     | system returns the new transaction and a message indicating that the operation was successful					|
 
-| Scenario 19.3 | Exception |
+| Scenario 9.1.4 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in  |
 |  Post condition     | transaction is not created and the user receives an error message |
@@ -879,11 +914,11 @@ TODO:
 |  5     | system validates all the input fields					|
 |  6     | system finds out that one of the field is invalid (ex: user selected a non existing category, an invalid date, or one of the required fields is missing ) |
 |  7     | system does not create the transaction					|
-|  7     | system return an error message to the User |
+|  8     | system return an error message to the User |
 
-### Use case 20, Edit a transaction
+#### Use case 9.2, EDIT A TRANSACTION
 
-| Actors Involved | User (Parent or Child) |
+| Actors Involved | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and at least has one transaction |
 |  Post condition     | The selected transaction is updated |
@@ -892,7 +927,7 @@ TODO:
 |  Exceptions     | User provided invalid information |
 
 
-| Scenario 20.1 | Nominal |
+| Scenario 9.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transaction is updated |
@@ -900,11 +935,11 @@ TODO:
 |  1     | user asks to edit a transaction |  
 |  2     | system displays the transaction and asks the user to update the desired fields (date, amount, direction, category, balance, and description) |
 |  3     | user updates the desired fields and submits form |
-|  5     | system validates all input fields |
-|  6     | system updates the transaction |
-|  7     | system returns the updated transaction and a message indicating that the operation was successful					|
+|  4     | system validates all input fields |
+|  5     | system updates the transaction |
+|  6     | system returns the updated transaction and a message indicating that the operation was successful					|
 
-| Scenario 20.3 | Variant |
+| Scenario 9.2.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transaction is not updated and the user receives an new error message |
@@ -912,9 +947,9 @@ TODO:
 |  1     | user asks to edit a transaction |  
 |  2     | system displays the transaction and asks the user to update the desired fields (date, amount, direction, category, balance, and description) |
 |  3     | user submits form without updating any of the fields |
-|  5     | system does not update the transaction |
+|  4     | system does not update the transaction |
 
-| Scenario 20.2 | Exception |
+| Scenario 9.2.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transaction is not updated and the user receives an new error message |
@@ -922,12 +957,12 @@ TODO:
 |  1     | user asks to edit a transaction |  
 |  2     | system displays the transaction and asks the user to update the desired fields (date, amount, direction, category, balance, and description) |
 |  3     | user updates the desired fields and submits form |
-|  5     | system validates all input fields |
-|  6     | system finds out that one of the field is invalid (ex: selected a non existing category, an invalid date, or one of the required fields is missing ) |
-|  7     | system does not update the transaction and returns an error message	|
+|  4     | system validates all input fields |
+|  5     | system finds out that one of the field is invalid (ex: selected a non existing category, an invalid date, or one of the required fields is missing ) |
+|  6     | system does not update the transaction and returns an error message	|
 
 
-### Use case 21, Delete transaction(s)
+#### Use case 9.3, DELETE A TRANSACTION
 
 | Actors Involved | User (Parent or Child) |
 | ------------- |:-------------:| 
@@ -937,7 +972,7 @@ TODO:
 |  Variants     | --- |
 |  Exceptions     | user does not confirm the operation, user decides to restore the deleted transactions|
 
-| Scenario 21.1 | Nominal |
+| Scenario 9.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transactions are deleted |
@@ -950,7 +985,7 @@ TODO:
 |  6     | system informs the user that the operation was successful and displays an undo popup |
 |  7     | system waits for a couple of seconds before hiding the undo button |
 
-| Scenario 21.2 | Exception |
+| Scenario 9.3.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transactions are not deleted |
@@ -961,7 +996,7 @@ TODO:
 |  4     | user does not confirm his/her intent to delete the selected transactions |
 |  5     | The system does not delete the selected transactions |
 
-| Scenario 21.3 | Exception |
+| Scenario 9.3.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transactions are not deleted |
@@ -976,7 +1011,7 @@ TODO:
 |  8	 | system restores all the deleted transactions |
 |  9 	 | systems notifies the user that the transactions were restored |
 
-### Use case 22, View transactions
+#### Use case 9.4, VIEW TRANSACTIONS
 
 | Actors Involved | User (Parent or Child) |
 | ------------- |:-------------:| 
@@ -986,7 +1021,7 @@ TODO:
 |  Variants     | user views a modified list of his/her transactions based on the selected filters, order, and grouping options / user has no transactions  |
 |  Exceptions     | --- |
 
-| Scenario 22.1 | Nominal |
+| Scenario 9.4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and at least has one transaction |
 |  Post condition     | user views all of his/her transactions in the default order |
@@ -995,7 +1030,7 @@ TODO:
 | 2		 | system retrieves all transactions and orders them starting from the most recent transaction |
 |  3     | systems returns the retrieved list of transactions |
 
-| Scenario 22.2 | Variant |
+| Scenario 9.4.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | user views a modified list of transactions based on the selected filter, order, and grouping options  |
@@ -1007,7 +1042,7 @@ TODO:
 | 5     | system returns the new list of transactions |
 
 
-| Scenario 22.3 | Variant |
+| Scenario 9.4.3 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has no transactions  |
 |  Post condition     | user recieves a message indicating that he/she doesn't have any transactions  |
@@ -1015,8 +1050,8 @@ TODO:
 |  1     | user asks to view his/her transactions |  
 |  2     | system does not find any transactions to show |
 |  3 	|  system displays a message indicating that the user didn't add any transactions along with a button to add transactions |
-
-### Use case 23, Add a new balance
+### User Case 10, MANAGE BALANCE
+#### Use case 10.1, ADD A NEW BALANCE
 
 | Actors Involved | User (Parent or Child) |
 | ------------- |:-------------:| 
@@ -1026,7 +1061,7 @@ TODO:
 |  Variants     | user does not specify a starting amount |
 |  Exceptions     | user specifies an already in use balance name |
 
-| Scenario 23.1 | Nominal |
+| Scenario 10.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in |
 |  Post condition     | A new balance is added to the User's profile  |
@@ -1034,12 +1069,12 @@ TODO:
 |  1     | user asks to add a new balance |  
 |  2     | system asks for the balance name, icon, and starting amount |
 |  3	 | user provides all the reqiured information |
-|  3	 | system validates all input fields (checks that the balance name is not already in use and if the starting balance is set) |  
-|  4 | system creates the new balance |
-| 5 | system displays list of balances and returns a message indicating that the operation was successful |
+|  4	 | system validates all input fields (checks that the balance name is not already in use and if the starting balance is set) |  
+|  5 | system creates the new balance |
+| 6  | system displays list of balances and returns a message indicating that the operation was successful |
 
 
-| Scenario 23.2 | Variant |
+| Scenario 10.1.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in |
 |  Post condition     | A new balance is added to the User's profile |
@@ -1047,14 +1082,14 @@ TODO:
 |  1     | user asks to add a new balance |  
 |  2     | system asks for the balance name, icon, and starting amount |
 |  3	 | user provides all the reqiured information but does not set a starting balance |
-|  3	 | system validates all input fields (checks that the balance name is not already in use and if the starting balance is set) |  
+|  4	 | system validates all input fields (checks that the balance name is not already in use and if the starting balance is set) |  
 | 5 | system sets the starting balance to zero | 
-|  4 | system creates the new balance |
-| 5 | system displays list of balances and returns a message indicating that the operation was successful |
+|  6 | system creates the new balance |
+| 7 | system displays list of balances and returns a message indicating that the operation was successful |
 
 
 
-| Scenario 7.1 | Exception |
+| Scenario 10.1.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in |
 |  Post condition     | The new balance is not created and the user recevies an error message  |
@@ -1062,12 +1097,12 @@ TODO:
 |  1     | user asks to add a new balance |  
 |  2     | system asks for the balance name, icon, and starting amount |
 |  3	 | user provides all the reqiured information but does not set a starting balance |
-|  3	 | system validates the input fields (checks that the balance name is not already in use and if the starting balance is set) |  
+|  4	 | system validates the input fields (checks that the balance name is not already in use and if the starting balance is set) |  
 | 5 | system finds out that the balance name is already in use | 
-|  4 | system does not create the new balance |
-| 5 | system returns an error message indicating that the operation failed |
+|  6 | system does not create the new balance |
+| 7 | system returns an error message indicating that the operation failed |
 
-### Use case 23, Delete a balance
+#### Use case 10.2, DELETE A BALANCE
 
 | Actors Involved | User (Parent or Child) |
 | ------------- |:-------------:| 
@@ -1077,7 +1112,7 @@ TODO:
 |  Variants     | --- |
 |  Exceptions     | User has only one balance / Child tries to delete allowance balance |
 
-| Scenario 23.1 | Nominal |
+| Scenario 10.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least two balances |
 |  Post condition     | The selected balance is deleted and the user receives a message indicating that the operation was successful |
@@ -1088,7 +1123,7 @@ TODO:
 |  4     | system deletes balance |
 |  5     | system returns a message indicating that the operation was successful |  
 
-| Scenario 23.2 | Exception |
+| Scenario 10.2.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has only one balance |
 |  Post condition     | The selected balance is not deleted and the user receives the option to create a new balance |
@@ -1097,7 +1132,7 @@ TODO:
 |  2     | system refuses to delete balance | 
 |  3     | system informs the user that he/she should at least have on balance and gives the user the option to create a new balance |
 
-| Scenario 23.2 | Exception |
+| Scenario 10.2.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has only one balance |
 |  Post condition     | The selected balance is not deleted and the user receives the option to create a new balance |
@@ -1106,50 +1141,8 @@ TODO:
 |  2     | system refuses to delete balance | 
 |  3     | system informs the kid that he/she cannot delete the default allowance balance |
 
-### Use case 24, Allocate budget for a catgory
 
-| Actors Involved | User (Parent or Child) |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | Provided amount of money is added to the specified category's budget |
-|  Nominal Scenario     | --- |
-|  Variants     | --- |
-|  Exceptions     | --- |
-
-| Scenario 23.1 | Nominal |
-| ------------- |:-------------:| 
-|  Precondition     |  User is logged in |
-|  Post condition     | Provided amount of money is added to the specified category's budget |
-| Step#        | Description  |
-|  1     | user asks to set a budget for a category |  
-|  2     | system asks the user to select a category and input the amount|
-|  3     | user provides all the required information |  
-|  4     | system adds the provided amount to the existing budget of the selected category  |
-|  5     | system returns a message indicating that the operation was successful |  
-
-### Use case 24, Transfer budget from one category to another category
-
-| Actors Involved | User (Parent or Child) |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | Provided amount of money is moved from the budget of one category to another |
-|  Nominal Scenario     | User is logged in |
-|  Variants     | --- |
-|  Exceptions     | --- |
-
-| Scenario 23.1 | Nominal |
-| ------------- |:-------------:| 
-|  Precondition     |  User is logged in |
-|  Post condition     | Provided amount of money is moved from the budget of one category to another  |
-| Step#        | Description  |
-|  1     | user asks to transfer budget |  
-|  2     | system asks the user to select amount, source category, and destination category|
-|  3     | user provides all the required information |  
-|  4     | system adds the provided amount to the destination category's budget and subtracts it from the source directory's budget  |
-|  5     | system notifies the user if the budget for the source directory is now negative |
-|  5     | system returns a message indicating that the operation was successful |  
-
-### Use Case 1: Create a family account
+### Use Case 12, CREATE A FAMILY ACCOUNT
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -1159,7 +1152,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     | User already belonging to a family account |
 
-| Scenario 1.1 | Nominal |
+| Scenario 12.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and does not belong to a family account |
 |  Post condition     | A family account is created for this user |
@@ -1170,7 +1163,7 @@ TODO:
 |  4     | System adds the user as a parent of this account|
 
 
-| Scenario 1.2 | Exception |
+| Scenario 12.1.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User already belongs to a family account|
 |  Post condition     | Operation ends with an error message |
@@ -1179,7 +1172,51 @@ TODO:
 |  2     | System verifies that the user already belongs to a family account|
 |  3     | System notifies the user that he/she can't create a family account unless he/she exits the current family account he/she belongs to|
 
-### Use Case 2: Delete a family account
+### Use Case 13, JOIN A FAMILY ACCOUNT
+
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in and received an invitation to a family account |
+|  Post condition     | User joins a family account |
+|  Nominal Scenario     | User does not already belong to a family account and he/she is invited to be parent of a family account, User does not belong to a family account and he's invited to be a child in family account  |
+|  Variants     | ---|
+|  Exceptions     | User already belongs to a family account|
+
+| Scenario 12.2.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged and does not already belong to a family account |
+|  Post condition     |User joins a family account as a parent |
+| Step#        | Description  |
+|  1     | User receives an invititation to be a parent in a family account |  
+|  2     | User accepts this invitation|
+|  3     | System verifies that user does not already belong to a family account|
+|  5    | System add user to the family account|
+
+| Scenario 12.2.2 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged and does not already belong to a family account |
+|  Post condition     |User joins a family account as a child and an allowance balance is added to his/her account  |
+| Step#        | Description  |
+|  1     | User receives an invititation to be a child in a family account |  
+|  2     | User accepts this invitation|
+|  3     | System verifies that user does not already belong to a family account|
+|  4    | System adds user to the family account|
+|  5    | System adds a new balance in the user account called allowance|
+
+
+| Scenario 12.2.3 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged and belongs to a family account|
+|  Post condition     |Operation ends with an error |
+| Step#        | Description  |
+|  1     | User receives an invititation to be a parent in a family account |  
+|  2     | User accepts this invitation|
+|  3     | System verifies that user already belongs to a family account|
+|  4    | System notifies user that he/she can't join this family account unless he/she exits the current one|
+
+
+### Use Case 13, MANAGE FAMILY ACCOUNTS
+#### Use Case 13.1, DELETE A FAMILY ACCOUNT
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -1189,7 +1226,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     | User role is child in the family account |
 
-| Scenario 2.1 | Nominal |
+| Scenario 13.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and his/her role is parent in the family account |
 |  Post condition     | The family account is deleted |
@@ -1200,7 +1237,7 @@ TODO:
 |  4     | System deletes the family account|
 
 
-| Scenario 2.2 | Exception |
+| Scenario 13.1.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User role is child in the family account|
 |  Post condition     | Operation ends with an error message |
@@ -1210,7 +1247,7 @@ TODO:
 |  3     | System notifies the user that he/she can't delete the account|
 
 
-### Use Case 3: Invite a user to family account
+#### Use Case 13.2, INVITE A USER TO FAMILY ACCOUNT
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -1220,7 +1257,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     | User role is child in the family account or invited user is not registered |
 
-| Scenario 3.1 | Nominal |
+| Scenario 13.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and his/her role is parent in the family account |
 |  Post condition     | A user is invited to the family account |
@@ -1234,7 +1271,7 @@ TODO:
 
 
 
-| Scenario 3.2 | Exception |
+| Scenario 13.2.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User role is child in the family account|
 |  Post condition     | Operation ends with an error message |
@@ -1244,7 +1281,7 @@ TODO:
 |  3     | System notifies the user that he/she can't invite a user to the family account|
 
 
-| Scenario 3.3 | Exception |
+| Scenario 13.2.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User role is parent and the entered email does not correspond to a registered user|
 |  Post condition     | Operation ends with an error message |
@@ -1256,49 +1293,8 @@ TODO:
 |  5     | System notifies the user that the target person is not registered|
 
 
-### Use Case 4: Join a family account
 
-| Actors Involved        | User |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in and received an invitation to a family account |
-|  Post condition     | User joins a family account |
-|  Nominal Scenario     | User does not already belong to a family account and he/she is invited to be parent of a family account, User does not belong to a family account and he's invited to be a child in family account  |
-|  Variants     | ---|
-|  Exceptions     | User already belongs to a family account|
-
-| Scenario 4.1 | Nominal |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged and does not already belong to a family account |
-|  Post condition     |User joins a family account as a parent |
-| Step#        | Description  |
-|  1     | User receives an invititation to be a parent in a family account |  
-|  2     | User accepts this invitation|
-|  3     | System verifies that user does not already belong to a family account|
-|  5    | System add user to the family account|
-
-| Scenario 4.2 | Nominal |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged and does not already belong to a family account |
-|  Post condition     |User joins a family account as a child and an allowance balance is added to his/her account  |
-| Step#        | Description  |
-|  1     | User receives an invititation to be a child in a family account |  
-|  2     | User accepts this invitation|
-|  3     | System verifies that user does not already belong to a family account|
-|  5    | System adds user to the family account|
-|  6    | System adds a new balance in the user account called allowance|
-
-
-| Scenario 4.3 | Exception |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged and belongs to a family account|
-|  Post condition     |Operation ends with an error |
-| Step#        | Description  |
-|  1     | User receives an invititation to be a parent in a family account |  
-|  2     | User accepts this invitation|
-|  3     | System verifies that user already belongs to a family account|
-|  5    | System notifies user that he/she can't join this family account unless he/she exits the current one|
-
-Use Case 4: Leave a family account
+#### Use Case 13.3, LEAVE A FAMILY ACCOUNT
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -1308,7 +1304,7 @@ Use Case 4: Leave a family account
 |  Variants     | ---|
 |  Exceptions     |User is a child in the family account, User is the only parent in the family account|
 
-| Scenario 4.1 | Nominal |
+| Scenario 13.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a parent in a family account and is not the only parent|
 |  Post condition     | User is removed from family account |
@@ -1321,7 +1317,7 @@ Use Case 4: Leave a family account
 |  6     | System removes user from the family account|
 
 
-| Scenario 4.2 | Exception |
+| Scenario 13.3.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as the only parent in the family account|
 |  Post condition     | User is removed from family account and the family account is deleted |
@@ -1336,7 +1332,7 @@ Use Case 4: Leave a family account
 
 
 
-| Scenario 4.3 | Exception |
+| Scenario 13.3.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is a child in the family account|
 |  Post condition     | Operation ends with an error |
@@ -1346,7 +1342,7 @@ Use Case 4: Leave a family account
 |  3     | System denies the operation and notifies user that he/she can't leave the family account|
 
 
-### Use Case 5: Remove a child from family account
+#### Use Case 13.4, REMOVE CHILD FROM FAMILY ACCOUNT
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -1356,7 +1352,7 @@ Use Case 4: Leave a family account
 |  Variants     | ---|
 |  Exceptions     |User does not confirm the operation, User is a child in the family account, User is trying to remove another parent in the family account|
 
-| Scenario 4.1 | Nominal |
+| Scenario 13.4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a parent in a family account and asks to remove a child from the family account|
 |  Post condition     | A specifies user is removed from family account |
@@ -1369,7 +1365,7 @@ Use Case 4: Leave a family account
 |  6     | System removes the specified user from the family account|
 
 
-| Scenario 4.1 | Exception |
+| Scenario 13.4.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a parent in a family account and try to remove another parent in the family account |
 |  Post condition     | specified user is not removed from the family account |
@@ -1381,7 +1377,7 @@ Use Case 4: Leave a family account
 |  5     | System does not remove the specified user from the family account|
 
 
-| Scenario 4.1 | Exception |
+| Scenario 13.4.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a parent in a family account and try to remove another parent in the family account |
 |  Post condition     | Operation ends with an error message |
@@ -1394,7 +1390,7 @@ Use Case 4: Leave a family account
 |  6     | System denies the operation and notifies user that he/she cannot remove another parent in the family account|
 
 
-| Scenario 4.1 | Exception |
+| Scenario 13.4.4 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a child in the family account |
 |  Post condition     | Operation ends with an error message |
@@ -1403,29 +1399,29 @@ Use Case 4: Leave a family account
 |  2     | System verifies that user is a child in the family account|
 |  3     | System denies the operation and notifies user that he/she can't make this operation|
 
-### Use Case 4: VIEW CHILD'S DASHBOARD
+#### Use Case 13.5, VIEW CHILD'S DASHBOARD
 
 | Actors Involved        | Parent |
 | ------------- |:-------------:| 
-|  Precondition     | Parent is logged in |
+|  Precondition     | User is logged in as a parent in the family account |
 |  Post condition     | Sytem displays child's dashboard|
 |  Nominal Scenario     | User is logged in and ask to see a child's dashboard in his family account|
 |  Variants     | ---|
-|  Exceptions     |Parent is logged in and ask to see another parent's dashboard in his family account|
+|  Exceptions     |User is logged in as a parent and ask to see another parent's dashboard in his family account, User is logged in as a child in the family account|
 
-| Scenario 4.1 | Nominal |
+| Scenario 13.5.1 | Nominal |
 | ------------- |:-------------:| 
-|  Precondition     | Parent is logged in and ask to see a child's dashboard in his family account|
+|  Precondition     | User is logged in and ask to see a child's dashboard in his family account|
 |  Post condition     | System shows child's dashboard |
 | Step#        | Description  |
-|  1     | Parent asks to see another family member's dashboard|  
+|  1     | User asks to see another family member's dashboard|  
 |  2     | System verifies that user is a parent in the family account|
 |  3     | System verifies that the specified user is a child in the family account|
 |  4     | System displayes child's dashboard|
 
-| Scenario 4.1 | Exception |
+| Scenario 13.5.2 | Exception |
 | ------------- |:-------------:| 
-|  Precondition     | Parent is logged in and ask to see a parent's dashboard in his family account|
+|  Precondition     | User is logged in as parent and ask to see a parent's dashboard in his family account|
 |  Post condition     | Operation ends with an error message |
 | Step#        | Description  |
 |  1     | Parent asks to see another family member's dashboard|  
@@ -1433,7 +1429,64 @@ Use Case 4: Leave a family account
 |  3     | System verifies that the specified user is a parent in the family account|
 |  4     | System denies the operation and notifies the parent that he/she can't view another parent's dashboard |
 
-### Use case 1, VIEW THE AMOUNT OF SELECTED BALANCES OVER TIME
+
+| Scenario 13.5.3 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in as a child |
+|  Post condition     | System shows child's dashboard |
+| Step#        | Description  |
+|  1     | User asks to see another family member's dashboard|  
+|  2     | System verifies that user is a child in the family account|
+|  3     | System denies the operation and notifies user that he can't do this operation|
+
+
+#### Use Case 13.6, ADD INCOME TO CHILD ACCOUNT
+
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in as a parent in the family account |
+|  Post condition     | Income is added to the Allowance balance in a child's account|
+|  Nominal Scenario     | User is logged in as a parent and ask to add income to a child's balance|
+|  Variants     | ---|
+|  Exceptions     | User is logged in and ask to add income to another parent's balance, User is logged in as a child in the family account|
+
+| Scenario 13.6.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in and ask to add income to another member of the family's account|
+|  Post condition     | Income is added to the Allowance balance in a child's account |
+| Step#        | Description  |
+|  1     | User asks to see add income to another family member|  
+|  2     | System verifies that user is a parent in the family account|
+|  3     | System verifies that the specified user is a child in the family account|
+|  4     | System ask user to specify amount to be added and from which balance he wants to transfer the amount|
+|  5     | User specify required fields|
+|  6     | System asks user to confirm the operation|
+|  7    |  User confirms the operation|
+|  8     | System substract the amount from parent's balance and adds it to the Allowance balance in the child's account|
+
+| Scenario 13.6.2 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in as parent and ask to add income to another parent's account|
+|  Post condition     | Operation ends with an error message |
+| Step#        | Description  |
+|  1     | Parent asks to add income to another family member|  
+|  2     | System verifies that user is a parent in the family account|
+|  3     | System verifies that the specified user is a parent in the family account|
+|  4     | System denies the operation and notifies the parent that he/she can't add income to another parent's account |
+
+| Scenario 13.6.3 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in as a child |
+|  Post condition     | Operation ends with an error message |
+| Step#        | Description  |
+|  1     | User asks to add income to another family member|  
+|  2     | System verifies that user is a child in the family account|
+|  3     | System denies the operation and notifies user that he can't do this operation|
+
+
+### Use case 14, VIEW REPORTS
+
+#### Use case 14.1, VIEW AMOUNT AVAILABLE IN SELECTED BALANCES OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1443,7 +1496,7 @@ Use Case 4: Leave a family account
 |  Exceptions     | --- |
 
 
-| Scenario 1.1 | Nominal |
+| Scenario 14.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The available amount in each selected balances is shown over time |
@@ -1455,7 +1508,7 @@ Use Case 4: Leave a family account
 |  5     | The user asks for viewing the amount of the selected balances over time |  
 |  6     | System shows required information |
 
-| Scenario 1.2 | Nominal |
+| Scenario 14.1.2 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The available amount in each selected balances is shown over time |
@@ -1467,7 +1520,7 @@ Use Case 4: Leave a family account
 |  5     | The user asks for viewing the amount of all balances over time |  
 |  6     | System shows required information |
 
-### Use case 3, VIEW EXPENSES OVER TIME
+#### Use case 14.2, VIEW EXPENSES OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1477,7 +1530,7 @@ Use Case 4: Leave a family account
 |  Exceptions     | --- |
 
 
-| Scenario 3.1 | Nominal |
+| Scenario 14.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The expenses are shown  |
@@ -1486,7 +1539,7 @@ Use Case 4: Leave a family account
 |  2     | System looks up the expenses |
 |  3     | System shows required information |
 
-| Scenario 3.2 | Variant |
+| Scenario 14.2.1 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | There are no stored expenses |
 |  Post condition     | User receives an empty graph |
@@ -1496,7 +1549,7 @@ Use Case 4: Leave a family account
 |  3     | System does not find any expenses |
 |  4     | System returns an empty graph |
 
-### Use case 4, VIEW EXPENSES PER CATEGORY OVER TIME
+#### Use case 14.3, VIEW EXPENSES PER CATEGORY OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1506,7 +1559,7 @@ Use Case 4: Leave a family account
 |  Exceptions     | --- |
 
 
-| Scenario 4.1 | Nominal |
+| Scenario 14.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and the user has at least one expense |
 |  Post condition     | The expenses per category are shown  |
@@ -1516,7 +1569,7 @@ Use Case 4: Leave a family account
 |  3     | System shows required information |
 
 
-| Scenario 4.2 | Variant |
+| Scenario 14.3.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and there are no stored expenses  |
 |  Post condition     | User receives an empty graph |
@@ -1526,7 +1579,7 @@ Use Case 4: Leave a family account
 |  3     | System does not find any expenses |
 |  4     | System returns an empty graph |
 
-### Use case 5, VIEW INCOME OVER TIME
+#### Use case 14.4, VIEW INCOME OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1536,7 +1589,7 @@ Use Case 4: Leave a family account
 |  Exceptions     | --- |
 
 
-| Scenario 5.1 | Nominal |
+| Scenario 14.4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The income is shown  |
@@ -1546,7 +1599,7 @@ Use Case 4: Leave a family account
 |  3     | System shows required information |
 
 
-| Scenario 5.2 | Variant |
+| Scenario 14.4.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | There is no a stored income |
 |  Post condition     | User receives an empty graph |
@@ -1556,7 +1609,7 @@ Use Case 4: Leave a family account
 |  3     | System does not find any income |
 |  4     | System returns an empty graph |
 
-### Use case 6, VIEW PERCENTAGE OF SPENDINGS BY CATEGORY IN A SPECIFIC TIME RANGE
+#### Use case 14.5, VIEW PERCENTAGE OF SPENDINGS BY CATEGORY IN A SPECIFIC TIME RANGE
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1566,7 +1619,7 @@ Use Case 4: Leave a family account
 |  Exceptions     | There are no stored spendings |
 
 
-| Scenario 6.1 | Nominal |
+| Scenario 14.5.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The percentage of spendings by category in a specific time range is shown  |
@@ -1580,7 +1633,7 @@ Use Case 4: Leave a family account
 |  7     | System shows the required pie chart |
 
 
-| Scenario 6.2 | Variant |
+| Scenario 14.5.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | There are no stored spendings |
 |  Post condition     | User receives a percentage equal to zero |
@@ -1590,7 +1643,7 @@ Use Case 4: Leave a family account
 |  3     | System does not find any spending |
 |  4     | System shows a message asking the user to add spendings to display this chart  |
 
-### Use case 7, VIEW OVERALL EXPENSES
+#### Use case 14.6, VIEW OVERALL EXPENSES
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1600,18 +1653,18 @@ Use Case 4: Leave a family account
 |  Exceptions     | --- |
 
 
-| Scenario 7.1 | Nominal |
+| Scenario 14.6.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The overall expenses are shown  |
 | Step#        | Description  |
-|  1     | The user asks for viewing the dashboard  |  
+|  1     | The user asks for viewing overall expenses  |  
 |  2     | System looks up the overall expenses |
 |  3     | System sums up all expenses from all balances over the last month |
-|  3     | System shows required information |
+|  4     | System shows required information |
 
 
-### Use case 8, VIEW OVERALL INCOME
+#### Use case 14.7, VIEW OVERALL INCOME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1621,17 +1674,17 @@ Use Case 4: Leave a family account
 |  Exceptions     | --- |
 
 
-| Scenario 8.1 | Nominal |
+| Scenario 14.7.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The overall income are shown  |
 | Step#        | Description  |
-|  1     | The user asks for viewing the dashboard  |  
+|  1     | The user asks for viewing overall income  |  
 |  2     | System looks up the overall income over the last month |
 |  3     | System shows required information |
 
 
-### Use case 9, VIEW AVAILABLE BUDGET FOR EACH CATEGORY
+#### Use case 14.8, VIEW AVAILABLE BUDGET FOR EACH CATEGORY
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1641,16 +1694,16 @@ Use Case 4: Leave a family account
 |  Exceptions     | --- |
 
 
-| Scenario 9.1 | Nominal |
+| Scenario 14.8.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The available budget for each category is shown  |
 | Step#        | Description  |
-|  1     | The user asks for viewing the dashboard  |  
+|  1     | The user asks for viewing available budget for each category  |  
 |  2     | System looks up the available budget for each category |
 |  3     | System shows required information |
 
-### Use case 10, VIEW PERCENTAGE OF AMOUNT SPENT FROM THE AVAILABLE BUDGET FOR EACH CATEGORY
+#### Use case 14.9, VIEW PERCENTAGE OF AMOUNT SPENT FROM THE AVAILABLE BUDGET FOR EACH CATEGORY
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1660,17 +1713,17 @@ Use Case 4: Leave a family account
 |  Exceptions     | --- |
 
 
-| Scenario 10.1 | Nominal |
+| Scenario 14.9.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The percentage of amount spent from the available budget for each category is shown  |
 | Step#        | Description  |
-|  1     | The user asks for viewing the dashboard  |  
+|  1     | The user asks for viewing the percentage of amount spent from the available budget for each category  |  
 |  2     | System looks up the percentage of amount spent from the available budget for each category over the last month|
 |  3     | System shows required information |
 
-
-### Use case 11, VIEW LIST OF USERS
+### Use Case 15, MANAGE USERS
+#### Use case 15.1, VIEW LIST OF USERS
 | Actors Involved        | Admin |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
@@ -1680,7 +1733,7 @@ Use Case 4: Leave a family account
 |  Exceptions     | --- |
 
 
-| Scenario 11.1 | Nominal |
+| Scenario 15.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
 |  Post condition     | List of users is shown |
@@ -1688,7 +1741,7 @@ Use Case 4: Leave a family account
 |  1     | The admin asks for viewing the list of users |  
 |  2     | System shows required information |
 
-### Use case 12, VIEW A USER'S ACCOUNT
+#### Use case 15.2, VIEW A USER'S ACCOUNT
 | Actors Involved        | Admin |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
@@ -1704,11 +1757,11 @@ Use Case 4: Leave a family account
 |  Post condition     | User's account is shown |
 | Step#        | Description  |
 |  1     | The admin asks for viewing the list of users |  
-|  2     | System shows required information |
+|  2     | System specifies required information |
 |  3     | The admin asks for viewing a specific user's account |  
 |  4     | System shows required information |
 
-### Use case 13, UPDATE USER
+#### Use case 15.3, UPDATE A USER'S ACCOUNT
 | Actors Involved        | Admin |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
@@ -1718,7 +1771,7 @@ Use Case 4: Leave a family account
 |  Exceptions     | --- |
 
 
-| Scenario 13.1 | Nominal |
+| Scenario 15.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
 |  Post condition     | User's account is updated |
@@ -1732,7 +1785,7 @@ Use Case 4: Leave a family account
 |  7     | The admin submits |  
 |  8     | System updates the user's details |
 
-| Scenario 13.1 | Variants |
+| Scenario 15.3.2 | Variants |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
 |  Post condition     | User's account stays the same |
@@ -1746,7 +1799,7 @@ Use Case 4: Leave a family account
 |  7     | The admin does not modify the user's details and submits |  
 |  8     | System does not update user's details |
 
-### Use case 14, DELETE USER
+#### Use case 15.4, DELETE  A USER'S ACCOUNT
 
 | Actors Involved        | Admin |
 | ------------- |:-------------:| 
@@ -1757,7 +1810,7 @@ Use Case 4: Leave a family account
 |  Exceptions     | --- |
 
 
-| Scenario 14.1 | Nominal |
+| Scenario 15.4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
 |  Post condition     | User account is deleted |
