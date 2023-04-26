@@ -51,13 +51,14 @@ TODO:
 |Google ads| Third party service for providing ads|
 |Start up company| Company that develops the software and provides the service|
 |Competitors| Companies that provide the same service|
-
+|Third party authentication service| Third party service for providing authentication|
 
 
 # Context Diagram and interfaces
 
 ## Context Diagram
 
+![Context Diagram](code/images/context_diagramV2.png)
 
 ## Interfaces
 
@@ -67,7 +68,7 @@ TODO:
 | Admin | GUI(to be defined - same functionalities as user + Manage users' accounts) | Smartphone or PC (Web browser)|
 |Google ads| Internet link | Google ads' API|
 |Currency exchange service| Internet link| Currency exchange service's API|
-
+|Third party authentication service| Internet link| Apple authentication's API and Google authentication's API|
 
 # Stories and personas
 - Persona 1: 20 years old student
