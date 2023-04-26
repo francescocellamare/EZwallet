@@ -189,7 +189,7 @@ TODO:
 
 ![use case diagram](code/images/Use_case_diagram_version2.png "use case diagram")
 
-### Use case 1, REGISTER
+### Use case 1, SIGN UP
 | Actors Involved | User |
 | ------------- |:-------------:| 
 |  Precondition     | User has no account 		|
