@@ -1440,15 +1440,14 @@ TODO:
 |  2     | System verifies that user is a child in the family account|
 |  3     | System denies the operation and notifies user that he can't do this operation|
 
-
 #### Use Case 13.6, ADD INCOME TO CHILD ACCOUNT
 
-| Actors Involved        | User |
+| Actors Involved        | User, Currency exchange API |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a parent in the family account |
 |  Post condition     | Income is added to the Allowance balance in a child's account|
 |  Nominal Scenario     | User is logged in as a parent and ask to add income to a child's balance|
-|  Variants     | ---|
+|  Variants     | Add income in a currency different than child's account display currency|
 |  Exceptions     | User is logged in and ask to add income to another parent's balance, User is logged in as a child in the family account|
 
 | Scenario 13.6.1 | Nominal |
@@ -1463,9 +1462,29 @@ TODO:
 |  5     | User specify required fields|
 |  6     | System asks user to confirm the operation|
 |  7    |  User confirms the operation|
+|  9    | System verifies that entered amount's currency is same as child's account display currency|
 |  8     | System substract the amount from parent's balance and adds it to the Allowance balance in the child's account|
 
-| Scenario 13.6.2 | Exception |
+
+
+| Scenario 13.6.2 | Variant |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in and ask to add income to another member of the family's account|
+|  Post condition     | Income is added to the Allowance balance in a child's account |
+| Step#        | Description  |
+|  1     | User asks to see add income to another family member|  
+|  2     | System verifies that user is a parent in the family account|
+|  3     | System verifies that the specified user is a child in the family account|
+|  4     | System ask user to specify amount to be added and from which balance he wants to transfer the amount|
+|  5     | User specify required fields|
+|  6     | System asks user to confirm the operation|
+|  7    |  User confirms the operation|
+|  8    | System verifies that entered amount's currency is different than child's account display currency|
+|  9    | Currency exchange is done through a currency exchange API|
+| 10    | System substract the amount from parent's balance and adds it to the Allowance balance in the child's account|
+
+
+| Scenario 13.6.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as parent and ask to add income to another parent's account|
 |  Post condition     | Operation ends with an error message |
@@ -1475,7 +1494,7 @@ TODO:
 |  3     | System verifies that the specified user is a parent in the family account|
 |  4     | System denies the operation and notifies the parent that he/she can't add income to another parent's account |
 
-| Scenario 13.6.3 | Exception |
+| Scenario 13.6.4 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a child |
 |  Post condition     | Operation ends with an error message |
@@ -1483,8 +1502,6 @@ TODO:
 |  1     | User asks to add income to another family member|  
 |  2     | System verifies that user is a child in the family account|
 |  3     | System denies the operation and notifies user that he can't do this operation|
-
-
 ### Use case 14, VIEW REPORTS
 
 #### Use case 14.1, VIEW AMOUNT AVAILABLE IN SELECTED BALANCES OVER TIME
