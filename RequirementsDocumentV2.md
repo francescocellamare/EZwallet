@@ -99,7 +99,7 @@ TODO:
 | FR1.1.1  | Log in using email and password |
 | FR1.1.2   |	Log in using 3rd party agent    |
 | FR1.2   | Reset password                  |
-| FR1.3   | Register as a new user          |	<!-- password validation >
+| FR1.3   | Register as a new user          |
 | FR1.4   | Register as a new user using 3rd party service | 
 | FR1.5   | Verify email                    |
 | FR1.6   | Log out                         |
@@ -221,13 +221,14 @@ TODO:
 ![use case diagram](code/images/Use_case_diagram_version2.png "use case diagram")
 
 ### Use case 1, SIGN UP
+
 | Actors Involved | User |
 | ------------- |:-------------:| 
 |  Precondition     | User has no account 		|
 |  Post condition   | User has a new account	|
-|  Nominal Scenario | User uses a new email 		|
+|  Nominal Scenario | User uses a new email and a valid password with correct confirmation |
 |  Variants     	| --- |
-|  Exceptions     	| User uses an email that is already linked to an account |
+|  Exceptions     	| User uses an email that is already linked to an account or he/she has entered a non-compliant password or confirmation password does not match|
 
 
 | Scenario 1.1 | Nominal |
@@ -237,13 +238,15 @@ TODO:
 | Step#  | Description  |
 |  1     | User asks to sign up 									  |  
 |  2     | System asks for email and password 						  |
-|  3     | User inserts required fields 							  |
-|  4     | User submits form 										  |
-|  5     | System verifies that the email is not in use 			  |
-|  6     | System creates the account 								  |
-|  7     | System adds a default category "Others" to the account and sets its budget to 0    |
-|  8     | System adds a default balance "Default" to the account     |
-|  9     | System redirects user to the home page 					  |
+|  3     | User inserts the email and a valid password according to system's rules | 
+|  4     | User write the password again in the confirmation field	  |
+|  5     | User submits form 										  |
+|  6     | System verifies that the email is not in use 			  |
+|  7     | System verifies that password complies with the rules and that confirmation password is equal|
+|  8     | System creates the account 								  |
+|  9     | System adds a default category "Others" to the account and sets its budget to 0    |
+|  10    | System adds a default balance "Default" to the account     |
+|  11    | System redirects user to the home page 					  |
 
 
 | Scenario 1.2 | Exception |
@@ -258,8 +261,92 @@ TODO:
 |  5     | System verifies that the user's account already exists 	  |
 |  6     | System notifies the User that he/she is already registered |
 
+| Scenario 1.3 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User has no account and password is not compliant with rules |
+|  Post condition   | The operation ends with an error message |
+| Step#  | Description  |
+|  1     | User asks to sign up 									  |  
+|  2     | System asks for email and password 						  |
+|  3     | User inserts email and password							  |
+|  4     | User writes the password again in the confirmation field	  |
+|  5     | User submits form 										  |
+|  6     | System verifies that the email is not in use 			  |
+|  7     | System verifies that the password does not complies with the rules|
+|  8     | System notifies the user that he/she has entered a non-compliant password |
 
-### Use case 2, LOGIN
+| Scenario 1.4 | Exception |
+| ------------- |:-------------:| 
+|  Precondition     | User has no account and confirmation password does not match |
+|  Post condition   | The operation ends with an error message |
+| Step#  | Description  |
+|  1     | User asks to sign up 									  |  
+|  2     | System asks for email and password 						  |
+|  3     | User inserts email and a valid password according to system's rules							  |
+|  4     | User write the password again in the confirmation field	  |
+|  5     | User submits form 										  |
+|  6     | System verifies that the email is not in use 			  |
+|  7     | System verifies that the password complies with the rules and that confirmation password is not equal|
+|  8     | System notifies the user that passwords do not match |
+
+### Use case 2, SIGN UP WITH 3rd PARTY AGENT
+| Actors Involved | User |
+| ------------- |:-------------:| 
+|  Precondition     | User has no account 		|
+|  Post condition   | User has a new account	|
+|  Nominal Scenario | User sign up using a 3rd party service |
+|  Variants     	| --- |
+|  Exceptions     	| User is not registered to any 3rd party agent, user fails to autheniticate using the 3rd party service|
+
+| Scenario 2.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition       | User has an account |
+|  Post condition     | User is authorized |
+| Step#  | Description  |
+|  1     | User asks to login using a 3rd party service 				  |  
+|  2     | System asks for the service to be used 						  |
+|  3     | User chooses the service 									  |
+|  4     | System redirect the user to the 3rd party service login form   |
+|  5     | 3rd party authentication service asks the user to login		  |
+|  6     | user provides all the necessary information to login 		  |
+|  7     | 3rd party authentication service authorizes the user			  | 
+|  8     | System checks if the user is authorized with 3rd party service |
+|  9     | System creates the account 								  |
+|  10    | System adds a default category "Others" to the account and sets its budget to 0    |
+|  11    | System adds a default balance "Default" to the account     |
+|  12    | System redirects user to the home page 					  |
+
+| Scenario 2.2 | Exception |
+| ------------- |:-------------:| 
+|  Precondition       | User has an account 	|
+|  Post condition     | User is not authorized  |
+| Step#  | Description  |
+|  1     | User asks to login using a 3rd party service 				  |  
+|  2     | System asks for the service to be used 						  |
+|  3     | User chooses the service 									  |
+|  4     | System redirect the user to the 3rd party service login form   |
+|  5     | 3rd party authentication service asks the user to login		  |
+|  6     | user provides all the necessary information to login 		  |
+|  7     | 3rd party authentication service authorizes the user			  | 
+|  8     | System checks if the user is authorized with 3rd party service |
+|  9     | System finds out that the user is not registerd using the 3rd party authenitcation service |
+|  10    | System informs the user that the account does no exist |
+
+| Scenario 2.3 | Exception |
+| ------------- |:-------------:| 
+|  Precondition       | User has an account 	|
+|  Post condition     | User is not authorized  |
+| Step#  | Description  |
+|  1     | User asks to login using a 3rd party service 				  |  
+|  2     | System asks for the service to be used 						  |
+|  3     | User chooses the service 									  |
+|  4     | System redirect the user to the 3rd party service login form   |
+|  5     | 3rd party authentication service asks the user to login		  |
+|  6     | user provides all the necessary information to login 		  |
+|  7     | 3rd party authentication service does not authorizes the user  | 
+|  8     | System notifies the user that authentication phase has failed  |
+
+### Use case 3, LOGIN
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User has an account 				 |
@@ -268,7 +355,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | Email and password do not match or the user enters an email that is not registered |
 
-| Scenario 2.1 | Nominal |
+| Scenario 3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User has an account |
 |  Post condition   | User is authorized  |
@@ -279,7 +366,7 @@ TODO:
 |  4     | System verifies that email and password are correct|
 |  5     | User is authorized 								  |
 
-| Scenario 2.2 | Exception |
+| Scenario 3.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User has an account 	 |
 |  Post condition   | User is not authorized |
@@ -291,7 +378,7 @@ TODO:
 |  5   	 | User is not authorized									   |
 |  6     | System notifies the user that he/she used wrong credentials |
 
-| Scenario 2.3 | Exception |
+| Scenario 3.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User does not have an account |
 |  Post condition   | User is not authorized 		|
@@ -302,16 +389,16 @@ TODO:
 |  4     | System verifies that the email is not registered |
 |  5   	 | User is not authorized 							|
 
-### Use case 3, LOGIN USING 3rd PARTY AGENT
+### Use case 4, LOGIN USING 3rd PARTY AGENT
 | Actors Involved        | User, 3rd party authentication service |
 | ------------- |:-------------:| 
 |  Precondition    	  | User has an account with 3rd party agent |
 |  Post condition     | User is authorized 						 |
 |  Nominal Scenario   | User log in using a 3rd party service 	 |
 |  Variants     	  | --- |
-|  Exceptions     	  | User is not registered to any 3rd party agent, User fails to authenitcate using the 3rd party service |
+|  Exceptions     	  | User is not registered to any 3rd party agent, User fails to autheniticate using the 3rd party service |
 
-| Scenario 3.1 | Nominal |
+| Scenario 4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User has an account |
 |  Post condition     | User is authorized |
@@ -326,7 +413,7 @@ TODO:
 |  8     | System checks if the user is authorized with 3rd party service |
 |  9    | User is authorized 											  |
 
-| Scenario 3.2 | Exception |
+| Scenario 4.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User has an account 	|
 |  Post condition     | User is not authorized  |
@@ -342,7 +429,7 @@ TODO:
 |  9    | System finds out that the user is not registerd using the 3rd party authenitcation service |
 |  10   | System informs the user that the account does no exist |
 
-| Scenario 3.3 | Exception |
+| Scenario 4.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User has an account 	|
 |  Post condition     | User is not authorized  |
@@ -359,46 +446,59 @@ TODO:
 
 
 
-### Use case 4, RESET PASSWORD WHEN FORGOTTEN
+### Use case 5, RESET PASSWORD WHEN FORGOTTEN
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is not logged in 	 |
 |  Post condition     | User resets his/her password |
 |  Nominal Scenario   | user changes to a new password within the allowed time 	 |
 |  Variants     	  | |
-|  Exceptions     	  | email expired, user uses the current password as a new password |
+|  Exceptions     	  | email expired, user uses the current password as a new password or email is not verified yet|
 
-| Scenario 4.1 | Nominal |
+| Scenario 5.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is not logged in 	 |
 |  Post condition     | User resets his/her password |
 | Step#  | Description  |
 |  1     | User asks to reset his/her password						|  
-|  2     | System sends an email to user for resetting the password |
-|  3     | User confirms the request and changes his/her password	|
-|  4     | System updates the user's password 						|
+|  2     | User inserts his email 									|
+|  3     | System sends an email to user for resetting the password |
+|  4     | User confirms the request and changes his/her password	|
+|  5     | System updates the user's password 						|
 
-| Scenario 4.2 | Exception |
+| Scenario 5.2 | Exception |
+| ------------- |:-------------:| 
+|  Precondition       | User is not logged in |
+|  Post condition     | User does not reset his/her password |
+| Step#  | Description  |
+|  1     | User asks to reset his/her password 						|	 
+|  2     | User inserts his email 									| 
+|  3     | System sends an email to user for resetting the password |
+|  4     | User confirms the request but received email is expired	|
+|  5     | System does not reset password and shows an error message 							|
+
+| Scenario 5.3 | Exception |
+| ------------- |:-------------:| 
+|  Precondition       | User is not logged in |
+|  Post condition     | User does not reset his/her password |
+| Step#  | Description  |
+|  1     | User asks to reset his/her password 						|	   
+|  2     | User inserts his email 									| 
+|  3     | System sends an email to user for resetting the password |
+|  4     | User confirms the request but the user uses the current password as a new password	|
+|  5     | System does not reset password and shows an error message 							|
+
+| Scenario 5.4 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is not logged in |
 |  Post condition     | User does not reset his/her password |
 | Step#  | Description  |
 |  1     | User asks to reset his/her password 						|	  
-|  2     | System sends an email to user for resetting the password |
-|  3     | User confirms the request but received email is expired	|
+|  2     | User inserts his email 									|  
+|  3     | System does not send an email to user for resetting the password because it is not verified|
 |  4     | System does not reset password and shows an error message 							|
 
-| Scenario 4.3 | Exception |
-| ------------- |:-------------:| 
-|  Precondition       | User is not logged in |
-|  Post condition     | User does not reset his/her password |
-| Step#  | Description  |
-|  1     | User asks to reset his/her password 						|	  
-|  2     | System sends an email to user for resetting the password |
-|  3     | User confirms the request but the user uses the current password as a new password	|
-|  4     | System does not reset password and shows an error message 							|
-
-### Use case 5, VERIFY EMAIL
+### Use case 6, VERIFY EMAIL
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in 					 |
@@ -407,7 +507,7 @@ TODO:
 |  Variants     	  | |
 |  Exceptions     	  | email expired |
 
-| Scenario 5.1 | Nominal |
+| Scenario 6.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in		|
 |  Post condition     | User verifies his/her email |
@@ -417,7 +517,7 @@ TODO:
 |  3     | User confirms the request 								 |
 |  4     | System updates the user's data 							 |
 
-| Scenario 5.2 | Exception |
+| Scenario 6.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 			   |
 |  Post condition     | User does not verify his/her email |
@@ -427,7 +527,7 @@ TODO:
 |  3     | User confirms the request but received email is expired	 |
 |  4     | System shows an error message 							 |
 
-### Use case 6, LOGOUT
+### Use case 7, LOGOUT
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in  |
@@ -436,7 +536,7 @@ TODO:
 |  Variants       | --- |
 |  Exceptions     | User does not have an account |
 
-| Scenario 6.1 | Nominal |
+| Scenario 7.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User has an account |
 |  Post condition   | User is logged out  |
@@ -445,7 +545,7 @@ TODO:
 |  2     | System allows the operation |
 
 
-| Scenario 6.2| Exception |
+| Scenario 7.2| Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User does not have an account	|
 |  Post condition   | User receives an error message|
@@ -455,9 +555,9 @@ TODO:
 |  3     | Error message is sent to the user 								  |
 
 
-### Use Case 7, MANAGE PERSONAL ACCOUNT
+### Use Case 8, MANAGE PERSONAL ACCOUNT
 
-#### Use case 7.1, DELETE PERSONAL ACCOUNT
+#### Use case 8.1, DELETE PERSONAL ACCOUNT
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in				|
@@ -466,7 +566,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | User does not delete his/her account because he/she used wrong credentials |
 
-| Scenario 7.1.1 | Nominal |
+| Scenario 8.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in				|
 |  Post condition     | User has not an account anymore |
@@ -477,7 +577,7 @@ TODO:
 |  4     | System checks the password			|
 |  5     | System deletes user's account 		|
 
-| Scenario 7.1.2 | Exception |
+| Scenario 8.1.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in	 		|
 |  Post condition     | User still have his/her account |
@@ -489,7 +589,7 @@ TODO:
 |  5    | System shows an error message 				   |
 
 
-#### Use case 7.2, EDIT PERSONAL INFORMATION
+#### Use case 8.2, EDIT PERSONAL INFORMATION
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in		  	  |
@@ -498,7 +598,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | --- |
 
-| Scenario 7.2.1 | Nominal |
+| Scenario 8.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in |
 |  Post condition     | User updates his/her information |
@@ -508,7 +608,7 @@ TODO:
 |  3     | User modifies his/her information							|
 |  4     | System updates user's information							|
 
-#### Use case 7.3, EDIT PROFILE PICTURE
+#### Use case 8.3, EDIT PROFILE PICTURE
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in 				 |
@@ -517,7 +617,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | --- |
 
-| Scenario 7.3.1 | Nominal |
+| Scenario 8.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 				 |
 |  Post condition     | User updates his/her profile picture |
@@ -528,7 +628,7 @@ TODO:
 |  4     | System updates user's profile picture 
 
 
-#### Use case 7.4, CHANGE PASSWORD
+#### Use case 8.4, CHANGE PASSWORD
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in 					|
@@ -537,7 +637,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | user provides an incorrect current password, user uses the same password					|
 
-| Scenario 7.4.1 | Nominal |
+| Scenario 8.4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 		  |
 |  Post condition     | User changes his/her password |
@@ -547,7 +647,7 @@ TODO:
 |  3     | User provides all the required information	|
 |  4     | System updates the user's password 						|
 
-| Scenario 7.4.2 | Exception |
+| Scenario 8.4.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 				  |
 |  Post condition     | User does not change his/her password |
@@ -557,7 +657,7 @@ TODO:
 |  3     | User provides inputs an incorrect current password	|
 |  4     | System does not update the password and informs user that password is incorrect 						|
 
-| Scenario 7.4.3 | Exception |
+| Scenario 8.4.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 				  |
 |  Post condition     | User does not change his/her password |
@@ -567,8 +667,8 @@ TODO:
 |  3     | User provides all the required information, but uses the current password as a new password	|
 |  4     | System does not update the password and informs user that password is incorrect 						|
 					|
-### Use Case 7.5, CHANGE APPLICATION'S SETTINGS
-#### Use case 7.5.1, CHANGE DEFAULT DISPLAY CURRENCY
+### Use Case 8.5, CHANGE APPLICATION'S SETTINGS
+#### Use case 8.5.1, CHANGE DEFAULT DISPLAY CURRENCY
 | Actors Involved        | User, Currency exchange service |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in				|
@@ -577,7 +677,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | --- |
 
-| Scenario 7.5.1.1 | Nominal |
+| Scenario 8.5.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 				|
 |  Post condition     | User changes default display currency	|
@@ -587,7 +687,7 @@ TODO:
 |  3     | User chooses a new currency 																		 |
 |  4     | System updates each amount of money with the new currency through a 3rd party currency exchange service |
 
-#### Use case 7.5.2, CHANGE DATE FORMAT
+#### Use case 8.5.2, CHANGE DATE FORMAT
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in 					  |
@@ -596,7 +696,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | --- |
 
-| Scenario 7.5.2.1 | Nominal |
+| Scenario 8.5.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 		 |
 |  Post condition     | User changes date format |
@@ -606,7 +706,7 @@ TODO:
 |  3     | User enters the new format 									|
 |  4     | System updates date format in application's settings |
 
-#### Use case 7.5.3, CHANGE LANGUAGE
+#### Use case 8.5.3, CHANGE LANGUAGE
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in		|
@@ -615,7 +715,7 @@ TODO:
 |  Variants     	  | --- |
 |  Exceptions     	  | --- |
 
-| Scenario 7.5.3.1 | Nominal |
+| Scenario 8.5.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User is logged in 		|
 |  Post condition     | User changes language	|
@@ -626,9 +726,9 @@ TODO:
 |  4     | System updates application's language 		|
 
 
-### Use Case 8, MANAGE CATEGORIES
+### Use Case 9, MANAGE CATEGORIES
 
-#### Use Case 8.1: CREATE A CATEGORY
+#### Use Case 9.1: CREATE A CATEGORY
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -639,7 +739,7 @@ TODO:
 |  Exceptions     |  User specifies a category name that is already in use |
 
 
-| Scenario 8.1.1 | Nominal |
+| Scenario 9.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | User has a new account |
@@ -653,7 +753,7 @@ TODO:
 |  7   | System stores new category |
 
 
-| Scenario 8.1.2 | Exception |
+| Scenario 9.1.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in but specifies a categoty name that is already in use |
 |  Post condition     | Operation ends with an error message |
@@ -667,7 +767,7 @@ TODO:
 
 
 
-#### Use Case 8.2: DELETE A CATEGORY
+#### Use Case 9.2: DELETE A CATEGORY
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -678,7 +778,7 @@ TODO:
 |  Exceptions     | User tries to delete the default "Others" category, User does not confirm the operation  |
 
 
-| Scenario 8.2.1 | Nominal |
+| Scenario 9.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | A category is deleted and all its corresponding transactions become associated to the default category (others...) |
@@ -691,7 +791,7 @@ TODO:
  
 
 
-| Scenario 8.2.2 | Exception |
+| Scenario 9.2.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | No changes made |
@@ -701,7 +801,7 @@ TODO:
 |  3     | User does not confirm the operation | 
 |  4     | System does not delete the category | 
 
-| Scenario 8.2.3 | Exception |
+| Scenario 9.2.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | No changes made and the user receives an error message |
@@ -710,7 +810,7 @@ TODO:
 |  2     | System rejects the request and shows an error message  |
 
 
-#### Use Case 8.3: VIEW CATEGORIES
+#### Use Case 9.3: VIEW CATEGORIES
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -720,7 +820,7 @@ TODO:
 |  Variants     | --- |
 |  Exceptions     | --- |
 
-| Scenario 8.3.1 | Nominal |
+| Scenario 9.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and he/she has at least one category |
 |  Post condition     | User receives a list of all of his/her categories |
@@ -729,7 +829,7 @@ TODO:
 |  2     | System looks up all categories|
 |  3     | System returns a list of categories |
 
-#### Use Case 8.4: EDIT A CATEGORY
+#### Use Case 9.4: EDIT A CATEGORY
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -739,7 +839,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     | User tries to update the default "Others" category, User changes name to a name already associated to another category |
 
-| Scenario 8.4.1 | Nominal |
+| Scenario 9.4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and does not change the name of a non-default category to name already in use |
 |  Post condition     | A category is updated |
@@ -751,7 +851,7 @@ TODO:
 |  5     | System applies changes|
 
 
-| Scenario 8.4.2 | Exception |
+| Scenario 9.4.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and he/she changes the category name to a name already in use|
 |  Post condition     | Operation ends with an error message |
@@ -763,7 +863,7 @@ TODO:
 |  5   | System notifies the user that he/she has to choose another name for the category |
 
 
-| Scenario 8.4.3 | Exception |
+| Scenario 9.4.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and he/she changes the category name to a name already in use|
 |  Post condition     | Operation ends with an error message |
@@ -771,7 +871,7 @@ TODO:
 |  1     | User asks to edit a default category |  
 |  2     | System rejects the request and returns an error message |
 
-#### Use Case 8.5: LABEL IMPORTANT CATEGORIES
+#### Use Case 9.5: LABEL IMPORTANT CATEGORIES
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -781,7 +881,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     | Category is already labeled as important |
 
-| Scenario 8.5.1 | Nominal |
+| Scenario 9.5.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and the category is not already labeled |
 |  Post condition     | A category is labeled as important |
@@ -792,7 +892,7 @@ TODO:
 
 
 
-| Scenario 8.5.2 | Exception |
+| Scenario 9.5.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and the category is already labeled |
 |  Post condition     | Operation ends with an error message |
@@ -801,7 +901,7 @@ TODO:
 |  2     | System verifies that the category is already labeled|
 |  3    | System notifies the user that the category is already labeled|
 
-#### Use Case 8.6: UNLABEL A CATEGORY
+#### Use Case 9.6: UNLABEL A CATEGORY
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -811,7 +911,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     |User is logged in and asks to unlabel a category that has no label|
 
-| Scenario 8.6.1 | Nominal |
+| Scenario 9.6.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and asks to unlabel a category that has a label|
 |  Post condition     | A category is unlabeled |
@@ -820,7 +920,7 @@ TODO:
 |  2     | System verifies that the category is labeled|
 |  3     | System unlabels the category|
 
-| Scenario 8.6.2 | Exception |
+| Scenario 9.6.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and asks to unlabel a category that has no label|
 |  Post condition     | Operation ends with an error message |
@@ -829,7 +929,7 @@ TODO:
 |  2     | System verifies that the category is already unlabeled|
 |  3     | System denies the operation and notifies the user that the category does not have a label |
 
-#### Use case 8.7, ALLOCATE A BUDGET FOR A CATEGORY
+#### Use case 9.7, ALLOCATE A BUDGET FOR A CATEGORY
 
 | Actors Involved | User  |
 | ------------- |:-------------:| 
@@ -839,7 +939,7 @@ TODO:
 |  Variants     | --- |
 |  Exceptions     | --- |
 
-| Scenario 8.7.1 | Nominal |
+| Scenario 9.7.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in |
 |  Post condition     | Provided amount of money is added to the specified category's budget |
@@ -850,7 +950,7 @@ TODO:
 |  4     | system adds the provided amount to the existing budget of the selected category  |
 |  5     | system returns a message indicating that the operation was successful |  
 
-#### Use case 8.8, TRANSFER BUDGET FROM ONE CATEGORY TO ANOTHER
+#### Use case 9.8, TRANSFER BUDGET FROM ONE CATEGORY TO ANOTHER
 
 | Actors Involved | User  |
 | ------------- |:-------------:| 
@@ -860,7 +960,7 @@ TODO:
 |  Variants     | --- |
 |  Exceptions     | --- |
 
-| Scenario 8.1.1 | Nominal |
+| Scenario 9.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in |
 |  Post condition     | Provided amount of money is moved from the budget of one category to another  |
@@ -874,9 +974,9 @@ TODO:
 
 
 
-### Use case 9, MANAGE TRANSACTIONS
+### Use case 10, MANAGE TRANSACTIONS
 
-#### Use case 9.1, ADD A NEW TRANSACTION
+#### Use case 10.1, ADD A NEW TRANSACTION
 
 | Actors Involved | User, Currency exchange service  |
 | ------------- |:-------------:| 
@@ -887,7 +987,7 @@ TODO:
 |  Exceptions     | User provided invalid information |
 
 
-| Scenario 9.1.1 | Nominal |
+| Scenario 10.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in  |
 |  Post condition     | A new transaction is added to the user's list of transactions |
@@ -902,7 +1002,7 @@ TODO:
 |  8     | system notifies the user if the budget for that category was exceeded and also notifies parents if the user is a child in a family |
 |  9     | system returns the new transaction and a message indicating that the operation was successful					|
 
-| Scenario 9.1.2 | Variant |
+| Scenario 10.1.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in  |
 |  Post condition     | A new recurrent transaction is added to the user's list of transactions after a specific period of time |
@@ -918,7 +1018,7 @@ TODO:
 |  9     | system returns the new transaction and a message indicating that the operation was successful					|
 | 10     | system adds the same transaction to the user's transaction list each time the specified number of days passes |
 
-| Scenario 9.1.3 | Variant |
+| Scenario 10.1.3 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in  |
 |  Post condition     | A new transaction is added to the user's list of transactions |
@@ -933,7 +1033,7 @@ TODO:
 |  8     | system notifies the user if the budget for that category was exceeded and also notifies parents if the user is a child in a family |
 |  9     | system returns the new transaction and a message indicating that the operation was successful					|
 
-| Scenario 9.1.4 | Exception |
+| Scenario 10.1.4 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in  |
 |  Post condition     | transaction is not created and the user receives an error message |
@@ -947,7 +1047,7 @@ TODO:
 |  7     | system does not create the transaction					|
 |  8     | system return an error message to the User |
 
-#### Use case 9.2, EDIT A TRANSACTION
+#### Use case 10.2, EDIT A TRANSACTION
 
 | Actors Involved | User |
 | ------------- |:-------------:| 
@@ -958,7 +1058,7 @@ TODO:
 |  Exceptions     | User provided invalid information |
 
 
-| Scenario 9.2.1 | Nominal |
+| Scenario 10.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transaction is updated |
@@ -970,7 +1070,7 @@ TODO:
 |  5     | system updates the transaction |
 |  6     | system returns the updated transaction and a message indicating that the operation was successful					|
 
-| Scenario 9.2.2 | Variant |
+| Scenario 10.2.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transaction is not updated and the user receives an new error message |
@@ -980,7 +1080,7 @@ TODO:
 |  3     | user submits form without updating any of the fields |
 |  4     | system does not update the transaction |
 
-| Scenario 9.2.3 | Exception |
+| Scenario 10.2.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transaction is not updated and the user receives an new error message |
@@ -993,7 +1093,7 @@ TODO:
 |  6     | system does not update the transaction and returns an error message	|
 
 
-#### Use case 9.3, DELETE A TRANSACTION
+#### Use case 10.3, DELETE A TRANSACTION
 
 | Actors Involved | User  |
 | ------------- |:-------------:| 
@@ -1003,7 +1103,7 @@ TODO:
 |  Variants     | --- |
 |  Exceptions     | user does not confirm the operation, user decides to restore the deleted transactions|
 
-| Scenario 9.3.1 | Nominal |
+| Scenario 10.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transactions are deleted |
@@ -1016,7 +1116,7 @@ TODO:
 |  6     | system informs the user that the operation was successful and displays an undo popup |
 |  7     | system waits for a couple of seconds before hiding the undo button |
 
-| Scenario 9.3.2 | Exception |
+| Scenario 10.3.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transactions are not deleted |
@@ -1027,7 +1127,7 @@ TODO:
 |  4     | user does not confirm his/her intent to delete the selected transactions |
 |  5     | The system does not delete the selected transactions |
 
-| Scenario 9.3.3 | Exception |
+| Scenario 10.3.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | The selected transactions are not deleted |
@@ -1042,7 +1142,7 @@ TODO:
 |  8	 | system restores all the deleted transactions |
 |  9 	 | systems notifies the user that the transactions were restored |
 
-#### Use case 9.4, VIEW TRANSACTIONS
+#### Use case 10.4, VIEW TRANSACTIONS
 
 | Actors Involved | User  |
 | ------------- |:-------------:| 
@@ -1052,7 +1152,7 @@ TODO:
 |  Variants     | user views a modified list of his/her transactions based on the selected filters, order, and grouping options / user has no transactions  |
 |  Exceptions     | --- |
 
-| Scenario 9.4.1 | Nominal |
+| Scenario 10.4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and at least has one transaction |
 |  Post condition     | user views all of his/her transactions in the default order |
@@ -1061,7 +1161,7 @@ TODO:
 | 2		 | system retrieves all transactions and orders them starting from the most recent transaction |
 |  3     | systems returns the retrieved list of transactions |
 
-| Scenario 9.4.2 | Variant |
+| Scenario 10.4.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least one transaction |
 |  Post condition     | user views a modified list of transactions based on the selected filter, order, and grouping options  |
@@ -1073,7 +1173,7 @@ TODO:
 | 5     | system returns the new list of transactions |
 
 
-| Scenario 9.4.3 | Variant |
+| Scenario 10.4.3 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has no transactions  |
 |  Post condition     | user recieves a message indicating that he/she doesn't have any transactions  |
@@ -1081,8 +1181,8 @@ TODO:
 |  1     | user asks to view his/her transactions |  
 |  2     | system does not find any transactions to show |
 |  3 	|  system displays a message indicating that the user didn't add any transactions along with a button to add transactions |
-### User Case 10, MANAGE BALANCE
-#### Use case 10.1, ADD A NEW BALANCE
+### User Case 11, MANAGE BALANCE
+#### Use case 11.1, ADD A NEW BALANCE
 
 | Actors Involved | User  |
 | ------------- |:-------------:| 
@@ -1092,7 +1192,7 @@ TODO:
 |  Variants     | user does not specify a starting amount |
 |  Exceptions     | user specifies an already in use balance name |
 
-| Scenario 10.1.1 | Nominal |
+| Scenario 11.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in |
 |  Post condition     | A new balance is added to the User's profile  |
@@ -1105,7 +1205,7 @@ TODO:
 | 6  | system displays list of balances and returns a message indicating that the operation was successful |
 
 
-| Scenario 10.1.2 | Variant |
+| Scenario 11.1.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in |
 |  Post condition     | A new balance is added to the User's profile |
@@ -1120,7 +1220,7 @@ TODO:
 
 
 
-| Scenario 10.1.3 | Exception |
+| Scenario 11.1.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in |
 |  Post condition     | The new balance is not created and the user recevies an error message  |
@@ -1133,7 +1233,7 @@ TODO:
 |  6 | system does not create the new balance |
 | 7 | system returns an error message indicating that the operation failed |
 
-#### Use case 10.2, DELETE A BALANCE
+#### Use case 11.2, DELETE A BALANCE
 
 | Actors Involved | User  |
 | ------------- |:-------------:| 
@@ -1143,7 +1243,7 @@ TODO:
 |  Variants     | --- |
 |  Exceptions     | User has only one balance / Child tries to delete allowance balance |
 
-| Scenario 10.2.1 | Nominal |
+| Scenario 11.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has at least two balances |
 |  Post condition     | The selected balance is deleted and the user receives a message indicating that the operation was successful |
@@ -1154,7 +1254,7 @@ TODO:
 |  4     | system deletes balance |
 |  5     | system returns a message indicating that the operation was successful |  
 
-| Scenario 10.2.2 | Exception |
+| Scenario 11.2.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has only one balance |
 |  Post condition     | The selected balance is not deleted and the user receives the option to create a new balance |
@@ -1163,7 +1263,7 @@ TODO:
 |  2     | system refuses to delete balance | 
 |  3     | system informs the user that he/she should at least have on balance and gives the user the option to create a new balance |
 
-| Scenario 10.2.3 | Exception |
+| Scenario 11.2.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in and has only one balance |
 |  Post condition     | The selected balance is not deleted and the user receives the option to create a new balance |
