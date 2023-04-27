@@ -1283,7 +1283,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     | User already belonging to a family account |
 
-| Scenario 12.1.1 | Nominal |
+| Scenario 12.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and does not belong to a family account |
 |  Post condition     | A family account is created for this user |
@@ -1294,7 +1294,7 @@ TODO:
 |  4     | System adds the user as a parent of this account|
 
 
-| Scenario 12.1.2 | Exception |
+| Scenario 12.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User already belongs to a family account|
 |  Post condition     | Operation ends with an error message |
@@ -1313,7 +1313,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     | User already belongs to a family account|
 
-| Scenario 12.2.1 | Nominal |
+| Scenario 13.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged and does not already belong to a family account |
 |  Post condition     |User joins a family account as a parent |
@@ -1323,7 +1323,7 @@ TODO:
 |  3     | System verifies that user does not already belong to a family account|
 |  5    | System add user to the family account|
 
-| Scenario 12.2.2 | Nominal |
+| Scenario 13.2 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged and does not already belong to a family account |
 |  Post condition     |User joins a family account as a child and an allowance balance is added to his/her account  |
@@ -1335,7 +1335,7 @@ TODO:
 |  5    | System adds a new balance in the user account called allowance|
 
 
-| Scenario 12.2.3 | Exception |
+| Scenario 13.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged and belongs to a family account|
 |  Post condition     |Operation ends with an error |
@@ -1346,8 +1346,8 @@ TODO:
 |  4    | System notifies user that he/she can't join this family account unless he/she exits the current one|
 
 
-### Use Case 13, MANAGE FAMILY ACCOUNTS
-#### Use Case 13.1, DELETE A FAMILY ACCOUNT
+### Use Case 14, MANAGE FAMILY ACCOUNTS
+#### Use Case 14.1, DELETE A FAMILY ACCOUNT
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -1357,7 +1357,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     | User role is child in the family account |
 
-| Scenario 13.1.1 | Nominal |
+| Scenario 14.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and his/her role is parent in the family account |
 |  Post condition     | The family account is deleted |
@@ -1368,7 +1368,7 @@ TODO:
 |  4     | System deletes the family account|
 
 
-| Scenario 13.1.2 | Exception |
+| Scenario 14.1.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User role is child in the family account|
 |  Post condition     | Operation ends with an error message |
@@ -1378,7 +1378,7 @@ TODO:
 |  3     | System notifies the user that he/she can't delete the account|
 
 
-#### Use Case 13.2, INVITE A USER TO FAMILY ACCOUNT
+#### Use Case 14.2, INVITE A USER TO FAMILY ACCOUNT
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -1388,7 +1388,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     | User role is child in the family account or invited user is not registered |
 
-| Scenario 13.2.1 | Nominal |
+| Scenario 14.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and his/her role is parent in the family account |
 |  Post condition     | A user is invited to the family account |
@@ -1402,7 +1402,7 @@ TODO:
 
 
 
-| Scenario 13.2.2 | Exception |
+| Scenario 14.2.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User role is child in the family account|
 |  Post condition     | Operation ends with an error message |
@@ -1412,7 +1412,7 @@ TODO:
 |  3     | System notifies the user that he/she can't invite a user to the family account|
 
 
-| Scenario 13.2.3 | Exception |
+| Scenario 14.2.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User role is parent and the entered email does not correspond to a registered user|
 |  Post condition     | Operation ends with an error message |
@@ -1425,7 +1425,7 @@ TODO:
 
 
 
-#### Use Case 13.3, LEAVE A FAMILY ACCOUNT
+#### Use Case 14.3, LEAVE A FAMILY ACCOUNT
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -1435,7 +1435,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     |User is a child in the family account, User is the only parent in the family account|
 
-| Scenario 13.3.1 | Nominal |
+| Scenario 14.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a parent in a family account and is not the only parent|
 |  Post condition     | User is removed from family account |
@@ -1448,7 +1448,7 @@ TODO:
 |  6     | System removes user from the family account|
 
 
-| Scenario 13.3.2 | Exception |
+| Scenario 14.3.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as the only parent in the family account|
 |  Post condition     | User is removed from family account and the family account is deleted |
@@ -1463,7 +1463,7 @@ TODO:
 
 
 
-| Scenario 13.3.3 | Exception |
+| Scenario 14.3.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is a child in the family account|
 |  Post condition     | Operation ends with an error |
@@ -1473,7 +1473,7 @@ TODO:
 |  3     | System denies the operation and notifies user that he/she can't leave the family account|
 
 
-#### Use Case 13.4, REMOVE CHILD FROM FAMILY ACCOUNT
+#### Use Case 14.4, REMOVE CHILD FROM FAMILY ACCOUNT
 
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -1483,7 +1483,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     |User does not confirm the operation, User is a child in the family account, User is trying to remove another parent in the family account|
 
-| Scenario 13.4.1 | Nominal |
+| Scenario 14.4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a parent in a family account and asks to remove a child from the family account|
 |  Post condition     | A specifies user is removed from family account |
@@ -1496,7 +1496,7 @@ TODO:
 |  6     | System removes the specified user from the family account|
 
 
-| Scenario 13.4.2 | Exception |
+| Scenario 14.4.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a parent in a family account and try to remove another parent in the family account |
 |  Post condition     | specified user is not removed from the family account |
@@ -1508,7 +1508,7 @@ TODO:
 |  5     | System does not remove the specified user from the family account|
 
 
-| Scenario 13.4.3 | Exception |
+| Scenario 14.4.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a parent in a family account and try to remove another parent in the family account |
 |  Post condition     | Operation ends with an error message |
@@ -1521,7 +1521,7 @@ TODO:
 |  6     | System denies the operation and notifies user that he/she cannot remove another parent in the family account|
 
 
-| Scenario 13.4.4 | Exception |
+| Scenario 14.4.4 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a child in the family account |
 |  Post condition     | Operation ends with an error message |
@@ -1530,7 +1530,7 @@ TODO:
 |  2     | System verifies that user is a child in the family account|
 |  3     | System denies the operation and notifies user that he/she can't make this operation|
 
-#### Use Case 13.5, VIEW CHILD'S DASHBOARD
+#### Use Case 14.5, VIEW CHILD'S DASHBOARD
 
 | Actors Involved        | Parent |
 | ------------- |:-------------:| 
@@ -1540,7 +1540,7 @@ TODO:
 |  Variants     | ---|
 |  Exceptions     |User is logged in as a parent and ask to see another parent's dashboard in his family account, User is logged in as a child in the family account|
 
-| Scenario 13.5.1 | Nominal |
+| Scenario 14.5.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and ask to see a child's dashboard in his family account|
 |  Post condition     | System shows child's dashboard |
@@ -1550,7 +1550,7 @@ TODO:
 |  3     | System verifies that the specified user is a child in the family account|
 |  4     | System displayes child's dashboard|
 
-| Scenario 13.5.2 | Exception |
+| Scenario 14.5.2 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as parent and ask to see a parent's dashboard in his family account|
 |  Post condition     | Operation ends with an error message |
@@ -1561,7 +1561,7 @@ TODO:
 |  4     | System denies the operation and notifies the parent that he/she can't view another parent's dashboard |
 
 
-| Scenario 13.5.3 | Exception |
+| Scenario 14.5.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a child |
 |  Post condition     | System shows child's dashboard |
@@ -1570,7 +1570,7 @@ TODO:
 |  2     | System verifies that user is a child in the family account|
 |  3     | System denies the operation and notifies user that he can't do this operation|
 
-#### Use Case 13.6, ADD INCOME TO CHILD ACCOUNT
+#### Use Case 14.6, ADD INCOME TO CHILD ACCOUNT
 
 | Actors Involved        | User, Currency exchange service |
 | ------------- |:-------------:| 
@@ -1580,7 +1580,7 @@ TODO:
 |  Variants     | Add income in a currency different than child's account display currency|
 |  Exceptions     | User is logged in and ask to add income to another parent's balance, User is logged in as a child in the family account|
 
-| Scenario 13.6.1 | Nominal |
+| Scenario 14.6.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and ask to add income to another member of the family's account|
 |  Post condition     | Income is added to the Allowance balance in a child's account |
@@ -1597,7 +1597,7 @@ TODO:
 
 
 
-| Scenario 13.6.2 | Variant |
+| Scenario 14.6.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and ask to add income to another member of the family's account|
 |  Post condition     | Income is added to the Allowance balance in a child's account |
@@ -1614,7 +1614,7 @@ TODO:
 | 10    | System substract the amount from parent's balance and adds it to the Allowance balance in the child's account|
 
 
-| Scenario 13.6.3 | Exception |
+| Scenario 14.6.3 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as parent and ask to add income to another parent's account|
 |  Post condition     | Operation ends with an error message |
@@ -1624,7 +1624,7 @@ TODO:
 |  3     | System verifies that the specified user is a parent in the family account|
 |  4     | System denies the operation and notifies the parent that he/she can't add income to another parent's account |
 
-| Scenario 13.6.4 | Exception |
+| Scenario 14.6.4 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a child |
 |  Post condition     | Operation ends with an error message |
@@ -1632,9 +1632,9 @@ TODO:
 |  1     | User asks to add income to another family member|  
 |  2     | System verifies that user is a child in the family account|
 |  3     | System denies the operation and notifies user that he can't do this operation|
-### Use case 14, VIEW REPORTS
+### Use case 15, VIEW REPORTS
 
-#### Use case 14.1, VIEW AMOUNT AVAILABLE IN SELECTED BALANCES OVER TIME
+#### Use case 15.1, VIEW AMOUNT AVAILABLE IN SELECTED BALANCES OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1644,7 +1644,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 14.1.1 | Nominal |
+| Scenario 15.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The available amount in each selected balances is shown over time |
@@ -1656,7 +1656,7 @@ TODO:
 |  5     | The user asks for viewing the amount of the selected balances over time |  
 |  6     | System shows required information |
 
-| Scenario 14.1.2 | Nominal |
+| Scenario 15.1.2 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The available amount in each selected balances is shown over time |
@@ -1668,7 +1668,7 @@ TODO:
 |  5     | The user asks for viewing the amount of all balances over time |  
 |  6     | System shows required information |
 
-#### Use case 14.2, VIEW EXPENSES OVER TIME
+#### Use case 15.2, VIEW EXPENSES OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1678,7 +1678,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 14.2.1 | Nominal |
+| Scenario 15.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The expenses are shown  |
@@ -1687,7 +1687,7 @@ TODO:
 |  2     | System looks up the expenses |
 |  3     | System shows required information |
 
-| Scenario 14.2.1 | Variant |
+| Scenario 15.2.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | There are no stored expenses |
 |  Post condition     | User receives an empty graph |
@@ -1697,7 +1697,7 @@ TODO:
 |  3     | System does not find any expenses |
 |  4     | System returns an empty graph |
 
-#### Use case 14.3, VIEW EXPENSES PER CATEGORY OVER TIME
+#### Use case 15.3, VIEW EXPENSES PER CATEGORY OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1707,7 +1707,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 14.3.1 | Nominal |
+| Scenario 15.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and the user has at least one expense |
 |  Post condition     | The expenses per category are shown  |
@@ -1717,7 +1717,7 @@ TODO:
 |  3     | System shows required information |
 
 
-| Scenario 14.3.2 | Variant |
+| Scenario 15.3.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and there are no stored expenses  |
 |  Post condition     | User receives an empty graph |
@@ -1727,7 +1727,7 @@ TODO:
 |  3     | System does not find any expenses |
 |  4     | System returns an empty graph |
 
-#### Use case 14.4, VIEW INCOME OVER TIME
+#### Use case 15.4, VIEW INCOME OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1737,7 +1737,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 14.4.1 | Nominal |
+| Scenario 15.4.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The income is shown  |
@@ -1747,7 +1747,7 @@ TODO:
 |  3     | System shows required information |
 
 
-| Scenario 14.4.2 | Variant |
+| Scenario 15.4.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | There is no a stored income |
 |  Post condition     | User receives an empty graph |
@@ -1757,7 +1757,7 @@ TODO:
 |  3     | System does not find any income |
 |  4     | System returns an empty graph |
 
-#### Use case 14.5, VIEW PERCENTAGE OF SPENDINGS BY CATEGORY IN A SPECIFIC TIME RANGE
+#### Use case 15.5, VIEW PERCENTAGE OF SPENDINGS BY CATEGORY IN A SPECIFIC TIME RANGE
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1767,7 +1767,7 @@ TODO:
 |  Exceptions     | There are no stored spendings |
 
 
-| Scenario 14.5.1 | Nominal |
+| Scenario 15.5.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The percentage of spendings by category in a specific time range is shown  |
@@ -1781,7 +1781,7 @@ TODO:
 |  7     | System shows the required pie chart |
 
 
-| Scenario 14.5.2 | Variant |
+| Scenario 15.5.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | There are no stored spendings |
 |  Post condition     | User receives a percentage equal to zero |
@@ -1791,7 +1791,7 @@ TODO:
 |  3     | System does not find any spending |
 |  4     | System shows a message asking the user to add spendings to display this chart  |
 
-#### Use case 14.6, VIEW OVERALL EXPENSES
+#### Use case 15.6, VIEW OVERALL EXPENSES
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1801,7 +1801,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 14.6.1 | Nominal |
+| Scenario 15.6.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The overall expenses are shown  |
@@ -1812,7 +1812,7 @@ TODO:
 |  4     | System shows required information |
 
 
-#### Use case 14.7, VIEW OVERALL INCOME
+#### Use case 15.7, VIEW OVERALL INCOME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1822,7 +1822,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 14.7.1 | Nominal |
+| Scenario 15.7.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The overall income are shown  |
@@ -1832,7 +1832,7 @@ TODO:
 |  3     | System shows required information |
 
 
-#### Use case 14.8, VIEW AVAILABLE BUDGET FOR EACH CATEGORY
+#### Use case 15.8, VIEW AVAILABLE BUDGET FOR EACH CATEGORY
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1842,7 +1842,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 14.8.1 | Nominal |
+| Scenario 15.8.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The available budget for each category is shown  |
@@ -1851,7 +1851,7 @@ TODO:
 |  2     | System looks up the available budget for each category |
 |  3     | System shows required information |
 
-#### Use case 14.9, VIEW PERCENTAGE OF AMOUNT SPENT FROM THE AVAILABLE BUDGET FOR EACH CATEGORY
+#### Use case 15.9, VIEW PERCENTAGE OF AMOUNT SPENT FROM THE AVAILABLE BUDGET FOR EACH CATEGORY
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1861,7 +1861,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 14.9.1 | Nominal |
+| Scenario 15.9.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The percentage of amount spent from the available budget for each category is shown  |
@@ -1870,8 +1870,8 @@ TODO:
 |  2     | System looks up the percentage of amount spent from the available budget for each category over the last month|
 |  3     | System shows required information |
 
-### Use Case 15, MANAGE USERS
-#### Use case 15.1, VIEW LIST OF USERS
+### Use Case 16, MANAGE USERS
+#### Use case 16.1, VIEW LIST OF USERS
 | Actors Involved        | Admin |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
@@ -1881,7 +1881,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 15.1.1 | Nominal |
+| Scenario 16.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
 |  Post condition     | List of users is shown |
@@ -1889,7 +1889,7 @@ TODO:
 |  1     | The admin asks for viewing the list of users |  
 |  2     | System shows required information |
 
-#### Use case 15.2, VIEW A USER'S ACCOUNT
+#### Use case 16.2, VIEW A USER'S ACCOUNT
 | Actors Involved        | Admin |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
@@ -1899,7 +1899,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 12.1 | Nominal |
+| Scenario 16.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
 |  Post condition     | User's account is shown |
@@ -1909,7 +1909,7 @@ TODO:
 |  3     | The admin asks for viewing a specific user's account |  
 |  4     | System shows required information |
 
-#### Use case 15.3, UPDATE A USER'S ACCOUNT
+#### Use case 16.3, UPDATE A USER'S ACCOUNT
 | Actors Involved        | Admin |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
@@ -1919,7 +1919,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 15.3.1 | Nominal |
+| Scenario 16.3.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
 |  Post condition     | User's account is updated |
@@ -1933,7 +1933,7 @@ TODO:
 |  7     | The admin submits |  
 |  8     | System updates the user's details |
 
-| Scenario 15.3.2 | Variants |
+| Scenario 16.3.2 | Variants |
 | ------------- |:-------------:| 
 |  Precondition     | Admin is logged in |
 |  Post condition     | User's account stays the same |
@@ -1947,7 +1947,7 @@ TODO:
 |  7     | The admin does not modify the user's details and submits |  
 |  8     | System does not update user's details |
 
-#### Use case 15.4, DELETE  A USER'S ACCOUNT
+#### Use case 16.4, DELETE  A USER'S ACCOUNT
 
 | Actors Involved        | Admin |
 | ------------- |:-------------:| 
@@ -1971,8 +1971,8 @@ TODO:
 |  5     | System deletes the user's account |
 
 
-### Use case 16, Manage ads
-#### Use case 16.1, View ads
+### Use case 17, Manage ads
+#### Use case 17.1, View ads
 
 | Actors Involved        | User, Google ads|
 | ------------- |:-------------:| 
@@ -1983,7 +1983,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 16.1.1 | Nominal |
+| Scenario 17.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | Advertisements are posted for user to view |
