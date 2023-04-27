@@ -51,7 +51,7 @@ TODO:
 |Google ads| Third party service for providing ads|
 |Start up company| Company that develops the software and provides the service|
 |Competitors| Companies that provide the same service|
-|Third party authentication service| Third party service for providing authentication|
+|Third party authentication service(Google authenticator and Apple authenticator)| Third party service for providing authentication|
 
 
 # Context Diagram and interfaces
@@ -110,7 +110,7 @@ TODO:
 | FR2.4   | Edit personal information 				|
 |FR2.5| Change application's settings|
 | FR2.5.1   | Change language   |
-| FR2.5.2  | Change display currency            | 
+| FR2.5.2  | Change display currency | 
 | FR2.5.3  | Change date format              | 
 | FR3 | Manage categories           | 
 | FR3.1 | Create a category             | 
@@ -168,9 +168,39 @@ TODO:
 |FR10.2| View a user's account|
 | FR10.3       | Update a user's account |
 | FR10.4       | Delete a user's account |
+| FR11| Manage ads|
+| FR12| Manage currency exchange for transactions in different currencies|
 
 
+# Table of rights 
 
+
+| FR       | User  | Admin | Google ads|Currency exchange service|Third party authentication service
+| ------------- |:-------------:|:-------------:|:-------------:|:-------------:|:-------------:| 
+|FR1.1.1| yes| yes| no| no| no| no|
+|FR1.1.2| yes| yes| no| no| no| yes
+|FR1.2|yes| yes| no| no| no| no
+|FR1.3|yes|yes| no| no|no|no
+|FR1.4|yes|yes|no|no| yes|
+|FR1.5|yes|yes| no| no|no|no
+|FR1.6|yes|yes| no| no|no|no
+|FR2.1|yes|yes| no| no|no|no
+|FR2.2|yes|yes| no| no|no|no
+|FR2.3|yes|yes| no| no|no|no
+|FR2.4|yes|yes| no| no|no|no
+|FR2.5.1|yes|yes| no| no|no|no
+|FR2.5.2|yes|yes| no| no|yes|no
+|FR2.5.3|yes|yes| no| no|no|no
+|FR3|yes|yes| no| no|no|no
+|FR4|yes|yes| no| no|no|no
+|FR5|yes|yes| no| no|no|no
+|FR6|yes|yes| no| no|no|no
+|FR7|yes|yes| no| no|no|no
+|FR8|yes|yes| no| no|no|no
+|FR9|yes|yes| no| no|no|no
+|FR10|no|yes|no|no|no|no
+|FR11|no|no|yes|no|no|no
+|FR12|no|no|no|no|yes|no
 ## Non Functional Requirements
 
 | ID        | Type (efficiency, reliability, ..)           | Description  | Refers to |
@@ -1839,6 +1869,10 @@ TODO:
 |  4     | systems asks the admin to confirm his/her intent of deleting user's account |
 |  4     | The admin confirms |  
 |  5     | System deletes the user's account |
+
+
+
+
 
 # Glossary
 
