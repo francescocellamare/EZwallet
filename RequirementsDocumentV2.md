@@ -569,7 +569,7 @@ TODO:
 					|
 ### Use Case 7.5, CHANGE APPLICATION'S SETTINGS
 #### Use case 7.5.1, CHANGE DEFAULT DISPLAY CURRENCY
-| Actors Involved        | User |
+| Actors Involved        | User, Currency exchange service |
 | ------------- |:-------------:| 
 |  Precondition    	  | User is logged in				|
 |  Post condition     | User changes default diplay currency	|
@@ -585,7 +585,7 @@ TODO:
 |  1     | User asks for changing default display currency																 |  
 |  2     | System shows list of possible choices 																 |
 |  3     | User chooses a new currency 																		 |
-|  4     | System updates each amount of money with the new currency using a 3rd party currency exchange service |
+|  4     | System updates each amount of money with the new currency through a 3rd party currency exchange service |
 
 #### Use case 7.5.2, CHANGE DATE FORMAT
 | Actors Involved        | User |
@@ -831,7 +831,7 @@ TODO:
 
 #### Use case 8.7, ALLOCATE A BUDGET FOR A CATEGORY
 
-| Actors Involved | User (Parent or Child) |
+| Actors Involved | User  |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | Provided amount of money is added to the specified category's budget |
@@ -852,7 +852,7 @@ TODO:
 
 #### Use case 8.8, TRANSFER BUDGET FROM ONE CATEGORY TO ANOTHER
 
-| Actors Involved | User (Parent or Child) |
+| Actors Involved | User  |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | Provided amount of money is moved from the budget of one category to another |
@@ -878,7 +878,7 @@ TODO:
 
 #### Use case 9.1, ADD A NEW TRANSACTION
 
-| Actors Involved | User  |
+| Actors Involved | User, Currency exchange service  |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | A new transaction is added to the user's list of transactions |
@@ -995,7 +995,7 @@ TODO:
 
 #### Use case 9.3, DELETE A TRANSACTION
 
-| Actors Involved | User (Parent or Child) |
+| Actors Involved | User  |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and has at least one transaction |
 |  Post condition     | The selected transactions are deleted |
@@ -1044,7 +1044,7 @@ TODO:
 
 #### Use case 9.4, VIEW TRANSACTIONS
 
-| Actors Involved | User (Parent or Child) |
+| Actors Involved | User  |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Poscondition     | user views a list of his/her transactions |
@@ -1084,7 +1084,7 @@ TODO:
 ### User Case 10, MANAGE BALANCE
 #### Use case 10.1, ADD A NEW BALANCE
 
-| Actors Involved | User (Parent or Child) |
+| Actors Involved | User  |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | A new balance is added to the User's profile |
@@ -1135,7 +1135,7 @@ TODO:
 
 #### Use case 10.2, DELETE A BALANCE
 
-| Actors Involved | User (Parent or Child) |
+| Actors Involved | User  |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The selected balance is deleted and the user receives a message indicating that the operation was successful |
@@ -1472,7 +1472,7 @@ TODO:
 
 #### Use Case 13.6, ADD INCOME TO CHILD ACCOUNT
 
-| Actors Involved        | User, Currency exchange API |
+| Actors Involved        | User, Currency exchange service |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in as a parent in the family account |
 |  Post condition     | Income is added to the Allowance balance in a child's account|
@@ -1869,6 +1869,30 @@ TODO:
 |  4     | systems asks the admin to confirm his/her intent of deleting user's account |
 |  4     | The admin confirms |  
 |  5     | System deletes the user's account |
+
+
+### Use case 16, Manage ads
+#### Use case 16.1, View ads
+
+| Actors Involved        | User, Google ads|
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | Advertisements are posted for user to view |
+|  Nominal Scenario     | User is logged in |
+|  Variants     | --- |
+|  Exceptions     | --- |
+
+
+| Scenario 16.1.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | Advertisements are posted for user to view |
+| Step#        | Description  |
+|  1     | User opens home page |  
+|  2     | System receives ads and displays them in home page|
+
+
+
 
 
 
