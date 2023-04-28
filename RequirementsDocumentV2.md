@@ -184,36 +184,36 @@ the application is free to use, but software companey makes money by selling adv
 
 | FR       | User  | Admin | Google ads|Currency exchange service|Third party authentication service
 | ------------- |:-------------:|:-------------:|:-------------:|:-------------:|:-------------:| 
-|FR1.1.1| yes| yes| no| no| no| no|
-|FR1.1.2| yes| yes| no| no| no| yes
-|FR1.2|yes| yes| no| no| no| no
-|FR1.3|yes|yes| no| no|no|no
+|FR1.1.1| yes| yes| no| no| no| 
+|FR1.1.2| yes| yes| no| no| yes|
+|FR1.2|yes| yes| no| no| no| 
+|FR1.3|yes|yes| no| no|no|
 |FR1.4|yes|yes|no|no| yes|
-|FR1.5|yes|yes| no| no|no|no
-|FR1.6|yes|yes| no| no|no|no
-|FR2.1|yes|yes| no| no|no|no
-|FR2.2|yes|yes| no| no|no|no
-|FR2.3|yes|yes| no| no|no|no
-|FR2.4|yes|yes| no| no|no|no
-|FR2.5.1|yes|yes| no| no|no|no
-|FR2.5.2|yes|yes| no| no|yes|no
-|FR2.5.3|yes|yes| no| no|no|no
-|FR3|yes|yes| no| no|no|no
-|FR4|yes|yes| no| no|no|no
-|FR5|yes|yes| no| no|no|no
-|FR6|yes|yes| no| no|no|no
-|FR7|yes|yes| no| no|no|no
-|FR8|yes|yes| no| no|no|no
-|FR9|yes|yes| no| no|no|no
-|FR10|no|yes|no|no|no|no
-|FR11|no|no|yes|no|no|no
-|FR12|no|no|no|no|yes|no
+|FR1.5|yes|yes| no| no|no|
+|FR1.6|yes|yes| no| no|no|
+|FR2.1|yes|yes| no| no|no|
+|FR2.2|yes|yes| no| no|no|
+|FR2.3|yes|yes| no| no|no|
+|FR2.4|yes|yes| no| no|no|
+|FR2.5.1|yes|yes| no| no|no|
+|FR2.5.2|yes|yes| no| yes|no|
+|FR2.5.3|yes|yes| no| no|no|
+|FR3|yes|yes| no| no|no|
+|FR4|yes|yes| no| no|no|
+|FR5|yes|yes| no| no|no|
+|FR6|yes|yes| no| no|no|
+|FR7|yes|yes| no| no|no|
+|FR8|yes|yes| no| no|no|
+|FR9|yes|yes| no| no|no|
+|FR10|no|yes|no|no|no|
+|FR11|no|no|yes|no|no|
+|FR12|no|no|no|no|yes|
 
 ## Non Functional Requirements
 
 | ID        | Type (efficiency, reliability, ..)           | Description  | Refers to |
 | ------------- |:-------------:| :-----:| -----:|
-|  NFR1     |  Usability | Users should use the core functions after following a simple tutorial on first login | all FR|
+|  NFR1     |  Usability | Users should use the core functions after following a simple tutorial sent by mail when signing up | all FR|
 |  NFR2     | Compatibility | The website (frontend) should run on all browsers | all FR|
 |  NFR3     | Security | Protection from malicious access, user authorization, comply with data safety and privacy laws such as GDPR | all FR|
 |  NFR4 | Efficiency | website load time should be less than 0.5s from PC and 0.3s for mobile, server response time should be less than 0.5s | FR4, FR3, FR2, FR5| 
@@ -235,7 +235,7 @@ the application is free to use, but software companey makes money by selling adv
 | Actors Involved | User |
 | ------------- |:-------------:| 
 |  Precondition     | User has no account 		|
-|  Post condition   | User has a new account	|
+|  Post condition   | User has a new account and a tutorial video is sent by email	|
 |  Nominal Scenario | User uses a new email and a valid password with correct confirmation |
 |  Variants     	| --- |
 |  Exceptions     	| User uses an email that is already linked to an account or he/she has entered a non-compliant password or confirmation password does not match|
@@ -244,7 +244,7 @@ the application is free to use, but software companey makes money by selling adv
 | Scenario 1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User has no account 	 |
-|  Post condition   | User has a new account |
+|  Post condition   | User has a new account and a tutorial video is sent by email	 |
 | Step#  | Description  |
 |  1     | User asks to sign up 									  |  
 |  2     | System asks for email and password 						  |
@@ -303,7 +303,7 @@ the application is free to use, but software companey makes money by selling adv
 | Actors Involved | User |
 | ------------- |:-------------:| 
 |  Precondition     | User has no account 		|
-|  Post condition   | User has a new account	|
+|  Post condition   | User has a new account and a tutorial video is sent by email		|
 |  Nominal Scenario | User sign up using a 3rd party service |
 |  Variants     	| --- |
 |  Exceptions     	| User is not registered to any 3rd party agent, user fails to autheniticate using the 3rd party service|
@@ -311,7 +311,7 @@ the application is free to use, but software companey makes money by selling adv
 | Scenario 2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition       | User has an account |
-|  Post condition     | User is authorized |
+|  Post condition     | User has a new account and a tutorial video is sent by email	|
 | Step#  | Description  |
 |  1     | User asks to login using a 3rd party service 				  |  
 |  2     | System asks for the service to be used 						  |
