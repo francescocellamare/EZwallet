@@ -1,13 +1,13 @@
 # Requirements Document - current EZWallet
 
-Date: 
+Date: 21/04/2023
 
 Version: V1 - description of EZWallet in CURRENT form (as received by teachers)
 
  
 | Version number | Change |
 | ----------------- |:-----------|
-| | | 
+|1.0 |Final | 
 
 
 # Contents
@@ -107,10 +107,9 @@ EZWallet (read EaSy Wallet) is a software application designed to help individua
 | ------------- |:-------------:| :-----:| -----:|
 |  NFR1     |  Usability | Users should use the core functions after following a simple tutorial on first login | all FR|
 |  NFR2     | Compatibility | The website (frontend) should run on all browsers | all FR|
-|  NFR3     | Security | Protection from malicious access, user authorization, comply with data safety and privacy laws such as GDPR | all FR|
-|  NFR4 | Efficiency | website load time should be less than 3s from PC and 5s for mobile, server response time should be less than 0.5s | all FR| 
-|  NFR5 | Maintainability | fix defects in less than 1hr, add/modify/or cancel a software function within 24hrs | all FR| 
-|  NFR6 | Availability | The server should not go down for more than 30 mins at a time | all FR| 
+|  NFR3 | Efficiency | website load time should be less than 3s from PC and 5s for mobile, server response time should be less than 0.5s | all FR| 
+|  NFR4 | Maintainability | fix defects in less than 1hr, add/modify/or cancel a software function within 24hrs | all FR| 
+
 
 
 

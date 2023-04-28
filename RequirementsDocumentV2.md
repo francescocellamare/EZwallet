@@ -1,13 +1,13 @@
 # Requirements Document - future EZWallet
 
-Date: 
+Date: 28/04/2023
 
 Version: V2 - description of EZWallet in FUTURE form (as proposed by the team)
 
  
 | Version number | Change |
 | ----------------- |:-----------|
-| | | 
+| 1.0 | Final | 
 
 
 # Contents
@@ -31,14 +31,18 @@ Version: V2 - description of EZWallet in FUTURE form (as proposed by the team)
 - [Deployment diagram](#deployment-diagram)
 
 # Informal description
-EZWallet (read EaSy Wallet) is a software application designed to help individuals and families keep track of their expenses. Users can enter and categorize their expenses, allowing them to quickly see where their money is going. EZWallet is a powerful tool for those looking to take control of their finances and make informed decisions about their spending.
+EZWallet is a website designed to help individuals and families keep track of their transactions. It allows users to add transactions, categorize them, and set a budget for each category by using the envelope budgetting method. Users can gain more financial awareness by examining the application's detailed summaries and trends. It is also a powerful tool for parents to monitor their children's finances. It allows  parents to add their children into a common family account, set their allowance, and keep an eye on their spendings.
 
-<!--- 
-TODO:
-	context diagram
-	fix actor
-	discuss personas
- --->
+main features: 
+
+* Budget management using the envelope budgeting method
+* Family accounts creation and management
+* Detailed reports of user's spending and income activities
+* Automatic conversion to a user defined currency
+
+
+## Business Model
+the application is free to use, but software companey makes money by selling advertising space on the application.
 
 # Stakeholders
 
@@ -71,17 +75,17 @@ TODO:
 |Third party authentication service| Internet link| Apple authentication's API and Google authentication's API|
 
 # Stories and personas
-- Persona 1: 20 years old student
+- Persona 1: 20 years old male student who goes out a lot
   - wants to keep track of his monthly expenses and identify problem areas in his spendings and fix them by changing his financial habbits. 
 - Persona 2: 50 years old Business man who travels a lot
-  - wants to keep track of his expenses that are in different currenies without doing the exchange each time adds a new transaction to his account.
+  - wants to keep track of his expenses in different countries without  having to exchange currencies each time he adds a new transaction to his account.
 - Persona 3: 38 years old single mother of 2 boys
   -  wants to keep track of her kids' expenses and teach them to be responsible.
-- Persona 4: 10 years old kid who is spending a lot of money on toys
+- Persona 4: Parents of a 10 years old kid who is spending a lot of money on toys
   - his parents want to monitor his purshases and limit them.
 - Persona 5: 30 years old man, with average income
   - would like to keep historical reports of his spendings and monitor trends to limit his expenses in some unecessary categories and keep an organized view of his financial state.
-- Persona 6: 25 years old newley employed male 
+- Persona 6: 25 years old newly employed male 
   - would like to budget his salary so that he avoids debt and save money to buy a car.
 
 
@@ -140,8 +144,9 @@ TODO:
 |  FR4.4.3.2   |  Filter by category|
 |  FR5     | Manage balances |    
 |  FR5.1     |  Add a new balance |        
-|  FR5.2     |  Delete a balance |        
-|FR6| Join family account | 
+|  FR5.2     |  Delete a balance |  
+|  FR5.3     |  View balances|        
+|FR6| Join family account| 
 |FR7| Create a family account|
 |FR8| Manage family accounts|
 |FR8.1| Delete a family account|
@@ -151,18 +156,20 @@ TODO:
 |FR8.5| remove user from family account | 
 |FR8.6| View child's dashboard |
 |FR9| View reports |
-|FR9.1| Visualize trends over time|
-|FR9.1.1| View amount of selected balances|
-|FR9.1.2| View total amount of all balances|
-|FR9.1.3| View expenses|
-|FR9.1.4| View expenses per category|
-|FR9.1.5| View income|
-|FR9.2  | View percentage of spendings by category in a specific time range|
-|FR9.3  | View overall expenses |
-|FR9.4  | View overall expenses per category |
-|FR9.5  | View overall income |
-|FR9.6  | View available budget for each category|
-|FR9.7  | View percentage of amount spent from the available budget for each category|
+|FR9.1| View summary|
+|FR9.1.1| View overall income|
+|FR9.1.2|View overall expenses|
+|FR9.1.3| View overall budget for each category|
+|FR9.1.4|View percentage of spendings by category in a specific time range|
+|FR9.1.5|View percentage of amount spent from the available budget for each category|
+|FR9.1.6|View overall expenses per category|
+|F9.2|View Balance trend|
+|FR9.2.1|View total amount of all balances|
+|FR9.2.2|View amount of selected balances|
+|FR9.3| View Expense's trend|
+|FR9.3.1|View expenses|
+|FR9.3.2|View expenses per category|
+|FR9.4|View income trend|
 | FR10         | Manage users' accounts |
 | FR10.1      | View list of users |
 |FR10.2| View a user's account|
@@ -201,6 +208,7 @@ TODO:
 |FR10|no|yes|no|no|no|no
 |FR11|no|no|yes|no|no|no
 |FR12|no|no|no|no|yes|no
+
 ## Non Functional Requirements
 
 | ID        | Type (efficiency, reliability, ..)           | Description  | Refers to |
@@ -208,15 +216,17 @@ TODO:
 |  NFR1     |  Usability | Users should use the core functions after following a simple tutorial on first login | all FR|
 |  NFR2     | Compatibility | The website (frontend) should run on all browsers | all FR|
 |  NFR3     | Security | Protection from malicious access, user authorization, comply with data safety and privacy laws such as GDPR | all FR|
-|  NFR4 | Efficiency | website load time should be less than 3s from PC and 5s for mobile, server response time should be less than 0.5s | all FR| 
-|  NFR5 | Maintainability | fix defects in less than 1hr, add/modify/or cancel a software function within 24hrs | all FR| 
-|  NFR6 | Availability | The server should not go down for more than 30 mins at a time | all FR| 
-
+|  NFR4 | Efficiency | website load time should be less than 0.5s from PC and 0.3s for mobile, server response time should be less than 0.5s | FR4, FR3, FR2, FR5| 
+|  NFR5 | Efficiency | website load time should be less than 1.2s from PC and 1s for mobile, server response time should be less than 0.7s | FR2, FR6, FR7, FR8, FR10 | 
+|  NFR6 | Efficiency | website load time should be less than 1.6s from PC and 1.4s for mobile, server response time should be less than 1s | FR1, FR9 | 
+|  NFR7 | Maintainability | fix defects in less than 1hr, add/modify/or cancel a software function within 24hrs | all FR| 
+|  NFR8 | Availability | The server should not go down for more than 30 mins at a time | all FR| 
+| NFR9| Responsiveness| Website page can adapt on the device's screen where it is shown| All FR|
+| NFR10| Scalability| The website should accomodate to the increase in the number of users | All FR|
 
 # Use case diagram and use cases
 
 ## Use case diagram
-
 
 ![use case diagram](code/images/Use_case_diagram_version2.png "use case diagram")
 
@@ -982,8 +992,8 @@ TODO:
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | A new transaction is added to the user's list of transactions |
-|  Nominal Scenario     | The information entered by user is valid |
-|  Variants     | User asks to create a recurrent transaction, User didn't specify a category | <!--transaction in != currency is not covered-->
+|  Nominal Scenario     | The information entered by user is valid and transaction's currency is same as user's display currency |
+|  Variants     | User asks to create a recurrent transaction, User didn't specify a category, User added transaction in currency different than display currency | 
 |  Exceptions     | User provided invalid information |
 
 
@@ -993,7 +1003,7 @@ TODO:
 |  Post condition     | A new transaction is added to the user's list of transactions |
 | Step#        | Description  |
 |  1     | user asks to add a new transaction |  
-|  2     | system asks the user to provide transaction date, amount, direction, category, balance, an optional description, wether to make it a recurrent transaction, and the period in days of the recurrent transaction  |
+|  2     | system asks the user to provide transaction date, amount, direction, currency,  category, balance, an optional description, wether to make it a recurrent transaction, and the period in days of the recurrent transaction  |
 |  3     | user fills all required fields and does not select the recurrent transaction option |
 |  4	 | user submits form		|
 |  5     | system validates all input fields					|
@@ -1008,15 +1018,16 @@ TODO:
 |  Post condition     | A new recurrent transaction is added to the user's list of transactions after a specific period of time |
 | Step#        | Description  |
 |  1     | user asks to add a new transaction |  
-|  2     | system asks the user to provide transaction date, amount, direction, category, balance, an optional description, wether to make it a recurrent transaction, and the period of the recurrent transaction  |
+|  2     | system asks the user to provide transaction date, amount, direction, currency, category, balance, an optional description, wether to make it a recurrent transaction, and the period of the recurrent transaction  |
 |  3     | user fills all required fields, selects the recurrent transaction option, and sets the period to the desired amount of days  |
 |  4	 | user submits form		|
 |  5     | system validates all input fields					|
-|  6     | system creates transaction |
-|  7     | system calculates the remaining budget for the selected category |
-|  8     | system notifies the user if the budget for that category was exceeded and also notifies parents if the user is a child in a family |
-|  9     | system returns the new transaction and a message indicating that the operation was successful					|
-| 10     | system adds the same transaction to the user's transaction list each time the specified number of days passes |
+|  6     | system verifies that transaction's currency is same as display currency|
+|  7     | system creates transaction |
+|  8     | system calculates the remaining budget for the selected category |
+|  9     | system notifies the user if the budget for that category was exceeded and also notifies parents if the user is a child in a family |
+|  10     | system returns the new transaction and a message indicating that the operation was successful					|
+| 11     | system adds the same transaction to the user's transaction list each time the specified number of days passes |
 
 | Scenario 10.1.3 | Variant |
 | ------------- |:-------------:| 
@@ -1024,16 +1035,34 @@ TODO:
 |  Post condition     | A new transaction is added to the user's list of transactions |
 | Step#        | Description  |
 |  1     | user asks to add a new transaction |  
-|  2     | system asks the user to provide transaction date, amount, direction, category, balance, an optional description, wether to make it a recurrent transaction, and the period of the recurrent transaction  |
+|  2     | system asks the user to provide transaction date, amount, direction, currency, category, balance, an optional description, wether to make it a recurrent transaction, and the period of the recurrent transaction  |
 |  3     | user fills all required fields but doesn't select a category |
 |  4	 | user submits the form		|
 |  5     | system validates all input fields and finds out that the category is not specified |
 |  6     | system sets the category to the "Others" default catgeory  |
-|  7     | system calculates the remaining budget for the "Others" category |
-|  8     | system notifies the user if the budget for that category was exceeded and also notifies parents if the user is a child in a family |
-|  9     | system returns the new transaction and a message indicating that the operation was successful					|
+|  7     | system verifies that transaction's currency is same as display currency| 
+|  8     | system calculates the remaining budget for the "Others" category |
+|  9     | system notifies the user if the budget for that category was exceeded and also notifies parents if the user is a child in a family |
+|  10     | system returns the new transaction and a message indicating that the operation was successful					|
 
-| Scenario 10.1.4 | Exception |
+| Scenario 10.1.4 | Variant |
+| ------------- |:-------------:| 
+|  Precondition     |  User is logged in  |
+|  Post condition     | A new transaction is added to the user's list of transactions |
+| Step#        | Description  |
+|  1     | user asks to add a new transaction |  
+|  2     | system asks the user to provide transaction date, amount, direction, currency, category, balance, an optional description, wether to make it a recurrent transaction, and the period of the recurrent transaction  |
+|  3     | user fills all required fields but doesn't select a category |
+|  4	 | user submits the form		|
+|  5     | system validates all input fields|
+|  6     | system verifies that transaction's currency is different than display currency| 
+|  7     | currency exchange is done through a currency exchange service|
+|  8     | system creates transaction |
+|  9     | system calculates the remaining budget for the selected category |
+|  10     | system returns the new transaction and a message indicating that the operation was successful					|
+
+
+| Scenario 10.1.5 | Exception |
 | ------------- |:-------------:| 
 |  Precondition     |  User is logged in  |
 |  Post condition     | transaction is not created and the user receives an error message |
@@ -1099,9 +1128,9 @@ TODO:
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and has at least one transaction |
 |  Post condition     | The selected transactions are deleted |
-|  Nominal Scenario     | user confirms the deletion and does not cancel the operation |
+|  Nominal Scenario     | user confirms the deletion |
 |  Variants     | --- |
-|  Exceptions     | user does not confirm the operation, user decides to restore the deleted transactions|
+|  Exceptions     | user does not confirm the operation|
 
 | Scenario 10.3.1 | Nominal |
 | ------------- |:-------------:| 
@@ -1113,8 +1142,8 @@ TODO:
 |  3     | system asks the user to confirm the operation |
 |  4     | user confirms his/her intent to delete the selected transactions |
 |  5     | system deletes the transactions |
-|  6     | system informs the user that the operation was successful and displays an undo popup |
-|  7     | system waits for a couple of seconds before hiding the undo button |
+|  6     | system informs the user that the operation was successful |
+
 
 | Scenario 10.3.2 | Exception |
 | ------------- |:-------------:| 
@@ -1127,20 +1156,6 @@ TODO:
 |  4     | user does not confirm his/her intent to delete the selected transactions |
 |  5     | The system does not delete the selected transactions |
 
-| Scenario 10.3.3 | Exception |
-| ------------- |:-------------:| 
-|  Precondition     |  User is logged in and has at least one transaction |
-|  Post condition     | The selected transactions are not deleted |
-| Step#        | Description  |
-|  1     | user selects one or more transactions |  
-|  2     | user asks to delete transactions |
-|  3     | system asks the user to confirm the operation |
-|  4     | user confirms his/her intent to delete the selected transactions |
-|  5     | system deletes the transactions |
-|  6     | system informs the user that the operation was successful and displays an undo popup |
-|  7     | user decides to undo the operation |
-|  8	 | system restores all the deleted transactions |
-|  9 	 | systems notifies the user that the transactions were restored |
 
 #### Use case 10.4, VIEW TRANSACTIONS
 
@@ -1198,7 +1213,7 @@ TODO:
 |  Post condition     | A new balance is added to the User's profile  |
 | Step#        | Description  |
 |  1     | user asks to add a new balance |  
-|  2     | system asks for the balance name, icon, and starting amount |
+|  2     | system asks for the balance name, and starting amount |
 |  3	 | user provides all the reqiured information |
 |  4	 | system validates all input fields (checks that the balance name is not already in use and if the starting balance is set) |  
 |  5 | system creates the new balance |
@@ -1211,7 +1226,7 @@ TODO:
 |  Post condition     | A new balance is added to the User's profile |
 | Step#        | Description  |
 |  1     | user asks to add a new balance |  
-|  2     | system asks for the balance name, icon, and starting amount |
+|  2     | system asks for the balance name, and starting amount |
 |  3	 | user provides all the reqiured information but does not set a starting balance |
 |  4	 | system validates all input fields (checks that the balance name is not already in use and if the starting balance is set) |  
 | 5 | system sets the starting balance to zero | 
@@ -1226,7 +1241,7 @@ TODO:
 |  Post condition     | The new balance is not created and the user recevies an error message  |
 | Step#        | Description  |
 |  1     | user asks to add a new balance |  
-|  2     | system asks for the balance name, icon, and starting amount |
+|  2     | system asks for the balance name, and starting amount |
 |  3	 | user provides all the reqiured information but does not set a starting balance |
 |  4	 | system validates the input fields (checks that the balance name is not already in use and if the starting balance is set) |  
 | 5 | system finds out that the balance name is already in use | 
@@ -1271,6 +1286,24 @@ TODO:
 |  1     | kid asks to delete allowance balance |  
 |  2     | system refuses to delete balance | 
 |  3     | system informs the kid that he/she cannot delete the default allowance balance |
+#### Use case 11.3, VIEW BALANCES
+
+| Actors Involved | User  |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Poscondition     | User views a list of his/her balances |
+|  Nominal Scenario     | User is logged in  |
+|  Variants     | ---  |
+|  Exceptions     | --- |
+
+| Scenario 11.3.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     |  User is logged in |
+|  Post condition     | User views all of his/her balances |
+| Step#        | Description  |
+|  1     | User asks to view his/her balances |  
+|  2  | System retrieves all balances |
+|  3     | Systems returns the retrieved list of balances |
 
 
 ### Use Case 12, CREATE A FAMILY ACCOUNT
@@ -1634,7 +1667,124 @@ TODO:
 |  3     | System denies the operation and notifies user that he can't do this operation|
 ### Use case 15, VIEW REPORTS
 
-#### Use case 15.1, VIEW AMOUNT AVAILABLE IN SELECTED BALANCES OVER TIME
+#### Use case 15.1, VIEW SUMMARY
+
+
+##### Use case 15.1.1, VIEW OVERALL INCOME
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | The overall income is shown |
+|  Nominal Scenario     | There is a stored income |
+|  Variants     |  --- |
+|  Exceptions     | --- |
+
+
+| Scenario 15.1.1.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | The overall income are shown  |
+| Step#        | Description  |
+|  1     | The user asks for viewing overall income  |  
+|  2     | System looks up the overall income over the last month |
+|  3     | System shows required information |
+
+##### Use case 15.1.2, VIEW OVERALL EXPENSES
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | The overall expenses are shown |
+|  Nominal Scenario     | There are stored expenses |
+|  Variants     | --- |
+|  Exceptions     | --- |
+
+
+| Scenario 15.1.2.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | The overall expenses are shown  |
+| Step#        | Description  |
+|  1     | The user asks for viewing overall expenses  |  
+|  2     | System looks up the overall expenses |
+|  3     | System sums up all expenses from all balances over the last month |
+|  4     | System shows required information |
+
+
+#### Use case 15.1.3, VIEW OVERALL BUDGET FOR EACH CATEGORY
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | The available budget for each category is shown |
+|  Nominal Scenario     | User is logged in  |
+|  Variants     |  --- |
+|  Exceptions     | --- |
+
+
+| Scenario 15.1.3.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | The available budget for each category is shown  |
+| Step#        | Description  |
+|  1     | The user asks for viewing available budget for each category  |  
+|  2     | System looks up the available budget for each category |
+|  3     | System shows required information |
+
+#### Use case 15.1.4, VIEW PERCENTAGE OF SPENDINGS BY CATEGORY IN A SPECIFIC TIME RANGE
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | The percentage of spendings by category in a specific time range is shown as a pie chart |
+|  Nominal Scenario     | There are stored spendings |
+|  Variants     |  --- |
+|  Exceptions     | There are no stored spendings |
+
+
+| Scenario 15.1.4.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | The percentage of spendings by category in a specific time range is shown  |
+| Step#        | Description  |
+|  1     | The user asks for viewing the percentage of spendings by category in a specific time range |  
+|  2     | System looks up the spendings by category |
+|  3     | System shows spendings by category |
+|  4     | System asks for selecting a time range |  
+|  5     | The user selects a time range |  
+|  6     | System computes the percentages |
+|  7     | System shows the required pie chart |
+
+
+| Scenario 15.1.4.2 | Variant |
+| ------------- |:-------------:| 
+|  Precondition     | There are no stored spendings |
+|  Post condition     | User receives a percentage equal to zero |
+| Step#        | Description  |
+|  1     | The user asks for viewing the percentage of spendings by category  |  
+|  2     | System looks up the spendings by category |
+|  3     | System does not find any spending |
+|  4     | System shows a message asking the user to add spendings to display this chart  |
+
+
+##### Use case 15.1.5, VIEW PERCENTAGE OF AMOUNT SPENT FROM THE AVAILABLE BUDGET FOR EACH CATEGORY
+| Actors Involved        | User |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | The percentage of amount spent from the available budget for each category is shown |
+|  Nominal Scenario     | --- |
+|  Variants     |  --- |
+|  Exceptions     | --- |
+
+
+| Scenario 15.1.5.1 | Nominal |
+| ------------- |:-------------:| 
+|  Precondition     | User is logged in |
+|  Post condition     | The percentage of amount spent from the available budget for each category is shown  |
+| Step#        | Description  |
+|  1     | The user asks for viewing the percentage of amount spent from the available budget for each category  |  
+|  2     | System looks up the percentage of amount spent from the available budget for each category over the last month|
+|  3     | System shows required information |
+
+#### Use case 15.2, VIEW BALANCE TREND
+#### Use case 15.2.1, VIEW AMOUNT AVAILABLE IN SELECTED BALANCES OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1644,7 +1794,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 15.1.1 | Nominal |
+| Scenario 15.2.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The available amount in each selected balances is shown over time |
@@ -1656,7 +1806,7 @@ TODO:
 |  5     | The user asks for viewing the amount of the selected balances over time |  
 |  6     | System shows required information |
 
-| Scenario 15.1.2 | Nominal |
+| Scenario 15.2.1.2 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The available amount in each selected balances is shown over time |
@@ -1668,7 +1818,9 @@ TODO:
 |  5     | The user asks for viewing the amount of all balances over time |  
 |  6     | System shows required information |
 
-#### Use case 15.2, VIEW EXPENSES OVER TIME
+#### Use case 15.3, VIEW EXPENSES' TREND
+
+#### Use case 15.3.1, VIEW EXPENSES OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1678,7 +1830,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 15.2.1 | Nominal |
+| Scenario 15.3.1.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
 |  Post condition     | The expenses are shown  |
@@ -1687,7 +1839,7 @@ TODO:
 |  2     | System looks up the expenses |
 |  3     | System shows required information |
 
-| Scenario 15.2.2 | Variant |
+| Scenario 15.3.1.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | There are no stored expenses |
 |  Post condition     | User receives an empty graph |
@@ -1696,8 +1848,7 @@ TODO:
 |  2     | System looks up the expenses |
 |  3     | System does not find any expenses |
 |  4     | System returns an empty graph |
-
-#### Use case 15.3, VIEW EXPENSES PER CATEGORY OVER TIME
+#### Use case 15.3.2, VIEW EXPENSES PER CATEGORY OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in |
@@ -1707,7 +1858,7 @@ TODO:
 |  Exceptions     | --- |
 
 
-| Scenario 15.3.1 | Nominal |
+| Scenario 15.3.2.1 | Nominal |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and the user has at least one expense |
 |  Post condition     | The expenses per category are shown  |
@@ -1717,7 +1868,7 @@ TODO:
 |  3     | System shows required information |
 
 
-| Scenario 15.3.2 | Variant |
+| Scenario 15.3.2.2 | Variant |
 | ------------- |:-------------:| 
 |  Precondition     | User is logged in and there are no stored expenses  |
 |  Post condition     | User receives an empty graph |
@@ -1727,6 +1878,7 @@ TODO:
 |  3     | System does not find any expenses |
 |  4     | System returns an empty graph |
 
+#### Use case 15.4, VIEW INCOME TREND
 #### Use case 15.4, VIEW INCOME OVER TIME
 | Actors Involved        | User |
 | ------------- |:-------------:| 
@@ -1757,118 +1909,6 @@ TODO:
 |  3     | System does not find any income |
 |  4     | System returns an empty graph |
 
-#### Use case 15.5, VIEW PERCENTAGE OF SPENDINGS BY CATEGORY IN A SPECIFIC TIME RANGE
-| Actors Involved        | User |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | The percentage of spendings by category in a specific time range is shown as a pie chart |
-|  Nominal Scenario     | There are stored spendings |
-|  Variants     |  --- |
-|  Exceptions     | There are no stored spendings |
-
-
-| Scenario 15.5.1 | Nominal |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | The percentage of spendings by category in a specific time range is shown  |
-| Step#        | Description  |
-|  1     | The user asks for viewing the percentage of spendings by category in a specific time range |  
-|  2     | System looks up the spendings by category |
-|  3     | System shows spendings by category |
-|  4     | System asks for selecting a time range |  
-|  5     | The user selects a time range |  
-|  6     | System computes the percentages |
-|  7     | System shows the required pie chart |
-
-
-| Scenario 15.5.2 | Variant |
-| ------------- |:-------------:| 
-|  Precondition     | There are no stored spendings |
-|  Post condition     | User receives a percentage equal to zero |
-| Step#        | Description  |
-|  1     | The user asks for viewing the percentage of spendings by category  |  
-|  2     | System looks up the spendings by category |
-|  3     | System does not find any spending |
-|  4     | System shows a message asking the user to add spendings to display this chart  |
-
-#### Use case 15.6, VIEW OVERALL EXPENSES
-| Actors Involved        | User |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | The overall expenses are shown |
-|  Nominal Scenario     | There are stored expenses |
-|  Variants     | --- |
-|  Exceptions     | --- |
-
-
-| Scenario 15.6.1 | Nominal |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | The overall expenses are shown  |
-| Step#        | Description  |
-|  1     | The user asks for viewing overall expenses  |  
-|  2     | System looks up the overall expenses |
-|  3     | System sums up all expenses from all balances over the last month |
-|  4     | System shows required information |
-
-
-#### Use case 15.7, VIEW OVERALL INCOME
-| Actors Involved        | User |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | The overall income is shown |
-|  Nominal Scenario     | There is a stored income |
-|  Variants     |  --- |
-|  Exceptions     | --- |
-
-
-| Scenario 15.7.1 | Nominal |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | The overall income are shown  |
-| Step#        | Description  |
-|  1     | The user asks for viewing overall income  |  
-|  2     | System looks up the overall income over the last month |
-|  3     | System shows required information |
-
-
-#### Use case 15.8, VIEW AVAILABLE BUDGET FOR EACH CATEGORY
-| Actors Involved        | User |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | The available budget for each category is shown |
-|  Nominal Scenario     | User is logged in  |
-|  Variants     |  --- |
-|  Exceptions     | --- |
-
-
-| Scenario 15.8.1 | Nominal |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | The available budget for each category is shown  |
-| Step#        | Description  |
-|  1     | The user asks for viewing available budget for each category  |  
-|  2     | System looks up the available budget for each category |
-|  3     | System shows required information |
-
-#### Use case 15.9, VIEW PERCENTAGE OF AMOUNT SPENT FROM THE AVAILABLE BUDGET FOR EACH CATEGORY
-| Actors Involved        | User |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | The percentage of amount spent from the available budget for each category is shown |
-|  Nominal Scenario     | --- |
-|  Variants     |  --- |
-|  Exceptions     | --- |
-
-
-| Scenario 15.9.1 | Nominal |
-| ------------- |:-------------:| 
-|  Precondition     | User is logged in |
-|  Post condition     | The percentage of amount spent from the available budget for each category is shown  |
-| Step#        | Description  |
-|  1     | The user asks for viewing the percentage of amount spent from the available budget for each category  |  
-|  2     | System looks up the percentage of amount spent from the available budget for each category over the last month|
-|  3     | System shows required information |
 
 ### Use Case 16, MANAGE USERS
 #### Use case 16.1, VIEW LIST OF USERS
@@ -1971,8 +2011,8 @@ TODO:
 |  5     | System deletes the user's account |
 
 
-### Use case 17, Manage ads
-#### Use case 17.1, View ads
+### Use case 17, MANAGE ADS
+#### Use case 17.1, VIEW ADS
 
 | Actors Involved        | User, Google ads|
 | ------------- |:-------------:| 
@@ -1988,14 +2028,8 @@ TODO:
 |  Precondition     | User is logged in |
 |  Post condition     | Advertisements are posted for user to view |
 | Step#        | Description  |
-|  1     | User opens home page |  
-|  2     | System receives ads and displays them in home page|
-
-
-
-
-
-
+|  1     | User opens the website |  
+|  2     | System fetches ads from the Google ads API and displays them in their corresponding containers |
 
 
 # Glossary
@@ -2010,7 +2044,3 @@ TODO:
 # Deployment Diagram 
 
 ![Deployment Diagram](code/images/deployment_diagramV2.png)
-
-
-
-
