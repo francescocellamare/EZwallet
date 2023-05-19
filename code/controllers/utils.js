@@ -9,6 +9,40 @@ import jwt, { decode } from 'jsonwebtoken'
  * @throws an error if the query parameters include `date` together with at least one of `from` or `upTo`
  */
 export const handleDateFilterParams = (req) => {
+
+    // Comparison operators : $eq, $gt, $gte, $in, $lt, $lte, $ne, $nin
+    let operations = [];
+    
+    for(const key in req.query){
+        
+        let operation;
+        let args;
+
+        // check if param is a date
+        const regex = /^[\d,]+$/;
+        if(regex.test(req.query[key])){
+            continue;
+        }
+        
+        if(key === "in" | key === "nin"){
+            // in and nin accept an array of amounts (comma seperated in the query) 
+            args = req.query[key].split(",")  
+            args = args.map(arg => new Date(arg));          
+        }else{
+            // all other operands only accept one value
+            args = new Date(req.query[key])
+        }
+
+        operation = `$${key}`
+        let filter = {}
+        filter[operation] = args;
+
+        operations.push({
+            date : filter
+        })
+    }
+
+    return operations;
 }
 
 /**
@@ -140,6 +174,40 @@ export const verifyAuth = (req, res, info) => {
  *  Example: {amount: {$gte: 100}} returns all transactions whose `amount` parameter is greater or equal than 100
  */
 export const handleAmountFilterParams = (req) => {
+
+    // Comparison operators : $eq, $gt, $gte, $in, $lt, $lte, $ne, $nin
+    let operations = [];
+    
+    for(const key in req.query){
+        
+        let operation;
+        let args;
+        
+        // check if param is a number
+        const regex = /^[\d,]+$/;
+        if(!regex.test(req.query[key])){
+            continue;
+        }
+
+        if(key === "in" | key === "nin"){
+            // in and nin accept an array of amounts (comma seperated in the query) 
+            args = req.query[key].split(",")  
+            args = args.map(arg => Number(arg));          
+        }else{
+            // all other operands only accept one value
+            args = Number(req.query[key])
+        }
+
+        operation = `$${key}`
+        let filter = {}
+        filter[operation] = args;
+
+        operations.push({
+            amount : filter
+        })
+    }
+
+    return operations;
 }
 
 /*----------------------------------------------------
