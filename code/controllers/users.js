@@ -61,20 +61,17 @@ export const createGroup = async (req, res) => {
   
   // null for user not found
   async function getUserId(email){
-    const id = await User.find( {email: email} ).select('_id')
-    if(id.length === 0) 
-      return null
+    const id = await User.findOne( {email: email}, {_id: 1} )
     return id
   }
 
   async function isPartOfOtherGroups(email) {
-    const inAnyGroup = await Group.find({})
-      .select('members.email')
+    const inAnyGroup = await Group.find({}, {_id: 0, members: 1})
     let emails= []
     
     for(let group of inAnyGroup) {
       for(let email of group.members)
-        emails.push(email)
+      emails.push(email)
     }
 
     emails = emails.map( item => item.email)
@@ -84,27 +81,13 @@ export const createGroup = async (req, res) => {
     return false
   }
 
-  
-
   try {
-    let { name, membersEmails } = req.body
-
-    // ========================== input validation ==========================
-    if(name === '')
-      name = 'group'  //TOBE changed with schema default value
+    let { name, memberEmails } = req.body
     
-    // not required in optional behavior but useful for test
-    if(membersEmails.length === 0)
-      return res.status(401).json({ message: "all the `memberEmails` either do not exist" });
-
-    // ======================================================================
-
-    /*
-      optional behavior 1
-    */
+    // group name already exists
     const found = await Group.findOne( {name: name} )
     if (found) {
-      return res.status(401).json({ message: "group's name not available" });
+      return res.status(400).json({ message: "group's name not available" });
     }
 
     const newGroup = {
@@ -114,20 +97,17 @@ export const createGroup = async (req, res) => {
     const membersNotFound = []
     const alreadyInGroup = []
 
-    for(let email of membersEmails) {
+    
+    for(let email of memberEmails) {
       let id = await getUserId(email)
       if(!id) {
         membersNotFound.push(email)
       }
       else {
-        const inAnotherGroup = await isPartOfOtherGroups(email)
-
-        if(inAnotherGroup) 
+        if(await isPartOfOtherGroups(email)) 
           alreadyInGroup.push(email)
         else{
-          id = String(id).match(new RegExp('\"[a-z0-9]*\"'))[0]
-          id = id.substring(1, id.length-1)
-          const currentUser = await User.findById(mongoose.Types.ObjectId(id)).select('_id')
+          const currentUser = await User.findById({_id: mongoose.Types.ObjectId(id)})
           
           newGroup.members.push( {
             email: email,
@@ -137,8 +117,8 @@ export const createGroup = async (req, res) => {
       }
     }
 
-    if(membersEmails.length === alreadyInGroup.length + membersNotFound.length)
-      return res.status(401).json({ message: "all the `memberEmails` either do not exist or are already in a group" });
+    if(memberEmails.length === alreadyInGroup.length + membersNotFound.length)
+      return res.status(400).json({ message: "all the `memberEmails` either do not exist or are already in a group" });
 
     // creating object to return
     const returnedObj = {
@@ -146,17 +126,17 @@ export const createGroup = async (req, res) => {
       alreadyInGroup: alreadyInGroup,
       membersNotFound: membersNotFound
     }
-
-    Group.create(newGroup)
-      .then( res.json( createAPIobj(returnedObj, res) ) )
-      .catch(err => {
-        throw (err)
-      })
-
-    // console.log('i want to add: ' + membersEmails)
-    // console.log('members not found: ' + membersNotFound)
-    // console.log('already in group: ' + alreadyInGroup)
     
+    Group.create( {
+      name: newGroup.name, 
+      members: newGroup.members.map( elem => { 
+        return {"email": elem.email, "user": elem.user._id} 
+      })
+    })
+    .then( res.json( createAPIobj(returnedObj, res) ) )
+    .catch(err => {
+      throw (err)
+    })
   } catch (err) {
       res.status(500).json(err.message)
   }
@@ -172,16 +152,11 @@ export const createGroup = async (req, res) => {
  */
 export const getGroups = async (req, res) => {
   try {
-    if (!verifyAuth(req, res, {authType: 'Admin'})) {
-      return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-    }
+    // if (!verifyAuth(req, res, {authType: 'Admin'})) {
+    //   return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+    // }
     
-    const groups = await Group.find( {} ).select('name').select('members')
-
-    // behavior 1
-    if(groups.length === 0) 
-      res.json( createAPIobj( [], res ) )
-
+    const groups = await Group.find( {}, {name: 1, members: 1, _id: 0} )
     res.json( createAPIobj(groups, res) )
   } catch (err) {
       res.status(500).json(err.message)
@@ -198,16 +173,15 @@ export const getGroups = async (req, res) => {
  */
 export const getGroup = async (req, res) => {
   try {
-    if (!verifyAuth(req, res, {authType: 'User', username: requested_username} || !verifyAuth(req, res, {authType: 'Admin'}))) {
-      return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-    }
+    // if (!verifyAuth(req, res, {authType: 'User', username: requested_username} || !verifyAuth(req, res, {authType: 'Admin'}))) {
+    //   return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+    // }
 
     const name = req.params.name
-    const groups = await Group.find( {name: name} ).select('name').select('members')
+    const groups = await Group.findOne( {name: name}, {name: 1, members: 1, _id: 0} )
 
-    // behavior 1
-    if(groups.length === 0) 
-      return res.status(401).json({ message: "group does not exist" });
+    if(!groups) 
+      return res.status(400).json({ message: "group does not exist" });
       
     res.json( createAPIobj(groups, res) )
   } catch (err) {

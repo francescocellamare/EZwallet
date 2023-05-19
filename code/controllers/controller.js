@@ -498,7 +498,7 @@ export const getTransactionsByGroup = async (req, res) => {
 export const getTransactionsByGroupByCategory = async (req, res) => {
 
     /*
-        join over username or email ?
+        join over username because email is not defined as transaction entity property 
     */
 
     function Query(username, type, amount, date, color) {
@@ -510,7 +510,6 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
     }
 
     try {
-        // requested_username = 'asdasdsa'
 
         // // /transactions/groups/:name/category/:category ADMIN
         // // /groups/:name/transactions/category/:category USER
@@ -545,15 +544,10 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
             .populate('members.user')
 
         if(!members) {
-            return res.status(401).json({ message: "group or category does not exist" })
+            return res.status(400).json({ message: "group or category does not exist" })
         }
 
         members = members.members.map( item => item.user.username)
-
-        // checking user without admin privilegies
-        if(verifiedUser && !verifiedAdmin && !members.includes(requested_username)) {
-            res.status(401).json({ message: "Unauthorized" });
-        }
 
         const query = await transactions.aggregate([
             {
