@@ -215,8 +215,7 @@ export const getGroup = async (req, res) => {
   }
 }
 
-/**
- * Add new members to a group
+/*Add new members to a group
   - Request Body Content: An array of strings containing the emails of the members to add to the group
   - Response `data` Content: An object having an attribute `group` (this object must have a string attribute for the `name` of the
     created group and an array for the `members` of the group, this array must include the new members as well as the old ones), 
@@ -226,16 +225,80 @@ export const getGroup = async (req, res) => {
     - error 401 is returned if the group does not exist
     - error 401 is returned if all the `memberEmails` either do not exist or are already in a group
  */
-export const addToGroup = async (req, res) => {
-    try {
-    } catch (err) {
-        res.status(500).json(err.message)
+export const addToGroup = async (req, res) => { //Only own group or admin any group
+  try {
+    /*const cookie = req.cookies
+    if (!cookie.accessToken) {
+      return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+    }*/
+
+    const group = await Group.findOne({ name: req.params.name });
+    if (!group) return res.status(401).json({ error: "Group not found" })
+
+    const inputEmail = req.body.email;
+
+    let membersNotFound = [];
+    let alreadyInGroup = [];
+    let oldMembers = [];
+
+    //old members 
+    group.members.forEach(
+      member => {
+        oldMembers.push({ "email": member.email, "user": member.user });
+      }
+    );
+
+    let newMembers = [];
+    let newMemberAdded = false;
+
+    //For each input email I search if there is a User that has that email. If it is not found, I add the User in membersNotFound; if it is found, I check if the User belongs to a group (I am looking for a Group with group.members.email matching the email of the existing user). If the User already belongs to a group it is added in AlreadyInGroup, otherwise in members.  
+    for (const iEmail of inputEmail) {
+      const corrUser = await User.findOne({ email: iEmail }); //corresponding User
+
+      if (corrUser) {
+        const corrGroup = await Group.findOne({ "members.email": iEmail });
+        if (corrGroup) {
+          alreadyInGroup.push({ "email": iEmail, "user": corrUser._id });
+        } else {
+          newMembers.push({ "email": iEmail, "user": corrUser._id });
+          newMemberAdded = true;
+        }
+      } else {
+        membersNotFound.push({ "email": iEmail });
+      }
     }
+    if (!newMemberAdded) {
+      return res.status(401).json({ error: "All the members' email either do not exist or are already in a group" })
+    }
+
+
+    let data = {
+      "group":
+      {
+        "name": req.params.name,
+        "members": oldMembers.concat(newMembers),
+        "alreadyInGroup": alreadyInGroup,
+        "membersNotFound": membersNotFound
+      }
+    };
+
+    await Group.updateOne(
+      { name: req.params.name },
+      { $push: { members: { $each: newMembers } } }
+    );
+
+
+    return res.json(data);
+
+  } catch (err) {
+    res.status(500).json(err.message)
+  }
 }
 
 /**
  * Remove members from a group
-  - Request Body Content: An object having an attribute `group` (this object must have a string attribute for the `name` of the
+  - Request Body Content: An array of strings containing the emails of the members to remove from the group
+  - Request Data Content: An object having an attribute `group` (this object must have a string attribute for the `name` of the
     created group and an array for the `members` of the group, this array must include only the remaining members),
     an array that lists the `notInGroup` members (members whose email is not in the group) and an array that lists 
     the `membersNotFound` (members whose email does not appear in the system)
@@ -243,11 +306,71 @@ export const addToGroup = async (req, res) => {
     - error 401 is returned if the group does not exist
     - error 401 is returned if all the `memberEmails` either do not exist or are not in the group
  */
-export const removeFromGroup = async (req, res) => {
-    try {
-    } catch (err) {
-        res.status(500).json(err.message)
+export const removeFromGroup = async (req, res) => { //Only own group or admin any group
+  try {
+    /*const cookie = req.cookies
+    if (!cookie.accessToken) {
+      return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+    }*/
+
+    const group = await Group.findOne({ name: req.params.name });
+    if (!group) return res.status(401).json({ error: "Group not found" })
+
+    const inputEmail = req.body.email;
+
+    let membersNotFound = [];
+    let notInGroup = [];
+    let remainingMembers = [];
+    let memberToRemove = [];
+
+    let inGroup = false;
+
+    //For each input email I search if there is a User that has that email. If it is not found, I add the User in membersNotFound; if it is found, I check if the User belongs to this group (checking if group.members.email matches the email of the existing user). If the User belongs to this group it is removed from the group, otherwise it is added to notInGroup members.  
+    for (const iEmail of inputEmail) {
+      const corrUser = await User.findOne({ email: iEmail }); //corresponding User
+      if (corrUser) {
+        for (const member of group.members) {
+          if (member.email === iEmail) {
+            memberToRemove.push({ "email": iEmail, "user": corrUser._id });
+            inGroup = true;
+          }
+        }
+        if (!inGroup) {
+          notInGroup.push({ "email": iEmail, "user": corrUser._id });
+        }
+        inGroup = false;
+      } else {
+        membersNotFound.push({ "email": iEmail });
+      }
     }
+
+    remainingMembers = group.members.filter(
+      (member) => !memberToRemove.find((m) => m.email === member.email)
+    );
+    if (remainingMembers.length == 0) {
+      return res.status(401).json({ error: "All the members' email either do not exist or are not in the group" })
+    }
+
+    let data = {
+      "group":
+      {
+        "name": req.params.name,
+        "members": remainingMembers,
+        "notInGroup": notInGroup,
+        "membersNotFound": membersNotFound
+      }
+    };
+
+    await Group.updateOne(
+      { name: req.params.name },
+      { members: remainingMembers }
+    );
+
+    return res.json(data);
+
+  } catch (err) {
+    res.status(500).json(err.message)
+  }
 }
 
 /**
@@ -259,11 +382,38 @@ export const removeFromGroup = async (req, res) => {
   - Optional behavior:
     - error 401 is returned if the user does not exist 
  */
-export const deleteUser = async (req, res) => {
-    try {
-    } catch (err) {
-        res.status(500).json(err.message)
+export const deleteUser = async (req, res) => { //Admin
+  try {
+
+    /*const cookie = req.cookies
+    if (!cookie.accessToken) {
+        return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+    }*/
+
+    const user = await User.findOne({ email: req.body.email })
+    if (!user) {
+      return res.status(401).json({ message: "User not found" })
     }
+    let userDeleted = await User.deleteOne({ email: req.body.email });
+
+    const { deletedCount } = await transactions.deleteMany({ username: user.username });
+
+    let deletedFromGroup = 0;
+    const groups = await Group.find({ "members.email": req.body.email }).count();
+    if (groups) {
+      deletedFromGroup = 1;
+    } else {
+      deletedFromGroup = 0;
+      //REMOVE FROM GROUP !!!
+    }
+
+    let data = { "deletedTransactions": deletedCount, "deletedFromGroup": deletedFromGroup };
+
+    return res.json(data)
+
+  } catch (err) {
+    res.status(500).json(err.message)
+  }
 }
 
 /**
@@ -273,9 +423,22 @@ export const deleteUser = async (req, res) => {
   - Optional behavior:
     - error 401 is returned if the group does not exist
  */
-export const deleteGroup = async (req, res) => {
-    try {
-    } catch (err) {
-        res.status(500).json(err.message)
+export const deleteGroup = async (req, res) => { //Admin any group
+  try {
+    /*const cookie = req.cookies
+    if (!cookie.accessToken) {
+        return res.status(401).json({ message: "Unauthorized" })
+    }*/
+
+    const group = await Group.findOne({ name: req.body.name })
+    if (!group) {
+      return res.status(401).json({ message: "Group not found" })
     }
+
+    let data = await Group.deleteOne({ name: req.body.name });
+    return res.json("deleted");
+
+  } catch (err) {
+    res.status(500).json(err.message)
+  }
 }
