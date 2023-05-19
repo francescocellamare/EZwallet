@@ -2,6 +2,7 @@ import { categories, transactions } from "../models/model.js";
 import { Group, User } from "../models/User.js";
 import { handleDateFilterParams, handleAmountFilterParams, verifyAuth } from "./utils.js";
 
+import mongoose from "mongoose";
 import { createAPIobj } from "./utils.js";
 /**
  * Create a new category
@@ -509,19 +510,19 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
     }
 
     try {
-        requested_username = 'asdasdsa'
+        // requested_username = 'asdasdsa'
 
-        // /transactions/groups/:name/category/:category ADMIN
-        // /groups/:name/transactions/category/:category USER
+        // // /transactions/groups/:name/category/:category ADMIN
+        // // /groups/:name/transactions/category/:category USER
 
 
-        // Check for Admin functionalities, return null --> USER 
-        if ( !String(req.path).match(new RegExp('/transactions/groups/*')) && verifyAuth(req, res, {authType: 'User', username: requested_username})) {
-            verifiedUser = 1
-        }
-        else if (verifyAuth(req, res)){
-            verifiedAdmin = 1
-        }
+        // // Check for Admin functionalities, return null --> USER 
+        // if ( !String(req.path).match(new RegExp('/transactions/groups/*')) && verifyAuth(req, res, {authType: 'User', username: requested_username})) {
+        //     verifiedUser = 1
+        // }
+        // else if (verifyAuth(req, res)){
+        //     verifiedAdmin = 1
+        // }
 
         /**
          * MongoDB equivalent to the query 
@@ -596,20 +597,20 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
    */
 export const deleteTransaction = async (req, res) => {
     try {
-        const requested_username = 'asdasd'
         const cookie = req.cookies
         // if (!cookie.accessToken) {
         //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
         // }
-        if (verifyAuth(req, res, {authType: 'User', username: requested_username})) {
-            return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        }
 
-        if (!User.( {username: req.params.username} ).count())
-            return res.status(401).json({ message: "user does not exist" })
-        if (!transactions.findById(req.body._id).count())
-            return res.status(401).json({ message: "transaction does not exist" })
-        let data = await transactions.deleteOne({ _id: req.body._id });
+        if ( !(await User.countDocuments( {username: req.params.username})) )
+            return res.status(400).json({ message: "user does not exist" })       
+
+        const data = await transactions.deleteOne({ _id: mongoose.Types.ObjectId(req.body.id) });
+
+        if ( !data.deletedCount )
+            return res.status(400).json({ message: "transaction does not exist" })
+
+        console.log(data)
         res.json(createAPIobj('deleted', res));
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -625,19 +626,17 @@ export const deleteTransaction = async (req, res) => {
  */
 export const deleteTransactions = async (req, res) => {
     try {
-        if(!verifyAuth(req, res, {authType: 'Admin'})) {
-            return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        }
-        const {ids} = req.body
-        for(id of ids) {
-            if(!transactions.findById(id).count()) {
-                return res.status(401).json({ message: "{0} id does not exist".format(id) })
+        // if(!verifyAuth(req, res, {authType: 'Admin'})) {
+        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+        // }
+        const {_id} = req.body
+        for(let id of _id) {
+            if(!await transactions.countDocuments({_id: id})) {
+                return res.status(400).json({ message: `${id} id does not exist` })
             }
         }
-
-        await transactions.deleteMany({ _id: {
-            $in : ids
-        }});
+        const res = await transactions.deleteMany( {_id: {$in: _id} } )
+        console.log(res)
         
         res.json(createAPIobj('deleted', res))
     } catch (error) {
