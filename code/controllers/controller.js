@@ -10,10 +10,10 @@ import { createAPIobj } from "./utils.js";
  */
 export const createCategory = (req, res) => {
     try {
-        const cookie = req.cookies
-        if (!cookie.accessToken) {
-            return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        }
+        // const cookie = req.cookies
+        // if (!cookie.accessToken) {
+        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+        // }
         const { type, color } = req.body;
         const new_categories = new categories({ type, color });
         new_categories.save()
@@ -193,10 +193,10 @@ export const deleteCategory = async (req, res) => {
  */
 export const getCategories = async (req, res) => {
     try {
-        const cookie = req.cookies
-        if (!cookie.accessToken) {
-            return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        }
+        // const cookie = req.cookies
+        // if (!cookie.accessToken) {
+        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+        // }
         let data = await categories.find({})
 
         let filter = data.map(v => Object.assign({}, { type: v.type, color: v.color }))
@@ -216,10 +216,10 @@ export const getCategories = async (req, res) => {
  */
 export const createTransaction = async (req, res) => {
     try {
-        const cookie = req.cookies
-        if (!cookie.accessToken) {
-            return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        }
+        // const cookie = req.cookies
+        // if (!cookie.accessToken) {
+        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+        // }
         const { username, amount, type } = req.body;
         const new_transactions = new transactions({ username, amount, type });
         new_transactions.save()
@@ -239,10 +239,10 @@ export const createTransaction = async (req, res) => {
  */
 export const getAllTransactions = async (req, res) => {
     try {
-        const cookie = req.cookies
-        if (!cookie.accessToken) {
-            return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        }
+        // const cookie = req.cookies
+        // if (!cookie.accessToken) {
+        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+        // }
         /**
          * MongoDB equivalent to the query "SELECT * FROM transactions, categories WHERE transactions.type = categories.type"
          */
