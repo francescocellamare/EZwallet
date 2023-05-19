@@ -115,7 +115,7 @@ export const updateCategory = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }
 
@@ -179,7 +179,7 @@ export const deleteCategory = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }
 
@@ -203,7 +203,7 @@ export const getCategories = async (req, res) => {
 
         return res.json(filter)
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }
 
@@ -226,7 +226,7 @@ export const createTransaction = async (req, res) => {
             .then(data => res.json(data))
             .catch(err => { throw err })
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }
 
@@ -243,9 +243,6 @@ export const getAllTransactions = async (req, res) => {
         // if (!cookie.accessToken) {
         //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
         // }
-        /**
-         * MongoDB equivalent to the query "SELECT * FROM transactions, categories WHERE transactions.type = categories.type"
-         */
         transactions.aggregate([
             {
                 $lookup: {
@@ -261,7 +258,7 @@ export const getAllTransactions = async (req, res) => {
             res.json(data);
         }).catch(error => { throw (error) })
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }
 
@@ -340,7 +337,7 @@ export const getTransactionsByUser = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }
 
@@ -411,11 +408,11 @@ export const getTransactionsByUserByCategory = async (req, res) => {
 
         res.status(200).json({
             data : result,
-            message : ""
+            message : res.locals.message
         })
 
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }
 
@@ -481,11 +478,11 @@ export const getTransactionsByGroup = async (req, res) => {
 
         res.status(200).json({
             data : result,
-            message : ""
+            message : res.locals.message
         })
 
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }
 
@@ -583,7 +580,7 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }
 
@@ -608,14 +605,14 @@ export const deleteTransaction = async (req, res) => {
             return res.status(401).json({ message: "Unauthorized" }) // unauthorized
         }
 
-        if (!User.find( {username: req.params.username} ).count())
+        if (!User.( {username: req.params.username} ).count())
             return res.status(401).json({ message: "user does not exist" })
         if (!transactions.findById(req.body._id).count())
             return res.status(401).json({ message: "transaction does not exist" })
         let data = await transactions.deleteOne({ _id: req.body._id });
         res.json(createAPIobj('deleted', res));
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }
 
@@ -638,11 +635,12 @@ export const deleteTransactions = async (req, res) => {
             }
         }
 
-        for(id of ids) {
-            await transactions.deleteOne({ _id: id });
-        }
+        await transactions.deleteMany({ _id: {
+            $in : ids
+        }});
+        
         res.json(createAPIobj('deleted', res))
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }

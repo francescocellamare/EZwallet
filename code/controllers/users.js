@@ -29,10 +29,10 @@ export const getUsers = async (req, res) => {
  */
 export const getUser = async (req, res) => {
     try {
-        const cookie = req.cookies
-        if (!cookie.accessToken || !cookie.refreshToken) {
-            return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        }
+        // const cookie = req.cookies
+        // if (!cookie.accessToken || !cookie.refreshToken) {
+        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+        // }
         const username = req.params.username
         const user = await User.findOne({ refreshToken: cookie.refreshToken })
         if (!user) return res.status(401).json({ message: "User not found" })
@@ -287,7 +287,6 @@ export const addToGroup = async (req, res) => { //Only own group or admin any gr
       { $push: { members: { $each: newMembers } } }
     );
 
-
     return res.json(data);
 
   } catch (err) {
@@ -298,7 +297,7 @@ export const addToGroup = async (req, res) => { //Only own group or admin any gr
 /**
  * Remove members from a group
   - Request Body Content: An array of strings containing the emails of the members to remove from the group
-  - Request Data Content: An object having an attribute `group` (this object must have a string attribute for the `name` of the
+  - Response Data Content: An object having an attribute `group` (this object must have a string attribute for the `name` of the
     created group and an array for the `members` of the group, this array must include only the remaining members),
     an array that lists the `notInGroup` members (members whose email is not in the group) and an array that lists 
     the `membersNotFound` (members whose email does not appear in the system)
