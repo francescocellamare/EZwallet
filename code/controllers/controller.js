@@ -20,7 +20,7 @@ export const createCategory = (req, res) => {
             .then(data => res.json(data))
             .catch(err => { throw err })
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: error.message })
     }
 }
 
@@ -50,6 +50,26 @@ export const updateCategory = async (req, res) => {
                     message : "category type is already in use"
                 });
             }   
+        }
+        
+        // check if new value stayed the same
+        if(newType == type && newColor == color){
+            return res.status(400).json({
+                data : {
+                    message : "please provide new type and color"                    
+                },
+                message : res.locals.message
+            })
+        }
+
+        // check if color is valid
+        if(!/^#[a-fA-F0-9]{6}$/.test(newColor)){
+            return res.status(400).json({
+                data : {
+                    message : "color should be a hexadecimal string"                    
+                },
+                message : res.locals.message
+            })
         }
 
         // update category
