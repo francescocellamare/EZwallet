@@ -2,6 +2,7 @@ import { categories, transactions } from "../models/model.js";
 import { Group, User } from "../models/User.js";
 import { handleDateFilterParams, handleAmountFilterParams, verifyAuth } from "./utils.js";
 
+import { createAPIobj } from "./utils.js";
 /**
  * Create a new category
   - Request Body Content: An object having attributes `type` and `color`
@@ -195,7 +196,90 @@ export const getTransactionsByGroup = async (req, res) => {
     - empty array must be returned if there are no transactions made by the group with the specified category
  */
 export const getTransactionsByGroupByCategory = async (req, res) => {
+
+    /*
+        join over username or email ?
+    */
+
+    function Query(username, type, amount, date, color) {
+        this.username = username
+        this.type = type
+        this.amount = amount
+        this.date = date
+        this.color = color
+    }
+
     try {
+        requested_username = 'asdasdsa'
+
+        // /transactions/groups/:name/category/:category ADMIN
+        // /groups/:name/transactions/category/:category USER
+
+
+        // Check for Admin functionalities, return null --> USER 
+        if ( !String(req.path).match(new RegExp('/transactions/groups/*')) && verifyAuth(req, res, {authType: 'User', username: requested_username})) {
+            verifiedUser = 1
+        }
+        else if (verifyAuth(req, res)){
+            verifiedAdmin = 1
+        }
+
+        /**
+         * MongoDB equivalent to the query 
+         * 
+         * SELECT USERNAME, TYPE, AMOUNT, DATE, COLOR
+         * FROM TRANSACTION, USER, GROUP, CATEGORIES
+         * WHERE USER.USERNAME = TRANSACTION.USERNAME AND
+         * USER.USERNAME = GROUP.USERNAME AND
+         * GROUP.NAME = $GROUPNAME AND 
+         * TRANSACTION.TYPE = CATEGORIES.TYPE AND
+         * CATEGORIES.TYPE = $CATEGORYTYPE
+         * 
+         *  */      
+
+        const groupName = req.params.name
+        const categoryType = req.params.category
+
+        let members = await Group.findOne({ name: groupName })
+            .select('members')
+            .populate('members.user')
+
+        if(!members) {
+            return res.status(401).json({ message: "group or category does not exist" })
+        }
+
+        members = members.members.map( item => item.user.username)
+
+        // checking user without admin privilegies
+        if(verifiedUser && !verifiedAdmin && !members.includes(requested_username)) {
+            res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const query = await transactions.aggregate([
+            {
+                $match: {
+                "username": {$in: members}
+                }
+            },
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "type",
+                    foreignField: "type",
+                    as: "categories_info"
+                }
+            },
+            { $match: {type: categoryType}},
+            { $unwind: "$categories_info" }
+        ])
+        .then( result => {            
+            result = result.map( item => new Query(item.username, item.type, item.amount, item.date, item.categories_info.color))
+            res.json( createAPIobj(result, res) )
+        })
+        .catch( err => {
+            throw err
+        })
+
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
@@ -207,15 +291,27 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
   - Response `data` Content: A string indicating successful deletion of the transaction
   - Optional behavior:
     - error 401 is returned if the user or the transaction does not exist
- */
+    TODO
+        - user can only delete his own transactions
+ 
+   */
 export const deleteTransaction = async (req, res) => {
     try {
+        const requested_username = 'asdasd'
         const cookie = req.cookies
-        if (!cookie.accessToken) {
+        // if (!cookie.accessToken) {
+        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+        // }
+        if (verifyAuth(req, res, {authType: 'User', username: requested_username})) {
             return res.status(401).json({ message: "Unauthorized" }) // unauthorized
         }
+
+        if (!User.find( {username: req.params.username} ).count())
+            return res.status(401).json({ message: "user does not exist" })
+        if (!transactions.findById(req.body._id).count())
+            return res.status(401).json({ message: "transaction does not exist" })
         let data = await transactions.deleteOne({ _id: req.body._id });
-        return res.json("deleted");
+        res.json(createAPIobj('deleted', res));
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
@@ -230,6 +326,20 @@ export const deleteTransaction = async (req, res) => {
  */
 export const deleteTransactions = async (req, res) => {
     try {
+        if(!verifyAuth(req, res, {authType: 'Admin'})) {
+            return res.status(401).json({ message: "Unauthorized" }) // unauthorized
+        }
+        const {ids} = req.body
+        for(id of ids) {
+            if(!transactions.findById(id).count()) {
+                return res.status(401).json({ message: "{0} id does not exist".format(id) })
+            }
+        }
+
+        for(id of ids) {
+            await transactions.deleteOne({ _id: id });
+        }
+        res.json(createAPIobj('deleted', res))
     } catch (error) {
         res.status(400).json({ error: error.message })
     }

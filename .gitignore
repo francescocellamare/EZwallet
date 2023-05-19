@@ -4,3 +4,7 @@ code/node_modules/
 code/coverage/
 code/data/
 code/.vscode
+code/*.http
+tests.md
+code/package-lock.json
+.gitignore

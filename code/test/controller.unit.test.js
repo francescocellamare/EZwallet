@@ -1,6 +1,8 @@
 import request from 'supertest';
 import { app } from '../app';
 import { categories, transactions } from '../models/model';
+import { Group } from '../models/User';
+import { getTransactionsByGroupByCategory } from '../controllers/controller';
 
 jest.mock('../models/model');
 
@@ -68,9 +70,25 @@ describe("getTransactionsByGroup", () => {
 })
 
 describe("getTransactionsByGroupByCategory", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+    test.failing('group name is an empty string, error 401 should be returned', async () => {
+        const response = await request(app).get("/api/groups//transactions/category/Investmet")
+        response.toThrow('group or category does not exist')
     });
+
+    test.failing('group name does not exists, error 401 should be returned', async () => {
+        const mockReq = {}
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        jest.spyOn(Group, "findOne").mockResolvedValue(res.status(401).json({ message: "group or category does not exist" }))
+        const response = await getTransactionsByGroupByCategory(mockReq, mockRes)
+        expect(Group.findOne).toHaveBeenCalled()
+        expect(mockRes.status).toHaveBeenCalledWith(401)
+        response.toThrow('group or category does not exist')
+    });
+
+    test.
 })
 
 describe("deleteTransaction", () => { 

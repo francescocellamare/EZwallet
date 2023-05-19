@@ -2,6 +2,8 @@ import { Group, User } from "../models/User.js";
 import { transactions } from "../models/model.js";
 import { verifyAuth } from "./utils.js";
 
+import mongoose from "mongoose";
+import { createAPIobj } from "./utils.js";
 /**
  * Return all the users
   - Request Body Content: None
@@ -51,12 +53,113 @@ export const getUser = async (req, res) => {
   - Optional behavior:
     - error 401 is returned if there is already an existing group with the same name
     - error 401 is returned if all the `memberEmails` either do not exist or are already in a group
- */
+    
+  NEW according to slack
+>>> TODO -if user is not part of the new group his email must be added to the list
+    */
 export const createGroup = async (req, res) => {
-    try {
-    } catch (err) {
-        res.status(500).json(err.message)
+  
+  // null for user not found
+  async function getUserId(email){
+    const id = await User.find( {email: email} ).select('_id')
+    if(id.length === 0) 
+      return null
+    return id
+  }
+
+  async function isPartOfOtherGroups(email) {
+    const inAnyGroup = await Group.find({})
+      .select('members.email')
+    let emails= []
+    
+    for(let group of inAnyGroup) {
+      for(let email of group.members)
+        emails.push(email)
     }
+
+    emails = emails.map( item => item.email)
+    if(emails.includes(email))
+      return true
+
+    return false
+  }
+
+  
+
+  try {
+    let { name, membersEmails } = req.body
+
+    // ========================== input validation ==========================
+    if(name === '')
+      name = 'group'  //TOBE changed with schema default value
+    
+    // not required in optional behavior but useful for test
+    if(membersEmails.length === 0)
+      return res.status(401).json({ message: "all the `memberEmails` either do not exist" });
+
+    // ======================================================================
+
+    /*
+      optional behavior 1
+    */
+    const found = await Group.findOne( {name: name} )
+    if (found) {
+      return res.status(401).json({ message: "group's name not available" });
+    }
+
+    const newGroup = {
+      name: name,
+      members: []
+    }
+    const membersNotFound = []
+    const alreadyInGroup = []
+
+    for(let email of membersEmails) {
+      let id = await getUserId(email)
+      if(!id) {
+        membersNotFound.push(email)
+      }
+      else {
+        const inAnotherGroup = await isPartOfOtherGroups(email)
+
+        if(inAnotherGroup) 
+          alreadyInGroup.push(email)
+        else{
+          id = String(id).match(new RegExp('\"[a-z0-9]*\"'))[0]
+          id = id.substring(1, id.length-1)
+          const currentUser = await User.findById(mongoose.Types.ObjectId(id)).select('_id')
+          
+          newGroup.members.push( {
+            email: email,
+            user: currentUser
+          })
+        }
+      }
+    }
+
+    if(membersEmails.length === alreadyInGroup.length + membersNotFound.length)
+      return res.status(401).json({ message: "all the `memberEmails` either do not exist or are already in a group" });
+
+    // creating object to return
+    const returnedObj = {
+      group: newGroup,
+      alreadyInGroup: alreadyInGroup,
+      membersNotFound: membersNotFound
+    }
+
+    Group.create(newGroup)
+      .then( res.json( createAPIobj(returnedObj, res) ) )
+      .catch(err => {
+        throw (err)
+      })
+
+    // console.log('i want to add: ' + membersEmails)
+    // console.log('members not found: ' + membersNotFound)
+    // console.log('already in group: ' + alreadyInGroup)
+    
+  } catch (err) {
+      res.status(500).json(err.message)
+  }
 }
 
 /**
@@ -68,10 +171,21 @@ export const createGroup = async (req, res) => {
     - empty array is returned if there are no groups
  */
 export const getGroups = async (req, res) => {
-    try {
-    } catch (err) {
-        res.status(500).json(err.message)
+  try {
+    if (!verifyAuth(req, res, {authType: 'Admin'})) {
+      return res.status(401).json({ message: "Unauthorized" }) // unauthorized
     }
+    
+    const groups = await Group.find( {} ).select('name').select('members')
+
+    // behavior 1
+    if(groups.length === 0) 
+      res.json( createAPIobj( [], res ) )
+
+    res.json( createAPIobj(groups, res) )
+  } catch (err) {
+      res.status(500).json(err.message)
+  }
 }
 
 /**
@@ -83,10 +197,22 @@ export const getGroups = async (req, res) => {
     - error 401 is returned if the group does not exist
  */
 export const getGroup = async (req, res) => {
-    try {
-    } catch (err) {
-        res.status(500).json(err.message)
+  try {
+    if (!verifyAuth(req, res, {authType: 'User', username: requested_username} || !verifyAuth(req, res, {authType: 'Admin'}))) {
+      return res.status(401).json({ message: "Unauthorized" }) // unauthorized
     }
+
+    const name = req.params.name
+    const groups = await Group.find( {name: name} ).select('name').select('members')
+
+    // behavior 1
+    if(groups.length === 0) 
+      return res.status(401).json({ message: "group does not exist" });
+      
+    res.json( createAPIobj(groups, res) )
+  } catch (err) {
+      res.status(500).json(err.message)
+  }
 }
 
 /**

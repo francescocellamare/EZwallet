@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import jwt, { decode } from 'jsonwebtoken'
 
 /**
  * Handle possible date filtering options in the query parameters for getTransactionsByUser when called by a Regular user.
@@ -39,7 +39,8 @@ export const handleDateFilterParams = (req) => {
 export const verifyAuth = (req, res, info) => {
     const cookie = req.cookies
     if (!cookie.accessToken || !cookie.refreshToken) {
-        res.status(401).json({ message: "Unauthorized" });
+        // remove vvvvv
+        //res.status(401).json({ message: "Unauthorized" });
         return false;
     }
     try {
@@ -57,33 +58,78 @@ export const verifyAuth = (req, res, info) => {
             res.status(401).json({ message: "Mismatched users" });
             return false;
         }
-        return true
-    } catch (err) {
-        if (err.name === "TokenExpiredError") {
-            try {
-                const refreshToken = jwt.verify(cookie.refreshToken, process.env.ACCESS_KEY)
-                const newAccessToken = jwt.sign({
-                    username: refreshToken.username,
-                    email: refreshToken.email,
-                    id: refreshToken.id,
-                    role: refreshToken.role
-                }, process.env.ACCESS_KEY, { expiresIn: '1h' })
-                res.cookie('accessToken', newAccessToken, { httpOnly: true, path: '/api', maxAge: 60 * 60 * 1000, sameSite: 'none', secure: true })
-                res.locals.message = 'Access token has been refreshed. Remember to copy the new one in the headers of subsequent calls'
-                return true
-            } catch (err) {
-                if (err.name === "TokenExpiredError") {
-                    res.status(401).json({ message: "Perform login again" });
-                } else {
-                    res.status(401).json({ message: err.name });
-                }
-                return false;
+        if (info.authType === 'User') {
+            const requestedUsername = info.username
+            if (decodedAccessToken.username != requestedUsername /* || decodedRefreshToken.username != requestedUsername */) {
+                res.status(401).json({ message: "Username does not match with requested one" })
+                return false
             }
-        } else {
-            res.status(401).json({ message: err.name });
+            if (decodedAccessToken.username === requestedUsername /* && decodedRefreshToken.username === requestedUsername */) {
+                return true
+            }
+        }
+        else if (info.authType === 'Admin') {
+            if (decodedAccessToken.role != 'Admin' /* || decodedRefreshToken.role != 'Admin' */) {
+                res.status(401).json({ message: "User does not have admin role" })
+                return false
+            }
+        } 
+        else if (info.authType === 'Group') {
+            const requestedEmails = info.emails
+            if (!requestedEmails.includes(decodedAccessToken.email) /* || !requestedEmails.includes(decodecRefreshToken.email) */) {
+                res.status(401).json({ message: "User is not part of the group" })
+                return false
+            }
+        }
+        return true
+
+
+} catch (err) {
+    if (err.name === "TokenExpiredError") {
+        try {
+
+            if (info.authType === 'User') {
+                if (decodecRefreshToken.username != requestedUsername) {
+                    res.status(401).json({ message: "Username does not match with requested one" })
+                    return false
+                }
+            }
+            else if (info.authType === 'Admin') {
+                if (decodecRefreshToken.role != 'Admin') {
+                    res.status(401).json({ message: "User does not have admin role" })
+                    return false
+                }
+            } 
+            else if (info.authType === 'Group') {
+                if (!requestedEmails.includes(decodedRefreshToken.email)) {
+                    res.status(401).json({ message: "User does not have admin role" })
+                    return false
+                }    
+            }
+
+            const refreshToken = jwt.verify(cookie.refreshToken, process.env.ACCESS_KEY)
+            const newAccessToken = jwt.sign({
+                username: refreshToken.username,
+                email: refreshToken.email,
+                id: refreshToken.id,
+                role: refreshToken.role
+            }, process.env.ACCESS_KEY, { expiresIn: '1h' })
+            res.cookie('accessToken', newAccessToken, { httpOnly: true, path: '/api', maxAge: 60 * 60 * 1000, sameSite: 'none', secure: true })
+            res.locals.message = 'Access token has been refreshed. Remember to copy the new one in the headers of subsequent calls'
+            return true
+        } catch (err) {
+            if (err.name === "TokenExpiredError") {
+                res.status(401).json({ message: "Perform login again" });
+            } else {
+                res.status(401).json({ message: err.name });
+            }
             return false;
         }
+    } else {
+        res.status(401).json({ message: err.name });
+        return false;
     }
+}
 }
 
 /**
@@ -95,3 +141,23 @@ export const verifyAuth = (req, res, info) => {
  */
 export const handleAmountFilterParams = (req) => {
 }
+
+/*----------------------------------------------------
+    not in the original project
+----------------------------------------------------*/
+
+/*
+    it's used for creating the required data according to code/README.md
+    datafield is for the required data
+    resfield is the response object received by each function
+*/
+
+function createAPIobj(datafield, resfield) {
+    const dataobj = {
+        data: datafield,
+        message: resfield.locals.message
+    }
+    return dataobj
+}
+
+export { createAPIobj }

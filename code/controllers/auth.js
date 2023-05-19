@@ -65,6 +65,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body
     const cookie = req.cookies
     const existingUser = await User.findOne({ email: email })
+    verifyAuth(req, res, {authType: "Simple"})
     if (!existingUser) return res.status(400).json('please you need to register')
     try {
         const match = await bcrypt.compare(password, existingUser.password)
