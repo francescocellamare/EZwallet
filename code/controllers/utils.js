@@ -1,4 +1,5 @@
 import jwt, { decode } from 'jsonwebtoken'
+import { Group, User } from '../models/User.js';
 
 /**
  * Handle possible date filtering options in the query parameters for getTransactionsByUser when called by a Regular user.
@@ -73,49 +74,41 @@ export const handleDateFilterParams = (req) => {
 export const verifyAuth = (req, res, info) => {
     const cookie = req.cookies
     if (!cookie.accessToken || !cookie.refreshToken) {
-        // remove vvvvv
-        //res.status(401).json({ message: "Unauthorized" });
-        return false;
+        return { authorized: false, cause: "Unauthorized"}
     }
     try {
         const decodedAccessToken = jwt.verify(cookie.accessToken, process.env.ACCESS_KEY);
         const decodedRefreshToken = jwt.verify(cookie.refreshToken, process.env.ACCESS_KEY);
         if (!decodedAccessToken.username || !decodedAccessToken.email || !decodedAccessToken.role) {
-            res.status(401).json({ message: "Token is missing information" })
-            return false
+            return { authorized: false, cause: "Token is missing information"}
         }
         if (!decodedRefreshToken.username || !decodedRefreshToken.email || !decodedRefreshToken.role) {
-            res.status(401).json({ message: "Token is missing information" })
-            return false
+            return { authorized: false, cause: "Token is missing information" }
         }
         if (decodedAccessToken.username !== decodedRefreshToken.username || decodedAccessToken.email !== decodedRefreshToken.email || decodedAccessToken.role !== decodedRefreshToken.role) {
-            res.status(401).json({ message: "Mismatched users" });
-            return false;
+            return { authorized: false, cause: "Mismatched users" }
         }
         if (info.authType === 'User') {
             const requestedUsername = info.username
             if (decodedAccessToken.username != requestedUsername /* || decodedRefreshToken.username != requestedUsername */) {
-                res.status(401).json({ message: "Username does not match with requested one" })
-                return false
+                return { authorized: false, cause: "Username does not match with requested one" }
             }
             if (decodedAccessToken.username === requestedUsername /* && decodedRefreshToken.username === requestedUsername */) {
-                return true
+                return { authorized: true, cause: "Authorized" }
             }
         }
         else if (info.authType === 'Admin') {
             if (decodedAccessToken.role != 'Admin' /* || decodedRefreshToken.role != 'Admin' */) {
-                res.status(401).json({ message: "User does not have admin role" })
-                return false
+                return { authorized: false, cause: "User does not have admin role" }
             }
         } 
         else if (info.authType === 'Group') {
             const requestedEmails = info.emails
             if (!requestedEmails.includes(decodedAccessToken.email) /* || !requestedEmails.includes(decodecRefreshToken.email) */) {
-                res.status(401).json({ message: "User is not part of the group" })
-                return false
+                return { authorized: false, cause: "User is not part of the group" }
             }
         }
-        return true
+        return { authorized: true, cause: "Authorized" }
 
 
 } catch (err) {
@@ -124,20 +117,17 @@ export const verifyAuth = (req, res, info) => {
 
             if (info.authType === 'User') {
                 if (decodecRefreshToken.username != requestedUsername) {
-                    res.status(401).json({ message: "Username does not match with requested one" })
-                    return false
+                    return { authorized: false, cause: "Username does not match with requested one" }
                 }
             }
             else if (info.authType === 'Admin') {
                 if (decodecRefreshToken.role != 'Admin') {
-                    res.status(401).json({ message: "User does not have admin role" })
-                    return false
+                    return { authorized: false, cause: "User does not have admin role" }
                 }
             } 
             else if (info.authType === 'Group') {
                 if (!requestedEmails.includes(decodedRefreshToken.email)) {
-                    res.status(401).json({ message: "User does not have admin role" })
-                    return false
+                    return { authorized: false, cause: "User is not in the group" }
                 }    
             }
 
@@ -150,18 +140,16 @@ export const verifyAuth = (req, res, info) => {
             }, process.env.ACCESS_KEY, { expiresIn: '1h' })
             res.cookie('accessToken', newAccessToken, { httpOnly: true, path: '/api', maxAge: 60 * 60 * 1000, sameSite: 'none', secure: true })
             res.locals.message = 'Access token has been refreshed. Remember to copy the new one in the headers of subsequent calls'
-            return true
+            return { authorized: true, cause: "Authorized" }
         } catch (err) {
             if (err.name === "TokenExpiredError") {
-                res.status(401).json({ message: "Perform login again" });
+                return { authorized: false, cause: "Perform login again" }
             } else {
-                res.status(401).json({ message: err.name });
+                return { authorized: false, cause: err.name }
             }
-            return false;
         }
     } else {
-        res.status(401).json({ message: err.name });
-        return false;
+        return { authorized: false, cause: err.name };
     }
 }
 }
@@ -226,6 +214,71 @@ function createAPIobj(datafield, resfield) {
         message: resfield.locals.message
     }
     return dataobj
+}
+
+/*
+    functions verifyAuthUser(), verifyAuthAdmin(), verifyAuthGroup() are used as wrapper for calling to verifyAuth() 
+    the proper way for calling is:
+
+        const simpleAuth = verifyAuth(req, res, {authType: "Simple"})
+        const userAuth = await verifyAuthUser(req, res)
+        const adminAuth = verifyAuthAdmin(req, res)
+        const groupAuth = await verifyAuthGroup(req, res)
+
+    return the following object
+    {
+        authorized: true|false,
+        cause: String
+    }
+
+    example scenario according to slack:
+
+    export const getUser = async (req, res) => {
+        try {
+            const userAuth = verifyAuthUser(req, res)
+            if (userAuth.authorized) {
+            //User auth successful
+            } else {
+            const adminAuth = verifyAuthAdmin(req, res)
+            if (adminAuth.authorized) {
+                //Admin auth successful
+            } else {
+                res.status(401).json({ error: adminAuth.cause})
+            }
+            }
+        } catch (error) {
+            res.status(500).json({ error: error.message })
+        }
+    }
+*/
+
+
+export async function verifyAuthUser(req, res) {
+    const cookie = req.cookies
+    const userByRefreshToken = await User.findOne( {refreshToken: cookie.refreshToken}, {username: 1, _id: 0})
+    if (!userByRefreshToken) 
+        return { authorized: false, cause: "Unauthorized"}
+
+    return verifyAuth(req, res, {authType: 'User', username: userByRefreshToken.username})
+}
+
+export function verifyAuthAdmin(req, res) {
+    return verifyAuth(req, res, {authType: 'Admin'})
+}
+
+export async function verifyAuthGroup(req, res) {
+    const cookie = req.cookies
+    const userEmail = await User.findOne( {refreshToken: cookie.refreshToken}, {email: 1, _id: 0})
+    // check at the user's email in the database
+    if (!userEmail)
+        return { authorized: false, cause: "Unauthorized"}
+    const document = await Group.findOne({
+        members: { $elemMatch: { email: userEmail.email } }
+        });
+    if (!document)
+        return { authorized: false, cause: "Unauthorized"}
+    const emails = document.members.map(member => member.email)
+    return verifyAuth(req, res, {authType: 'Group', emails: emails})
 }
 
 export { createAPIobj }
