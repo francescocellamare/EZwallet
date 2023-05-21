@@ -13,7 +13,11 @@ import { verifyAuth } from './utils.js';
 export const register = async (req, res) => {
     try {
         const { username, email, password } = req.body;
-        const existingUser = await User.findOne({ email: req.body.email });
+        const existingUser = await User.findOne({ 
+            $or:[
+            {email: req.body.email },
+            {username: req.body.username}
+            ]});
         if (existingUser) return res.status(400).json({ message: "you are already registered" });
         const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = await User.create({
@@ -26,18 +30,22 @@ export const register = async (req, res) => {
         res.status(400).json(err);
     }
 };
-
-/**
- * Register a new user in the system with an Admin role
-  - Request Body Content: An object having attributes `username`, `email` and `password`
-  - Response `data` Content: A message confirming successful insertion
-  - Optional behavior:
-    - error 400 is returned if there is already a user with the same username and/or email
- */
+    
+    /**
+     * Register a new user in the system with an Admin role
+      - Request Body Content: An object having attributes `username`, `email` and `password`
+      - Response `data` Content: A message confirming successful insertion
+      - Optional behavior:
+        - error 400 is returned if there is already a user with the same username and/or email
+     */
 export const registerAdmin = async (req, res) => {
     try {
         const { username, email, password } = req.body
-        const existingUser = await User.findOne({ email: req.body.email });
+        const existingUser = await User.findOne({ 
+            $or:[
+            {email: req.body.email },
+            {username: req.body.username}
+            ]});
         if (existingUser) return res.status(400).json({ message: "you are already registered" });
         const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = await User.create({
@@ -52,6 +60,9 @@ export const registerAdmin = async (req, res) => {
     }
 
 }
+
+    
+    
 
 /**
  * Perform login 

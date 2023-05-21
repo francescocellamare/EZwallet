@@ -88,7 +88,7 @@ describe("getTransactionsByGroupByCategory", () => {
         response.toThrow('group or category does not exist')
     });
 
-    test.
+    
 })
 
 describe("deleteTransaction", () => { 
