@@ -52,7 +52,11 @@ describe('register', () => {
     await register(mockReq, mockResp);
 
     expect(mockResp.status).toHaveBeenCalledWith(200);
-    expect(mockResp.json).toHaveBeenCalledWith('user added succesfully');
+    // Get the argument passed to the json method
+    const jsonResponse = mockResp.json.mock.calls[0][0];
+
+    // Check the value of data.message
+    expect(jsonResponse.data.message).toBe('user added succesfully');
 
 
 
@@ -63,7 +67,11 @@ describe('register', () => {
         await register(mockReq, mockResp);
 
         expect(mockResp.status).toHaveBeenCalledWith(400);
-        expect(mockResp.json).toHaveBeenCalledWith({ message: 'you are already registered' });
+        // Get the argument passed to the json method
+    const jsonResponse = mockResp.json.mock.calls[0][0];
+
+    // Check the value of data.message
+    expect(jsonResponse.data.message).toBe('you are already registered');
     })
 
 
@@ -115,7 +123,11 @@ describe("registerAdmin", () => {
     await registerAdmin(mockReq, mockResp);
 
     expect(mockResp.status).toHaveBeenCalledWith(200);
-    expect(mockResp.json).toHaveBeenCalledWith('admin added succesfully');
+    // Get the argument passed to the json method
+    const jsonResponse = mockResp.json.mock.calls[0][0];
+
+    // Check the value of data.message
+    expect(jsonResponse.data.message).toBe('admin added succesfully');
 
 
 
@@ -126,7 +138,12 @@ describe("registerAdmin", () => {
         await registerAdmin(mockReq, mockResp);
 
         expect(mockResp.status).toHaveBeenCalledWith(400);
-        expect(mockResp.json).toHaveBeenCalledWith({ message: 'you are already registered' });
+        // Get the argument passed to the json method
+         const jsonResponse = mockResp.json.mock.calls[0][0];
+
+        // Check the value of data.message
+        expect(jsonResponse.data.message).toBe('you are already registered');
+
     });
 
 

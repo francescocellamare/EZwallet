@@ -18,14 +18,16 @@ export const register = async (req, res) => {
             {email: req.body.email },
             {username: req.body.username}
             ]});
-        if (existingUser) return res.status(400).json({ message: "you are already registered" });
+        if (existingUser) return res.status(400).json({ 
+        data:{message: "you are already registered"},
+        message:"" });
         const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = await User.create({
             username,
             email,
             password: hashedPassword,
         });
-        res.status(200).json('user added succesfully');
+        res.status(200).json({data:{message: 'user added succesfully'}, message:""});
     } catch (err) {
         res.status(400).json(err);
     }
@@ -46,7 +48,11 @@ export const registerAdmin = async (req, res) => {
             {email: req.body.email },
             {username: req.body.username}
             ]});
-        if (existingUser) return res.status(400).json({ message: "you are already registered" });
+        if (existingUser) return res.status(400).json({ 
+            data : {
+            message: "you are already registered" 
+        },
+            message : ""});
         const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = await User.create({
             username,
@@ -54,7 +60,17 @@ export const registerAdmin = async (req, res) => {
             password: hashedPassword,
             role: "Admin"
         });
-        res.status(200).json('admin added succesfully');
+        res.status(200).json(
+            
+            
+            {
+                data : {
+                    message : "admin added succesfully"
+                },
+                message : ""
+            });
+            
+       
     } catch (err) {
         res.status(500).json(err);
     }
@@ -77,7 +93,10 @@ export const login = async (req, res) => {
     const cookie = req.cookies
     const existingUser = await User.findOne({ email: email })
     verifyAuth(req, res, {authType: "Simple"})
-    if (!existingUser) return res.status(400).json('please you need to register')
+    if (!existingUser) return res.status(400).json({
+        data: {
+        message: 'please you need to register'},
+        message: ""});
     try {
         const match = await bcrypt.compare(password, existingUser.password)
         if (!match) return res.status(400).json('wrong credentials')

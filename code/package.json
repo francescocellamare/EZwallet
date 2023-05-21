@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "You need to install Node.js and MongoDB and then execute npm install on the command line. This command will install all the dependencies required by the project. Then, you can execute npm start. This command will make the Node.js backend available on the port 3000. You can call the endpoints by using Postman.\r You can also run the tests by executing npm test or npm run test:coverage.\r All the npm commands must be run by using the terminal opened in the root project folder called code (this folder).",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -36,5 +36,8 @@
   },
   "jest": {
     "testTimeout": 30000
+  },
+  "directories": {
+    "test": "test"
   }
 }
