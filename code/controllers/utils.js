@@ -208,7 +208,7 @@ export const handleAmountFilterParams = (req) => {
     resfield is the response object received by each function
 */
 
-function createAPIobj(datafield, resfield) {
+export function createAPIobj(datafield, resfield) {
     const dataobj = {
         data: datafield,
         message: resfield.locals.message
@@ -225,31 +225,54 @@ function createAPIobj(datafield, resfield) {
         const adminAuth = verifyAuthAdmin(req, res)
         const groupAuth = await verifyAuthGroup(req, res)
 
-    return the following object
+    returned object
     {
         authorized: true|false,
         cause: String
     }
 
-    example scenario according to slack:
 
-    export const getUser = async (req, res) => {
-        try {
-            const userAuth = verifyAuthUser(req, res)
-            if (userAuth.authorized) {
-            //User auth successful
-            } else {
-            const adminAuth = verifyAuthAdmin(req, res)
-            if (adminAuth.authorized) {
-                //Admin auth successful
-            } else {
-                res.status(401).json({ error: adminAuth.cause})
-            }
-            }
-        } catch (error) {
-            res.status(500).json({ error: error.message })
+    example scenario for getTransactionByGroupByCategory():
+    - user can work only with his own group
+    - admin does not have this limit
+    
+export const getTransactionsByGroupByCategory = async (req, res) => {
+    // parameters for the function
+    const groupName = req.params.name
+    const categoryType = req.params.category
+
+    // the functions called are the same and must have different behaviors depending on the route.
+    const pathAdmin = '/transactions/groups/:name/category/:category'
+    
+    // (.*) stands for whatever as parameters' placeholder
+    const regexp = new RegExp('/transactions/groups/(.*)/category/(.*)')
+    
+    const userAuthInfo = await verifyAuthUser(req, res)
+    const adminAuthInfo = verifyAuthAdmin(req, res)
+
+    if ( userAuthInfo.authorized) {
+        console.log('I am a user')
+        const groupAuthInfo = await verifyAuthGroup(req, res, groupName)
+        if ( groupAuthInfo.authorized) {
+            console.log('I can work with this group')
+            // work
         }
+        else {
+            console.log('I can not work with this group')
+            return res.status(401).json({ message: groupAuthInfo.cause })
+        }
+    } 
+    else if (req.path.match(regexp) && adminAuthInfo.authorized){
+        console.log('I am an admin')
+        console.log('I can work with whichever group')
+        // work
     }
+    else {
+        console.log('I am nobody')
+        return res.status(401).json({ message: adminAuthInfo.cause }) // unauthorized
+    }
+    ...
+}
 */
 
 
@@ -266,19 +289,15 @@ export function verifyAuthAdmin(req, res) {
     return verifyAuth(req, res, {authType: 'Admin'})
 }
 
-export async function verifyAuthGroup(req, res) {
+export async function verifyAuthGroup(req, res, groupName) {
     const cookie = req.cookies
     const userEmail = await User.findOne( {refreshToken: cookie.refreshToken}, {email: 1, _id: 0})
     // check at the user's email in the database
     if (!userEmail)
         return { authorized: false, cause: "Unauthorized"}
-    const document = await Group.findOne({
-        members: { $elemMatch: { email: userEmail.email } }
-        });
+    const document = await Group.findOne({name: groupName}, {members: 1, _id: 0})
     if (!document)
         return { authorized: false, cause: "Unauthorized"}
     const emails = document.members.map(member => member.email)
     return verifyAuth(req, res, {authType: 'Group', emails: emails})
 }
-
-export { createAPIobj }
