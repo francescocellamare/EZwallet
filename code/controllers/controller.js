@@ -1,6 +1,6 @@
 import { categories, transactions } from "../models/model.js";
 import { Group, User } from "../models/User.js";
-import { handleDateFilterParams, handleAmountFilterParams, verifyAuth } from "./utils.js";
+import { handleDateFilterParams, handleAmountFilterParams, verifyAuth, verifyAuthUser, verifyAuthGroup, verifyAuthAdmin } from "./utils.js";
 
 import mongoose from "mongoose";
 import { createAPIobj } from "./utils.js";
@@ -255,7 +255,8 @@ export const getAllTransactions = async (req, res) => {
             },
             { $unwind: "$categories_info" }
         ]).then((result) => {
-            let data = result.map(v => Object.assign({}, { _id: v._id, username: v.username, amount: v.amount, type: v.type, color: v.categories_info.color, date: v.date }))
+            console.log(result)
+            let data = result.map(v => Object.assign({}, { /*_id: v._id,*/ username: v.username, amount: v.amount, type: v.type, color: v.categories_info.color, date: v.date }))
             res.json(data);
         }).catch(error => { throw (error) })
     } catch (error) {
@@ -497,10 +498,6 @@ export const getTransactionsByGroup = async (req, res) => {
  */
 export const getTransactionsByGroupByCategory = async (req, res) => {
 
-    /*
-        join over username because email is not defined as transaction entity property 
-    */
-
     function Query(username, type, amount, date, color) {
         this.username = username
         this.type = type
@@ -510,19 +507,6 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
     }
 
     try {
-
-        // // /transactions/groups/:name/category/:category ADMIN
-        // // /groups/:name/transactions/category/:category USER
-
-
-        // // Check for Admin functionalities, return null --> USER 
-        // if ( !String(req.path).match(new RegExp('/transactions/groups/*')) && verifyAuth(req, res, {authType: 'User', username: requested_username})) {
-        //     verifiedUser = 1
-        // }
-        // else if (verifyAuth(req, res)){
-        //     verifiedAdmin = 1
-        // }
-
         /**
          * MongoDB equivalent to the query 
          * 
@@ -540,14 +524,38 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         const categoryType = req.params.category
 
         let members = await Group.findOne({ name: groupName })
-            .select('members')
-            .populate('members.user')
+        .select('members')
+        .populate('members.user')
 
         if(!members) {
             return res.status(400).json({ message: "group or category does not exist" })
         }
 
         members = members.members.map( item => item.user.username)
+
+        // checking privileges
+        const regexp = new RegExp('/transactions/groups/(.*)/category/(.*)')
+        
+        const userAuthInfo = await verifyAuthUser(req, res)
+        const adminAuthInfo = verifyAuthAdmin(req, res)
+        const groupAuthInfo = await verifyAuthGroup(req, res, groupName)
+
+        // TODO: try with unregistered user
+        if ( !req.path.match(regexp) ) { // user path
+            if ( !userAuthInfo.authorized ) {
+                return res.status(401).json({ message: userAuthInfo.cause })
+            }
+            if ( !adminAuthInfo.authorized && !groupAuthInfo.authorized) {
+                return res.status(401).json({ message: groupAuthInfo.cause })
+            }
+            if ( !userAuthInfo.authorized && !adminAuthInfo.authorized) {
+                return res.status(401).json({ message: 'unauthorized' })
+            }
+        } else {    //admin path
+            if ( !adminAuthInfo.authorized ) {
+                return res.status(401).json({ message: adminAuthInfo.cause })
+            }
+        }
 
         const query = await transactions.aggregate([
             {
@@ -586,25 +594,46 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
   - Optional behavior:
     - error 401 is returned if the user or the transaction does not exist
     TODO
-        - user can only delete his own transactions
+        - check if the error is correct
  
    */
 export const deleteTransaction = async (req, res) => {
     try {
         const cookie = req.cookies
-        // if (!cookie.accessToken) {
-        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        // }
+        let onlyMine = undefined
+        const userAuthInfo = await verifyAuthUser(req, res)
+        const adminAuthInfo = verifyAuthAdmin(req, res)  
+        console.log(userAuthInfo)
+        console.log(adminAuthInfo)
+        if( !userAuthInfo.authorized ) {
+            return res.status(401).json({ message: userAuthInfo.cause })
+        }
+        if( userAuthInfo.authorized && !adminAuthInfo.authorized) {
+            if((await User.findOne({refreshToken: cookie.refreshToken}, {_id: 0, username: 1})).username != req.params.username) {
+                return res.status(401).json({ message: 'unauthorized' })
+                // TOBE checked with the new requirements
+            }
+        }
+        
+        console.log(onlyMine)
+        console.log(req.params.username)
 
         if ( !(await User.countDocuments( {username: req.params.username})) )
-            return res.status(400).json({ message: "user does not exist" })       
+            return res.status(400).json({ message: "user does not exist" })     
 
-        const data = await transactions.deleteOne({ _id: mongoose.Types.ObjectId(req.body.id) });
-
-        if ( !data.deletedCount )
+        const query = { _id: mongoose.Types.ObjectId(req.body.id), username: req.params.username }
+        // const data = await transactions.deleteOne(query);
+        const data = await transactions.countDocuments(query);
+        /*
+            TODO        
+            eventually adding another error according to new requirements
+            if I can not delete the transaction by id because it is not mine
+            this error is catched by next check now
+        */
+        // console.log(data)
+        if ( data.deletedCount === 0 )
             return res.status(400).json({ message: "transaction does not exist" })
 
-        console.log(data)
         res.json(createAPIobj('deleted', res));
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -620,9 +649,16 @@ export const deleteTransaction = async (req, res) => {
  */
 export const deleteTransactions = async (req, res) => {
     try {
-        // if(!verifyAuth(req, res, {authType: 'Admin'})) {
-        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        // }
+        const userAuthInfo = await verifyAuthUser(req, res)
+        const adminAuthInfo = verifyAuthAdmin(req, res)
+
+        if(!userAuthInfo.authorized) {
+            return res.status(401).json({ message: userAuthInfo.cause })
+        }
+        if(!adminAuthInfo.authorized) {
+            return res.status(401).json({ message: adminAuthInfo.cause })
+        }
+
         const {_id} = req.body
         for(let id of _id) {
             if(!await transactions.countDocuments({_id: id})) {
