@@ -1,7 +1,8 @@
+
 import request from 'supertest';
 import { app } from '../app';
 import { User } from '../models/User.js';
-
+import  {getUser, getUsers} from '../controllers/users';
 /**
  * In order to correctly mock the calls to external modules it is necessary to mock them using the following line.
  * Without this operation, it is not possible to replace the actual implementation of the external functions with the one
@@ -18,42 +19,107 @@ jest.mock("../models/User.js")
 beforeEach(() => {
   User.find.mockClear()
   //additional `mockClear()` must be placed here
+
 });
 
 describe("getUsers", () => {
-  test("should return empty list if there are no users", async () => {
+  let mockReq, mockResp;
+  beforeEach(
+    
+    ()=>{
+      
+      mockReq = {};
+      mockResp ={
+        status: jest.fn(()=>mockResp),
+        json: jest.fn(),
+      }
+    }
+  );
+
+  test("T1:no users -> return 200 and empty list", async () => {
     //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
     jest.spyOn(User, "find").mockImplementation(() => [])
-    const response = await request(app)
-      .get("/api/users")
+    await getUsers(mockReq, mockResp);
 
-    expect(response.status).toBe(200)
-    expect(response.body).toEqual([])
+    expect(mockResp.status).toHaveBeenCalledWith(200)
+    const jsonResp = mockResp.json.mock.calls[0][0];
+    expect(jsonResp.data).toBe([])
   })
 
-  test("should retrieve list of all users", async () => {
+  test("T2: at least one user exists -> return 200 and list of retrieved users", async () => {
     const retrievedUsers = [{ username: 'test1', email: 'test1@example.com', password: 'hashedPassword1' }, { username: 'test2', email: 'test2@example.com', password: 'hashedPassword2' }]
-    jest.spyOn(User, "find").mockImplementation(() => retrievedUsers)
-    const response = await request(app)
-      .get("/api/users")
-
-    expect(response.status).toBe(200)
-    expect(response.body).toEqual(retrievedUsers)
+    jest.spyOn(User, "find").mockImplementation(() => [...retrievedUsers]);
+    
+    await getUsers(mockReq, mockResp);
+    expect(mockResp.status).toHaveBeenCalledWith(200);
+    expect(mockResp.json.mock.calls[0][0].data).toBe(retrievedUsers);
   })
+
+
+
+
+
+
 })
 
-describe("getUser", () => { })
+describe("getUser", () => {
+  let mockReq, mockResp;
+  
+beforeEach(
+    ()=>{
+       mockReq = {
+        params: {
+          username: 'user',
+        },
+        cookies: {}
+      };
+       mockResp ={
+        status: jest.fn(()=>mockResp),
+        json: jest.fn(),
+      };
+      
+    }
+  )
 
-describe("createGroup", () => { })
+test('T1: user exists -> return 200 and user info', async ()=>{
+  const user ={
+    username: 'user',
+    email: 'test@example.com',
+    role: 'role',
+    refreshToken: 'refreshToken'
+  }
+  jest.spyOn(User, "findOne").mockImplementation(()=>user);
 
-describe("getGroups", () => { })
+  await getUser(mockReq, mockResp);
+  expect(mockResp.status).toHaveBeenCalledWith(200);
+  const jsonResp = mockResp.json.mock.call[0][0];
+  expect(jsonResp.data.username).toBe('user');
+  expect(jsonResp.data.email).toBe('test@example.com');
+  expect(jsonResp.data.role).toBe('role');
 
-describe("getGroup", () => { })
 
-describe("addToGroup", () => { })
+})
 
-describe("removeFromGroup", () => { })
+test('T2: user not found -> return 401 and message: user not found', async()=>{
+  jest.spyOn(User, "findOne").mockImplementation(()=> null);
 
-describe("deleteUser", () => { })
+  await getUser(mockReq, mockResp);
+  expect(mockResp.status).toHaveBeenCalledWith(401);
+  expect(mockResp.json.mock.call[0][0].data.message).toBe('User not found')
+})
 
-describe("deleteGroup", () => { })
+test('T3: different username -> return 401 and message: unauthorized', async ()=>
+{ const user ={
+  username: 'differentUser',
+  email: 'test@example.com',
+  role: 'role',
+  refreshToken: 'refreshToken'
+  
+}
+jest.spyOn(User, "findOne").mockImplementation(()=> user);
+await getUser(mockReq, mockResp);
+expect(mockResp.status).toHaveBeenCalledWith(401);
+expect(mockResp.json.mock.call[0][0].data.message).toBe('Unauthorized');
+
+})
+})
