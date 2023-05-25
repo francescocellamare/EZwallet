@@ -15,7 +15,8 @@ import { createAPIobj } from "./utils.js";
 export const getUsers = async (req, res) => {
     try {
         const users = await User.find();
-        res.status(200).json({data:{users}, message:''});
+        res.status(200).json({data:{
+          users: users}, message:''});
     } catch (error) {
         res.status(500).json(error.message);
     }

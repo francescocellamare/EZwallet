@@ -43,7 +43,7 @@ describe("getUsers", () => {
 
     expect(mockResp.status).toHaveBeenCalledWith(200)
     const jsonResp = mockResp.json.mock.calls[0][0];
-    expect(jsonResp.data).toBe([])
+    expect(jsonResp.data.users).toEqual([])
   })
 
   test("T2: at least one user exists -> return 200 and list of retrieved users", async () => {
@@ -52,7 +52,7 @@ describe("getUsers", () => {
     
     await getUsers(mockReq, mockResp);
     expect(mockResp.status).toHaveBeenCalledWith(200);
-    expect(mockResp.json.mock.calls[0][0].data).toBe(retrievedUsers);
+    expect(mockResp.json.mock.calls[0][0].data.users).toEqual(retrievedUsers);
   })
 
 
@@ -123,3 +123,17 @@ expect(mockResp.json.mock.call[0][0].data.message).toBe('Unauthorized');
 
 })
 })
+
+describe("createGroup", () => { })
+
+describe("getGroups", () => { })
+
+describe("getGroup", () => { })
+
+describe("addToGroup", () => { })
+
+describe("removeFromGroup", () => { })
+
+describe("deleteUser", () => { })
+
+describe("deleteGroup", () => { })
