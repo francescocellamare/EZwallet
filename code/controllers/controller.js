@@ -255,7 +255,6 @@ export const getAllTransactions = async (req, res) => {
             },
             { $unwind: "$categories_info" }
         ]).then((result) => {
-            console.log(result)
             let data = result.map(v => Object.assign({}, { /*_id: v._id,*/ username: v.username, amount: v.amount, type: v.type, color: v.categories_info.color, date: v.date }))
             res.json(data);
         }).catch(error => { throw (error) })
@@ -603,8 +602,6 @@ export const deleteTransaction = async (req, res) => {
         let onlyMine = undefined
         const userAuthInfo = await verifyAuthUser(req, res)
         const adminAuthInfo = verifyAuthAdmin(req, res)  
-        console.log(userAuthInfo)
-        console.log(adminAuthInfo)
         if( !userAuthInfo.authorized ) {
             return res.status(401).json({ message: userAuthInfo.cause })
         }
@@ -614,23 +611,18 @@ export const deleteTransaction = async (req, res) => {
                 // TOBE checked with the new requirements
             }
         }
-        
-        console.log(onlyMine)
-        console.log(req.params.username)
-
         if ( !(await User.countDocuments( {username: req.params.username})) )
             return res.status(400).json({ message: "user does not exist" })     
 
         const query = { _id: mongoose.Types.ObjectId(req.body.id), username: req.params.username }
-        // const data = await transactions.deleteOne(query);
-        const data = await transactions.countDocuments(query);
+        const data = await transactions.deleteOne(query);
+        // const data = await transactions.countDocuments(query);
         /*
             TODO        
             eventually adding another error according to new requirements
             if I can not delete the transaction by id because it is not mine
             this error is catched by next check now
         */
-        // console.log(data)
         if ( data.deletedCount === 0 )
             return res.status(400).json({ message: "transaction does not exist" })
 
