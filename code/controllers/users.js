@@ -14,6 +14,11 @@ import { createAPIobj } from "./utils.js";
  */
 export const getUsers = async (req, res) => {
     try {
+
+      const adminAuthInfo = verifyAuthAdmin(req, res)
+      if(!adminAuthInfo.authorized) {
+        return res.status(401).json({message: adminAuthInfo.cause})
+      }
         const users = await User.find();
         res.status(200).json({data:{
           users: users}, message:''});
@@ -170,7 +175,7 @@ export const createGroup = async (req, res) => {
 export const getGroups = async (req, res) => {
   try {
     const userAuthInfo = await verifyAuthUser(req, res)
-    const adminAuthInfo = verifyAuthAdmin(req, res)
+    const adminAuthInfo = await (req, res)
 
     if(!userAuthInfo.authorized) {
       return res.status(401).json({ message: userAuthInfo.cause })

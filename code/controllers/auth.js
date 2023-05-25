@@ -21,6 +21,23 @@ export const register = async (req, res) => {
         if (existingUser) return res.status(400).json({ 
         data:{message: "you are already registered"},
         message:"" });
+        if((username=="")||(email=="")||(password=="")){
+            return res.status(400).json({
+                data: {
+                    message: "empty fields are not allowed"
+                },
+                message: ""
+            })
+        }
+
+        if((!username)||(!email)||(!password))
+        {return res.status(400).json({ 
+            data:{message: "some fields are missing"},
+            message:"" });}
+        
+        let regex = new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
+        const emailValid = regex.test(email)
+        if(!emailValid) return res.status(400).json({data:{message:'invalid email'}, message:""});
         const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = await User.create({
             username,
@@ -53,6 +70,21 @@ export const registerAdmin = async (req, res) => {
             message: "you are already registered" 
         },
             message : ""});
+        if((username=="")||(email=="")||(password=="")){
+            return res.status(400).json({
+                data: {
+                    message: "empty fields are not allowed"
+                },
+                message: ""
+            })
+        }
+        if((!username)||(!email)||(!password))
+        {return res.status(400).json({ 
+            data:{message: "some fields are missing"},
+            message:"" });}
+        let regex = new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
+        const emailValid = regex.test(email)
+        if(!emailValid) return res.status(400).json({data:{message:'invalid email'}, message:""});
         const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = await User.create({
             username,
@@ -94,6 +126,21 @@ export const login = async (req, res) => {
         const existingUser = await User.findOne({ email: email })
         if (!existingUser) return res.status(400).json({data:{ message: 'please you need to register'}, message:''})
         try {
+            if((email=="")||(password=="")){
+                return res.status(400).json({
+                    data: {
+                        message: "empty fields are not allowed"
+                    },
+                    message: ""
+                })
+            }
+            if((!email)||(!password))
+            {return res.status(400).json({ 
+                data:{message: "some fields are missing"},
+                message:"" });}
+            let regex = new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
+            const emailValid = regex.test(email)
+            if(!emailValid) return res.status(400).json({data:{message:'invalid email'}, message:""});
             const match = await bcrypt.compare(password, existingUser.password)
             if (!match) return res.status(400).json({data:{message:'wrong credentials'}, message:''})
             //CREATE ACCESSTOKEN

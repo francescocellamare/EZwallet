@@ -59,6 +59,7 @@ test("T1: register user  -> return 200 and message: user added succesfully", asy
     expect(mockResp.status).toHaveBeenCalledWith(200);
     // Get the argument passed to the json method
     const jsonResponse = mockResp.json.mock.calls[0][0];
+    
 
     // Check the value of data.message
     expect(jsonResponse.data.message).toBe('user added succesfully');
@@ -70,17 +71,70 @@ test("T1: register user  -> return 200 and message: user added succesfully", asy
 test("T2: user already exist -> return 400 and message: you are already registered ", async () =>{
         jest.spyOn(User, "findOne").mockImplementation(()=>({username:'user', email:"test@example.com"}))
         await register(mockReq, mockResp);
-
+        
         expect(mockResp.status).toHaveBeenCalledWith(400);
         // Get the argument passed to the json method
         const jsonResponse = mockResp.json.mock.calls[0][0];
-
+        
     // Check the value of data.message
         expect(jsonResponse.data.message).toBe('you are already registered');
     })
 
 
+test("T3: invalid email -> return 400 and message: invalid email ", async () =>{
+        let mockReqInvalidEmail;
+        mockReqInvalidEmail = {
+            body:{
+                username: 'user',
+                email: 'invalidEmail',
+                password: '123'
+            }
 
+        }
+        jest.spyOn(User, "findOne").mockImplementation(()=>null)
+        await register(mockReqInvalidEmail, mockResp);
+        expect(mockResp.status).toHaveBeenCalledWith(400);
+        // Get the argument passed to the json method
+        const jsonResponse = mockResp.json.mock.calls[0][0];
+
+        // Check the value of data.message
+        expect(jsonResponse.data.message).toBe('invalid email');
+    })
+test("T4: missing fields -> return 400 and message: some fields are missing ", async () =>{
+        let mockReqIncomplete;
+        mockReqIncomplete = {
+            body:{
+                username: 'user',
+                email: 'test@example.com'
+            }
+
+        }
+        jest.spyOn(User, "findOne").mockImplementation(()=>null);
+        await register(mockReqIncomplete, mockResp);
+        expect(mockResp.status).toHaveBeenCalledWith(400);
+        // Get the argument passed to the json method
+        const jsonResponse = mockResp.json.mock.calls[0][0];
+        // Check the value of data.message
+        expect(jsonResponse.data.message).toBe('some fields are missing');
+    })
+test("T5: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
+        let mockReqIncomplete;
+        mockReqIncomplete = {
+            body:{
+                username: 'user',
+                email: 'test@example.com',
+                password: ''
+            }
+
+        }
+        jest.spyOn(User, "findOne").mockImplementation(()=>null);
+        await register(mockReqIncomplete, mockResp);
+        expect(mockResp.status).toHaveBeenCalledWith(400);
+        // Get the argument passed to the json method
+        const jsonResponse = mockResp.json.mock.calls[0][0];
+        // Check the value of data.message
+        expect(jsonResponse.data.message).toBe('empty fields are not allowed');
+    })
 
 
 });
@@ -150,6 +204,63 @@ describe("registerAdmin", () => {
         expect(jsonResponse.data.message).toBe('you are already registered');
 
     });
+
+
+    test("T3: invalid email -> return 400 and message: invalid email ", async () =>{
+        let mockReqInvalidEmail;
+        mockReqInvalidEmail = {
+            body:{
+                username: 'user',
+                email: 'invalidEmail',
+                password: '123'
+            }
+
+        }
+        jest.spyOn(User, "findOne").mockImplementation(()=>null)
+        await registerAdmin(mockReqInvalidEmail, mockResp);
+        expect(mockResp.status).toHaveBeenCalledWith(400);
+        // Get the argument passed to the json method
+        const jsonResponse = mockResp.json.mock.calls[0][0];
+
+        // Check the value of data.message
+        expect(jsonResponse.data.message).toBe('invalid email');
+    })
+    test("T4: missing fields -> return 400 and message: some fields are missing ", async () =>{
+        let mockReqIncomplete;
+        mockReqIncomplete = {
+            body:{
+                username: 'user',
+                email: 'test@example.com'
+            }
+
+        }
+        jest.spyOn(User, "findOne").mockImplementation(()=>null);
+        await registerAdmin(mockReqIncomplete, mockResp);
+        expect(mockResp.status).toHaveBeenCalledWith(400);
+        // Get the argument passed to the json method
+        const jsonResponse = mockResp.json.mock.calls[0][0];
+        // Check the value of data.message
+        expect(jsonResponse.data.message).toBe('some fields are missing');
+    })
+
+    test("T5: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
+        let mockReqIncomplete;
+        mockReqIncomplete = {
+            body:{
+                username: 'user',
+                email: 'test@example.com',
+                password: ''
+            }
+
+        }
+        jest.spyOn(User, "findOne").mockImplementation(()=>null);
+        await registerAdmin(mockReqIncomplete, mockResp);
+        expect(mockResp.status).toHaveBeenCalledWith(400);
+        // Get the argument passed to the json method
+        const jsonResponse = mockResp.json.mock.calls[0][0];
+        // Check the value of data.message
+        expect(jsonResponse.data.message).toBe('empty fields are not allowed');
+    })
 
 
 });
@@ -235,6 +346,79 @@ afterEach(()=>{
         expect(mockResp.json.mock.calls[0][0].data.message).toBe('wrong credentials')
         
     })
+
+
+
+    test("T4: invalid email -> return 400 and message: invalid email ", async () =>{
+        let mockReqInvalidEmail;
+        mockReqInvalidEmail = {
+            body:{
+                email: 'invalidEmail',
+                password: '123'
+            }
+
+        }
+        let findOneMock;
+        findOneMock = jest.spyOn(User, "findOne");
+        findOneMock.mockResolvedValue({
+            existingUser: existingUser,
+            save: jest.fn().mockResolvedValue({})
+        });
+        await login(mockReqInvalidEmail, mockResp);
+        expect(mockResp.status).toHaveBeenCalledWith(400);
+        // Get the argument passed to the json method
+        const jsonResponse = mockResp.json.mock.calls[0][0];
+
+        // Check the value of data.message
+        expect(jsonResponse.data.message).toBe('invalid email');
+    })
+    test("T5: missing fields -> return 400 and message: some fields are missing ", async () =>{
+        let mockReqIncomplete;
+        mockReqIncomplete = {
+            body:{
+                
+                email: 'test@example.com'
+            }
+
+        }
+        let findOneMock;
+        findOneMock = jest.spyOn(User, "findOne");
+        findOneMock.mockResolvedValue({
+            existingUser: existingUser,
+            save: jest.fn().mockResolvedValue({})
+        });
+        await login(mockReqIncomplete, mockResp);
+        expect(mockResp.status).toHaveBeenCalledWith(400);
+        // Get the argument passed to the json method
+        const jsonResponse = mockResp.json.mock.calls[0][0];
+        // Check the value of data.message
+        expect(jsonResponse.data.message).toBe('some fields are missing');
+    })
+
+    test("T6: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
+        let mockReqIncomplete;
+        mockReqIncomplete = {
+            body:{
+                email: 'test@example.com',
+                password: ''
+            }
+
+        }
+        let findOneMock;
+        findOneMock = jest.spyOn(User, "findOne");
+        findOneMock.mockResolvedValue({
+            existingUser: existingUser,
+            save: jest.fn().mockResolvedValue({})
+        });
+        await login(mockReqIncomplete, mockResp);
+        expect(mockResp.status).toHaveBeenCalledWith(400);
+        // Get the argument passed to the json method
+        const jsonResponse = mockResp.json.mock.calls[0][0];
+        // Check the value of data.message
+        expect(jsonResponse.data.message).toBe('empty fields are not allowed');
+    })
+
+
        
     });
 

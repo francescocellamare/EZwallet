@@ -3,6 +3,7 @@ import request from 'supertest';
 import { app } from '../app';
 import { User } from '../models/User.js';
 import  {getUser, getUsers} from '../controllers/users';
+import { verifyAuthAdmin } from '../controllers/utils';
 /**
  * In order to correctly mock the calls to external modules it is necessary to mock them using the following line.
  * Without this operation, it is not possible to replace the actual implementation of the external functions with the one
@@ -24,6 +25,11 @@ beforeEach(() => {
 
 describe("getUsers", () => {
   let mockReq, mockResp;
+
+  jest.mock('../controllers/utils.js', ()=> ({
+    verifyAuthAdmin: jest.fn()
+  }));
+
   beforeEach(
     
     ()=>{
@@ -38,7 +44,10 @@ describe("getUsers", () => {
 
   test("T1:no users -> return 200 and empty list", async () => {
     //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
+    //sverifyAuthAdmin.mockImplementation(()=>({ authorized: false, cause: "Unauthorized"}))
     jest.spyOn(User, "find").mockImplementation(() => [])
+    
+
     await getUsers(mockReq, mockResp);
 
     expect(mockResp.status).toHaveBeenCalledWith(200)
@@ -48,6 +57,9 @@ describe("getUsers", () => {
 
   test("T2: at least one user exists -> return 200 and list of retrieved users", async () => {
     const retrievedUsers = [{ username: 'test1', email: 'test1@example.com', password: 'hashedPassword1' }, { username: 'test2', email: 'test2@example.com', password: 'hashedPassword2' }]
+    verifyAuthAdmin.mockReturnValueOnce({
+      authorized: true
+    })
     jest.spyOn(User, "find").mockImplementation(() => [...retrievedUsers]);
     
     await getUsers(mockReq, mockResp);
@@ -55,6 +67,15 @@ describe("getUsers", () => {
     expect(mockResp.json.mock.calls[0][0].data.users).toEqual(retrievedUsers);
   })
 
+  test("T3:not authentified -> return 401", async () => {
+    //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
+    verifyAuthAdmin.mockReturnValueOnce({
+      authorized: false
+    })    
+    await getUsers(mockReq, mockResp);
+
+    expect(mockResp.status).toHaveBeenCalledWith(401);
+  })
 
 
 
