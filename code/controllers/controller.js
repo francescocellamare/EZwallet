@@ -43,6 +43,10 @@ export const createCategory = (req, res) => {
 export const updateCategory = async (req, res) => {
     try {
 
+        // authentication
+        const {authorized, cause} = await verifyAuthAdmin(req, res);
+        if(!authorized) return res.status(401).json({error: cause})
+
         const {type} = req.params;
         const {type : newType, color : newColor} = req.body; 
 
@@ -152,6 +156,10 @@ export const updateCategory = async (req, res) => {
 */
 export const deleteCategory = async (req, res) => {
     try {
+
+        // authentication
+        const {authorized, cause} = await verifyAuthAdmin(req, res);
+        if(!authorized) return res.status(401).json({error: cause})
 
         const {types} = req.body;
 
@@ -342,9 +350,16 @@ export const getTransactionsByUser = async (req, res) => {
         //and different behaviors and access rights
         let filters;        
         if (req.url.indexOf("/transactions/users/") >= 0) {
-            // admin
+            // admin authentication
+            const {authorized, cause} = await verifyAuthAdmin(req, res);
+            if(!authorized) return res.status(401).json({error: cause})
+
             filters = {};                        
         } else {
+            // regular user authentication            
+            const {authorized, cause} = await verifyAuthUser(req, res);            
+            if(!authorized) return res.status(401).json({error: cause})
+
             const amountFilter = handleAmountFilterParams(req);
             const dateFilter = handleDateFilterParams(req);
 
@@ -352,9 +367,9 @@ export const getTransactionsByUser = async (req, res) => {
 
             filters["$and"].push(amountFilter);
             filters["$and"].push(dateFilter);
-        }        
+        }      
         
-        console.log(JSON.stringify(filters))
+        console.log("authorized")
 
         const {username} = req.params;
 
@@ -421,7 +436,17 @@ export const getTransactionsByUser = async (req, res) => {
     - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin) if the route is `/api/transactions/users/:username/category/:category`
 */
 export const getTransactionsByUserByCategory = async (req, res) => {
-    try {     
+    try {  
+        
+        if (req.url.indexOf("/transactions/users/") >= 0) {
+            // admin authentication
+            const {authorized, cause} = await verifyAuthAdmin(req, res);
+            if(!authorized) return res.status(401).json({error: cause})                       
+        } else {
+            // regular user authentication
+            const {authorized, cause} = await verifyAuthUser(req, res);
+            if(!authorized) return res.status(401).json({error: cause})
+        }       
 
         const {username, category : type} = req.params;
 
@@ -496,6 +521,16 @@ export const getTransactionsByUserByCategory = async (req, res) => {
 */ 
 export const getTransactionsByGroup = async (req, res) => {
     try {
+
+        if (req.url.indexOf("/transactions/groups/") >= 0) {
+            // admin authentication
+            const {authorized, cause} = await verifyAuthAdmin(req, res);
+            if(!authorized) return res.status(401).json({error: cause})                       
+        } else {
+            // regular user authentication
+            const {authorized, cause} = await verifyAuthGroup(req, res);
+            if(!authorized) return res.status(401).json({error: cause})
+        }   
 
         // check if group exists
         const {name} = req.params;  
@@ -603,7 +638,7 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         const regexp = new RegExp('/transactions/groups/(.*)/category/(.*)')
         
         const userAuthInfo = await verifyAuthUser(req, res)
-        const adminAuthInfo = verifyAuthAdmin(req, res)
+        const adminAuthInfo = await verifyAuthAdmin(req, res)
         const groupAuthInfo = await verifyAuthGroup(req, res, groupName)
 
         // TODO: try with unregistered user
@@ -668,7 +703,7 @@ export const deleteTransaction = async (req, res) => {
         const cookie = req.cookies
         let onlyMine = undefined
         const userAuthInfo = await verifyAuthUser(req, res)
-        const adminAuthInfo = verifyAuthAdmin(req, res)  
+        const adminAuthInfo = await verifyAuthAdmin(req, res)  
         if( !userAuthInfo.authorized ) {
             return res.status(401).json({ message: userAuthInfo.cause })
         }
@@ -709,7 +744,7 @@ export const deleteTransaction = async (req, res) => {
 export const deleteTransactions = async (req, res) => {
     try {
         const userAuthInfo = await verifyAuthUser(req, res)
-        const adminAuthInfo = verifyAuthAdmin(req, res)
+        const adminAuthInfo = await verifyAuthAdmin(req, res)
 
         if(!userAuthInfo.authorized) {
             return res.status(401).json({ message: userAuthInfo.cause })
