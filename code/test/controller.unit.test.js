@@ -1,8 +1,8 @@
 import request from 'supertest';
 import { app } from '../app';
 import { categories, transactions } from '../models/model';
-import { Group } from '../models/User';
-import { getTransactionsByGroupByCategory } from '../controllers/controller';
+import { Group, User } from '../models/User';
+import { getTransactionsByUserByCategory } from '../controllers/controller';
 
 jest.mock('../models/model');
 
@@ -150,8 +150,112 @@ describe("getTransactionsByUser", () => {
 })
 
 describe("getTransactionsByUserByCategory", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+
+    let req;
+    let res;
+
+    beforeEach(() => {
+
+        // mock request
+        req = {
+            params : {
+                username : "johnDoe",
+                category : "testCategory"
+            }
+        }
+
+        // mock response
+        res = {
+            locals : {
+                message : "dummy message"
+            },
+            status : jest.fn().mockReturnThis(),
+            json : jest.fn()
+        }
+    });
+
+    afterEach(()=>{
+        jest.clearAllMocks();
+    })
+
+    test("should return an error indicating that the user does not exist", async () => {
+
+        // number of users with the provided email is zero
+        jest.spyOn(User, "countDocuments").mockResolvedValue(0);
+
+        // call function under test
+        await getTransactionsByUserByCategory(req, res);
+
+        expect(User.countDocuments).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            data : {},
+            message : "User does not exist"
+        });
+    });
+
+    test("should return an error indicating that the catrgory does not exist", async () => {
+
+        // number of users with the provided email is zero
+        jest.spyOn(User, "countDocuments").mockResolvedValue(1);
+        jest.spyOn(categories, "countDocuments").mockResolvedValue(0);
+
+        // call function under test
+        await getTransactionsByUserByCategory(req, res);
+
+        expect(User.countDocuments).toHaveBeenCalled();
+        expect(categories.countDocuments).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            data : {},
+            message : "Category does not exist"
+        });
+    });
+
+    test("should return an empty list of transactions", async () => {
+
+        // number of users with the provided email is zero
+        jest.spyOn(User, "countDocuments").mockResolvedValue(1);
+        jest.spyOn(categories, "countDocuments").mockResolvedValue(1);
+        jest.spyOn(transactions, "aggregate").mockResolvedValue([]);
+
+        // call function under test
+        await getTransactionsByUserByCategory(req, res);
+
+        expect(User.countDocuments).toHaveBeenCalled();
+        expect(categories.countDocuments).toHaveBeenCalled();
+        expect(transactions.aggregate).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({
+            data : [],
+            message : "dummy message"
+        });
+    });
+
+    test("should return a list of transactions", async () => {
+
+        // number of users with the provided email is zero
+        jest.spyOn(User, "countDocuments").mockResolvedValue(1);
+        jest.spyOn(categories, "countDocuments").mockResolvedValue(1);
+        jest.spyOn(transactions, "aggregate").mockResolvedValue([
+            {username : "johnDoe", type : "testCategory", date : "test-date", amount : 0, category : [{color : "blue"}]},
+            {username : "johnDoe", type : "testCategory", date : "test-date", amount : 1, category : [{color : "red"}]},
+        ]);
+
+        // call function under test
+        await getTransactionsByUserByCategory(req, res);
+
+        expect(User.countDocuments).toHaveBeenCalled();
+        expect(categories.countDocuments).toHaveBeenCalled();
+        expect(transactions.aggregate).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({
+            data : [
+                {username : "johnDoe", color : "blue", type : "testCategory", amount : 0, date : "test-date"},
+                {username : "johnDoe", color : "red", type : "testCategory", amount : 1, date : "test-date"}
+            ],
+            message : "dummy message"
+        });
     });
 })
 
