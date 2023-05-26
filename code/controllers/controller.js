@@ -244,7 +244,7 @@ export const deleteCategory = async (req, res) => {
                 message : "successfully deleted categories",
                 count : result.modifiedCount
             },
-            message : ""
+            refreshedTokenMessage: res.locals.refreshedTokenMessage
         })
 
     } catch (error) {
@@ -348,7 +348,7 @@ export const getTransactionsByUser = async (req, res) => {
     try {
         //Distinction between route accessed by Admins or Regular users for functions that can be called by both
         //and different behaviors and access rights
-        let filters;        
+        let filters;      
         if (req.url.indexOf("/transactions/users/") >= 0) {
             // admin authentication
             const {authorized, cause} = await verifyAuthAdmin(req, res);
@@ -367,9 +367,7 @@ export const getTransactionsByUser = async (req, res) => {
 
             filters["$and"].push(amountFilter);
             filters["$and"].push(dateFilter);
-        }      
-        
-        console.log("authorized")
+        }                  
 
         const {username} = req.params;
 
@@ -396,15 +394,12 @@ export const getTransactionsByUser = async (req, res) => {
             },
             {
                 $project : projection
-            },
-            {
-                $unwind : "$category"
             }]
         );        
 
         result = result.map(transaction => {
             return {
-            color : transaction.category.color,
+            color : transaction.category[0].color,
             username : transaction.username,
             type : transaction.type,
             amount : transaction.amount,
@@ -413,7 +408,7 @@ export const getTransactionsByUser = async (req, res) => {
 
         res.status(200).json({
             data : result,
-            message : ""
+            refreshedTokenMessage: res.locals.refreshedTokenMessage
         })
 
     } catch (error) {
@@ -498,7 +493,7 @@ export const getTransactionsByUserByCategory = async (req, res) => {
 
         res.status(200).json({
             data : result,
-            message : res.locals.message
+            refreshedTokenMessage: res.locals.refreshedTokenMessage
         })
 
     } catch (error) {
@@ -581,7 +576,7 @@ export const getTransactionsByGroup = async (req, res) => {
 
         res.status(200).json({
             data : result,
-            message : res.locals.message
+            refreshedTokenMessage: res.locals.refreshedTokenMessage
         })
 
     } catch (error) {
