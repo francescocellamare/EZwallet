@@ -1,49 +1,62 @@
 import jwt, { decode } from 'jsonwebtoken'
 import { Group, User } from '../models/User.js';
 
-/**
- * Handle possible date filtering options in the query parameters for getTransactionsByUser when called by a Regular user.
- * @param req the request object that can contain query parameters
- * @returns an object that can be used for filtering MongoDB queries according to the `date` parameter.
- *  The returned object must handle all possible combination of date filtering parameters, including the case where none are present.
- *  Example: {date: {$gte: "2023-04-30T00:00:00.000Z"}} returns all transactions whose `date` parameter indicates a date from 30/04/2023 (included) onwards
- * @throws an error if the query parameters include `date` together with at least one of `from` or `upTo`
- */
+/*
+- Returns an object with a `date` attribute used for filtering mongoDB's `aggregate` queries
+- The value of `date` is an object that depends on the query parameters:
+  - If the query parameters include `from` then it must include a `$gte` attribute that specifies the starting date as a `Date` object in the format **YYYY-MM-DDTHH:mm:ss**
+    - Example: `/api/users/Mario/transactions?from=2023-04-30` => `{date: {$gte: 2023-04-30T00:00:00.000Z}}`
+  - If the query parameters include `upTo` then it must include a `$lte` attribute that specifies the ending date as a `Date` object in the format **YYYY-MM-DDTHH:mm:ss**
+    - Example: `/api/users/Mario/transactions?upTo=2023-05-10` => `{date: {$lte: 2023-05-10T23:59:59.000Z}}`
+  - If both `from` and `upTo` are present then both `$gte` and `$lte` must be included
+  - If `date` is present then it must include both `$gte` and `$lte` attributes, these two attributes must specify the same date as a `Date` object in the format **YYYY-MM-DDTHH:mm:ss**
+    - Example: `/api/users/Mario/transactions?date=2023-05-10` => `{date: {$gte: 2023-05-10T00:00:00.000Z, $lte: 2023-05-10T23:59:59.000Z}}`
+  - If there is no query parameter then it returns an empty object
+    - Example: `/api/users/Mario/transactions` => `{}`
+- Throws an error if `date` is present in the query parameter together with at least one of `from` or `upTo`
+- Throws an error if the value of any of the three query parameters is not a string that represents a date in the format **YYYY-MM-DD**
+*/
 export const handleDateFilterParams = (req) => {
 
-    // Comparison operators : $eq, $gt, $gte, $in, $lt, $lte, $ne, $nin
-    let operations = [];
+    const {from, upTo, date} = req.query;
+
+    // validate filters
+    if(date && (upTo || from)) throw new Error('Cannot use date filter with upTo or from');
     
-    for(const key in req.query){
-        
-        let operation;
-        let args;
+    const re = new RegExp("^[0-9]{4}-[0-9]{2}-[0-9]{2}$");
+    if(date && !re.test(date)) throw new Error('Invalid date format');
+    if(from && !re.test(from)) throw new Error('Invalid date format');
+    if(upTo && !re.test(upTo)) throw new Error('Invalid date format');    
 
-        // check if param is a date
-        const regex = /^[\d,]+$/;
-        if(regex.test(req.query[key])){
-            continue;
+    if(date){
+        const [year, month, day] = date.split("-");   
+        const dateStart = new Date(Number(year), Number(month)-1, Number(day), 0, 0, 0); 
+        const dateEnd = new Date(Number(year), Number(month)-1, Number(day), 23, 59, 59);         
+        return {
+            date : {
+                $gte : dateStart,
+                $lte : dateEnd
+            }
         }
-        
-        if(key === "in" | key === "nin"){
-            // in and nin accept an array of amounts (comma seperated in the query) 
-            args = req.query[key].split(",")  
-            args = args.map(arg => new Date(arg));          
-        }else{
-            // all other operands only accept one value
-            args = new Date(req.query[key])
+    }else if(from || upTo){
+        let filter = {
+            date : {}
         }
 
-        operation = `$${key}`
-        let filter = {}
-        filter[operation] = args;
-
-        operations.push({
-            date : filter
-        })
+        if(from){
+            const [year, month, day] = from.split("-");   
+            const dateStart = new Date(Number(year), Number(month)-1, Number(day), 0, 0, 0);
+            filter.date["$gte"] = dateStart
+        }
+        if(upTo){
+            const [year, month, day] = upTo.split("-");   
+            const dateEnd = new Date(Number(year), Number(month)-1, Number(day), 23, 59, 59);
+            filter.date["$lte"] = dateEnd
+        } 
+        return filter;
+    }else{
+        return {};
     }
-
-    return operations;
 }
 
 /**
@@ -154,48 +167,33 @@ export const verifyAuth = (req, res, info) => {
 }
 }
 
-/**
- * Handle possible amount filtering options in the query parameters for getTransactionsByUser when called by a Regular user.
- * @param req the request object that can contain query parameters
- * @returns an object that can be used for filtering MongoDB queries according to the `amount` parameter.
- *  The returned object must handle all possible combination of amount filtering parameters, including the case where none are present.
- *  Example: {amount: {$gte: 100}} returns all transactions whose `amount` parameter is greater or equal than 100
- */
+/*
+- Returns an object with an `amount` attribute used for filtering mongoDB's `aggregate` queries
+- The value of `amount` is an object that depends on the query parameters:
+  - If the query parameters include `min` then it must include a `$gte` attribute that is an integer equal to `min`
+    - Example: `/api/users/Mario/transactions?min=10` => `{amount: {$gte: 10} }
+  - If the query parameters include `min` then it must include a `$lte` attribute that is an integer equal to `max`
+    - Example: `/api/users/Mario/transactions?min=50` => `{amount: {$lte: 50} }
+  - If both `min` and `max` are present then both `$gte` and `$lte` must be included
+- Throws an error if the value of any of the two query parameters is not a numerical value
+*/
 export const handleAmountFilterParams = (req) => {
 
-    // Comparison operators : $eq, $gt, $gte, $in, $lt, $lte, $ne, $nin
-    let operations = [];
+    const {min, max} = req.query;
     
-    for(const key in req.query){
-        
-        let operation;
-        let args;
-        
-        // check if param is a number
-        const regex = /^[\d,]+$/;
-        if(!regex.test(req.query[key])){
-            continue;
-        }
+    // if(!min && !max) return {}
+    if(min && !/^[0-9\.]+$/.test(min)) throw new Error("min param is not a number");
+    if(max && !/^[0-9\.]+$/.test(max)) throw new Error("max param is not a number");
 
-        if(key === "in" | key === "nin"){
-            // in and nin accept an array of amounts (comma seperated in the query) 
-            args = req.query[key].split(",")  
-            args = args.map(arg => Number(arg));          
-        }else{
-            // all other operands only accept one value
-            args = Number(req.query[key])
-        }
-
-        operation = `$${key}`
-        let filter = {}
-        filter[operation] = args;
-
-        operations.push({
-            amount : filter
-        })
+    let filter = {
+        amount : {}
     }
 
-    return operations;
+    if(!min && !max) return {}
+    if(min) filter.amount["$gte"] = Number(min);
+    if(max) filter.amount["$lte"] = Number(max);
+
+    return filter
 }
 
 /*----------------------------------------------------
