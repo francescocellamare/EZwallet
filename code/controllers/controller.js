@@ -448,13 +448,13 @@ export const getTransactionsByUserByCategory = async (req, res) => {
         // check if username passed in params represents a user in the database
         let result = await User.countDocuments({username});
         if(result !== 1){
-            return res.status(401).json({ error : "User does not exist" });
+            return res.status(400).json({ error : "User does not exist" });
         }
 
-        // check if username passed in params represents a user in the database
+        // check if category passed in params represents a category in the database
         result = await categories.countDocuments({type});
         if(result !== 1){
-            return res.status(401).json({ error : "Category does not exist" })
+            return res.status(400).json({ error : "Category does not exist" })
         }
 
         const projection = {

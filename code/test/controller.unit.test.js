@@ -213,7 +213,7 @@ describe("getTransactionsByUser", () => {
         });
     });
 
-    test("Should return an error indicating that the user specified by params does not exist", async () => {
+    test("Should return an error indicating that the user specified by params does not exist (authorized as an admin)", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -236,7 +236,7 @@ describe("getTransactionsByUser", () => {
         });
     });
 
-    test("Should return a list of transactions", async () => {
+    test("Should return a list of transactions (authorized as an admin)", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -267,6 +267,73 @@ describe("getTransactionsByUser", () => {
         });
     });
 
+    test("Should return an error indicating that the user specified by params does not exist (authorized as a user)", async () => {
+
+        // called by user
+        req.url = `/users/${req.params.username}/transactions`;
+
+        jest.spyOn(utils, "verifyAuthUser").mockResolvedValue({
+            authorized : true,
+            cause : "Authorized"
+        });
+
+        jest.spyOn(utils, "handleAmountFilterParams").mockReturnValue({
+            amount : {dummyOp : "dummyVal"}
+        });            
+        jest.spyOn(utils, "handleDateFilterParams").mockReturnValue({
+            date : {dummyOp : "dummyVal"}
+        });
+
+        jest.spyOn(User, "countDocuments").mockResolvedValue(0);
+
+        // call function under test
+        await getTransactionsByUser(req, res);
+
+        expect(utils.verifyAuthUser).toHaveBeenCalled();
+        expect(User.countDocuments).toHaveBeenCalled();
+        expect(utils.handleDateFilterParams).toHaveBeenCalled();
+        expect(utils.handleAmountFilterParams).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "User does not exist"
+        });
+    });
+
+    test("Should return a list of transactions (authorized as a user)", async () => {
+
+        // called by user
+        req.url = `/users/${req.params.username}/transactions`;
+
+        jest.spyOn(utils, "verifyAuthUser").mockResolvedValue({
+            authorized : true,
+            cause : "Authorized"
+        });
+
+        jest.spyOn(User, "countDocuments").mockResolvedValue(1);
+        jest.spyOn(transactions, "aggregate").mockResolvedValue([
+            {username : "johnDoe", type : "testCategory", date : "test-date", amount : 0, category : [{color : "blue"}]},
+            {username : "johnDoe", type : "testCategory", date : "test-date", amount : 1, category : [{color : "red"}]},
+        ]);
+
+        await getTransactionsByUser(req, res);        
+
+        expect(utils.verifyAuthUser).toHaveBeenCalled();
+        expect(User.countDocuments).toHaveBeenCalled();
+        expect(transactions.aggregate).toHaveBeenCalledWith([
+            {$match : {$and : [{amount : {dummyOp : "dummyVal"}},{date : {dummyOp : "dummyVal"}}]}},
+            {$lookup : {from: "categories", localField: "type", foreignField: "type", as: "category"}}, 
+            {$project : {_id: 0, username : 1, type : 1, amount : 1, date : 1, color : 1, "category.color" : 1}}
+        ]);
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({
+            data : [
+                {username : "johnDoe", color : "blue", type : "testCategory", amount : 0, date : "test-date"},
+                {username : "johnDoe", color : "red", type : "testCategory", amount : 1, date : "test-date"}
+            ],
+            refreshedTokenMessage : "dummy message"
+        });
+    });
+
 })
 
 describe("getTransactionsByUserByCategory", () => { 
@@ -287,7 +354,7 @@ describe("getTransactionsByUserByCategory", () => {
         // mock response
         res = {
             locals : {
-                message : "dummy message"
+                refreshedTokenMessage : "dummy message"
             },
             status : jest.fn().mockReturnThis(),
             json : jest.fn()
@@ -298,83 +365,128 @@ describe("getTransactionsByUserByCategory", () => {
         jest.clearAllMocks();
     })
 
-    test("should return an error indicating that the user does not exist", async () => {
+    test("Should return an error indicating that the user is not authorized", async () => {
 
-        // number of users with the provided email is zero
+        // called by user
+        req.url = `/users/${req.params.username}/transactions`;
+
+        jest.spyOn(utils, "verifyAuthUser").mockResolvedValue({
+            authorized : false,
+            cause : "dummy error"
+        });
+
+        // call function under test
+        await getTransactionsByUserByCategory(req, res);
+
+        expect(utils.verifyAuthUser).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "dummy error"
+        });
+    });
+
+    test("Should return an error indicating that the user is not authorized or not an admin", async () => {
+
+        // called by admin
+        req.url = `/transactions/users/`;
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockResolvedValue({
+            authorized : false,
+            cause : "dummy error"
+        });
+
+        // call function under test
+        await getTransactionsByUserByCategory(req, res);
+
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "dummy error"
+        });
+    });
+
+    test("Should return an error indicating that the user specified by params does not exist (auth type doesn't matter)", async () => {
+
+        // called by admin
+        req.url = `/transactions/users/`;
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockResolvedValue({
+            authorized : true,
+            cause : "Authorized"
+        });
+
         jest.spyOn(User, "countDocuments").mockResolvedValue(0);
 
         // call function under test
         await getTransactionsByUserByCategory(req, res);
 
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
         expect(User.countDocuments).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({
-            data : {},
-            message : "User does not exist"
+            error : "User does not exist"
         });
     });
 
-    test("should return an error indicating that the catrgory does not exist", async () => {
+    test("Should return an error indicating that the category specified by params does not exist (auth type doesn't matter)", async () => {
 
-        // number of users with the provided email is zero
+        // called by admin
+        req.url = `/transactions/users/`;
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockResolvedValue({
+            authorized : true,
+            cause : "Authorized"
+        });
+
         jest.spyOn(User, "countDocuments").mockResolvedValue(1);
         jest.spyOn(categories, "countDocuments").mockResolvedValue(0);
 
         // call function under test
         await getTransactionsByUserByCategory(req, res);
 
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
         expect(User.countDocuments).toHaveBeenCalled();
         expect(categories.countDocuments).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({
-            data : {},
-            message : "Category does not exist"
+            error : "Category does not exist"
         });
     });
 
-    test("should return an empty list of transactions", async () => {
+    test("Should return a list of transactions (auth type doesn't matter)", async () => {
 
-        // number of users with the provided email is zero
-        jest.spyOn(User, "countDocuments").mockResolvedValue(1);
-        jest.spyOn(categories, "countDocuments").mockResolvedValue(1);
-        jest.spyOn(transactions, "aggregate").mockResolvedValue([]);
+        // called by admin
+        req.url = `/transactions/users/`;
 
-        // call function under test
-        await getTransactionsByUserByCategory(req, res);
-
-        expect(User.countDocuments).toHaveBeenCalled();
-        expect(categories.countDocuments).toHaveBeenCalled();
-        expect(transactions.aggregate).toHaveBeenCalled();
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith({
-            data : [],
-            message : "dummy message"
+        jest.spyOn(utils, "verifyAuthAdmin").mockResolvedValue({
+            authorized : true,
+            cause : "Authorized"
         });
-    });
 
-    test("should return a list of transactions", async () => {
-
-        // number of users with the provided email is zero
         jest.spyOn(User, "countDocuments").mockResolvedValue(1);
         jest.spyOn(categories, "countDocuments").mockResolvedValue(1);
         jest.spyOn(transactions, "aggregate").mockResolvedValue([
-            {username : "johnDoe", type : "testCategory", date : "test-date", amount : 0, category : [{color : "blue"}]},
+            {username : "johnDoe", type : "testCategory", date : "test-date", amount : 0, category : [{color : "red"}]},
             {username : "johnDoe", type : "testCategory", date : "test-date", amount : 1, category : [{color : "red"}]},
         ]);
 
-        // call function under test
         await getTransactionsByUserByCategory(req, res);
 
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
         expect(User.countDocuments).toHaveBeenCalled();
         expect(categories.countDocuments).toHaveBeenCalled();
-        expect(transactions.aggregate).toHaveBeenCalled();
+        expect(transactions.aggregate).toHaveBeenCalledWith([
+            {$match : {type : "testCategory"}},
+            {$lookup : {from: "categories", localField: "type", foreignField: "type", as: "category"}},
+            {$project : {_id: 0, username : 1, type : 1, amount : 1, date : 1, color : 1, category : 1}}
+        ]);
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith({
             data : [
-                {username : "johnDoe", color : "blue", type : "testCategory", amount : 0, date : "test-date"},
+                {username : "johnDoe", color : "red", type : "testCategory", amount : 0, date : "test-date"},
                 {username : "johnDoe", color : "red", type : "testCategory", amount : 1, date : "test-date"}
             ],
-            message : "dummy message"
+            refreshedTokenMessage : "dummy message"
         });
     });
 })
