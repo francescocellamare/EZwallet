@@ -3,7 +3,6 @@ import { Group, User } from "../models/User.js";
 import { handleDateFilterParams, handleAmountFilterParams, verifyAuth, verifyAuthUser, verifyAuthGroup, verifyAuthAdmin } from "./utils.js";
 
 import mongoose from "mongoose";
-import { createAPIobj } from "./utils.js";
 /**
  * Create a new category
   - Request Body Content: An object having attributes `type` and `color`
@@ -603,6 +602,7 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
     }
 
     try {
+        const regexp = new RegExp('/transactions/groups/(.*)/category/(.*)')
         /**
          * MongoDB equivalent to the query 
          * 
@@ -619,6 +619,28 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         const groupName = req.params.name
         const categoryType = req.params.category
 
+
+        // checking privileges
+        const adminAuthInfo = verifyAuthAdmin(req, res)
+        const groupAuthInfo = await verifyAuthGroup(req, res, groupName)
+        if ( !req.path.match(regexp) ) { // user path
+            if(!groupAuthInfo.authorized)
+                return res.status(401).json({ error: 'authenticated user who is not part of the group' })
+        } else {    //admin path
+            if(!adminAuthInfo.authorized)
+                return res.status(401).json({ error: 'authenticated user who is not an admin' })
+        }
+
+        // group is not into the db
+        let found = await Group.findOne( {name: groupName} )
+        if(!members) {
+            return res.status(400).json({ error: "group does not exist" })
+        }
+        // category is not into the db
+        found = await categories.find( {type: categoryType} )
+        if(!found)
+            return res.status(400).json({ error: "category does not exist" })
+
         let members = await Group.findOne({ name: groupName })
         .select('members')
         .populate('members.user')
@@ -629,29 +651,6 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
 
         members = members.members.map( item => item.user.username)
 
-        // checking privileges
-        const regexp = new RegExp('/transactions/groups/(.*)/category/(.*)')
-        
-        const userAuthInfo = await verifyAuthUser(req, res)
-        const adminAuthInfo = await verifyAuthAdmin(req, res)
-        const groupAuthInfo = await verifyAuthGroup(req, res, groupName)
-
-        // TODO: try with unregistered user
-        if ( !req.path.match(regexp) ) { // user path
-            if ( !userAuthInfo.authorized ) {
-                return res.status(401).json({ message: userAuthInfo.cause })
-            }
-            if ( !adminAuthInfo.authorized && !groupAuthInfo.authorized) {
-                return res.status(401).json({ message: groupAuthInfo.cause })
-            }
-            if ( !userAuthInfo.authorized && !adminAuthInfo.authorized) {
-                return res.status(401).json({ message: 'unauthorized' })
-            }
-        } else {    //admin path
-            if ( !adminAuthInfo.authorized ) {
-                return res.status(401).json({ message: adminAuthInfo.cause })
-            }
-        }
 
         const query = await transactions.aggregate([
             {
@@ -672,7 +671,7 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         ])
         .then( result => {            
             result = result.map( item => new Query(item.username, item.type, item.amount, item.date, item.categories_info.color))
-            res.json( createAPIobj(result, res) )
+            res.status(200).json({data: result, refreshedTokenMessage: res.locals.refreshedTokenMessage})
         })
         .catch( err => {
             throw err
@@ -688,42 +687,40 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
   - Request Body Content: The `_id` of the transaction to be deleted
   - Response `data` Content: A string indicating successful deletion of the transaction
   - Optional behavior:
-    - error 401 is returned if the user or the transaction does not exist
-    TODO
-        - check if the error is correct
- 
+    - error 401 is returned if the user or the transaction does not exist 
    */
 export const deleteTransaction = async (req, res) => {
     try {
         const cookie = req.cookies
-        let onlyMine = undefined
-        const userAuthInfo = await verifyAuthUser(req, res)
-        const adminAuthInfo = await verifyAuthAdmin(req, res)  
-        if( !userAuthInfo.authorized ) {
-            return res.status(401).json({ message: userAuthInfo.cause })
-        }
-        if( userAuthInfo.authorized && !adminAuthInfo.authorized) {
-            if((await User.findOne({refreshToken: cookie.refreshToken}, {_id: 0, username: 1})).username != req.params.username) {
-                return res.status(401).json({ message: 'unauthorized' })
-                // TOBE checked with the new requirements
-            }
-        }
-        if ( !(await User.countDocuments( {username: req.params.username})) )
-            return res.status(400).json({ message: "user does not exist" })     
+        const id = req.body.id
+        const username = req.params.username
 
-        const query = { _id: mongoose.Types.ObjectId(req.body.id), username: req.params.username }
+        // body is not complete
+        if (!id)
+            return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
+        
+        // user not found
+        let found = User.findOne({username: username})
+        if(!found)
+            return res.status(400).json({ error: 'user not found' })
+
+        // transaction not found
+        found = transactions.findOne( {_id: id} )
+        if(!found)
+            return res.status(400).json({ error: 'transaction not found' })
+
+        const userAuthInfo = await verifyAuthUser(req, res, username)
+
+        if (!userAuthInfo.authorized) {
+            return res.status(401).json({ error: userAuthInfo.cause })
+        }
+
+        const query = { _id: mongoose.Types.ObjectId(req.body.id), username: username }
         const data = await transactions.deleteOne(query);
-        // const data = await transactions.countDocuments(query);
-        /*
-            TODO        
-            eventually adding another error according to new requirements
-            if I can not delete the transaction by id because it is not mine
-            this error is catched by next check now
-        */
         if ( data.deletedCount === 0 )
-            return res.status(400).json({ message: "transaction does not exist" })
+            return res.status(400).json({ error: "transaction does not exist" })
 
-        res.json(createAPIobj('deleted', res));
+        res.status(200).json({data: {message: "Transaction deleted"}, refreshedTokenMessage: res.locals.refreshedTokenMessage})
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
@@ -738,26 +735,27 @@ export const deleteTransaction = async (req, res) => {
  */
 export const deleteTransactions = async (req, res) => {
     try {
-        const userAuthInfo = await verifyAuthUser(req, res)
-        const adminAuthInfo = await verifyAuthAdmin(req, res)
-
-        if(!userAuthInfo.authorized) {
-            return res.status(401).json({ message: userAuthInfo.cause })
-        }
+        const adminAuthInfo = verifyAuthAdmin(req, res)
         if(!adminAuthInfo.authorized) {
-            return res.status(401).json({ message: adminAuthInfo.cause })
+            return res.status(401).json({ error: adminAuthInfo.cause })
         }
 
-        const {_id} = req.body
-        for(let id of _id) {
-            if(!await transactions.countDocuments({_id: id})) {
-                return res.status(400).json({ message: `${id} id does not exist` })
+        const _ids = req.body._ids
+        if(!_ids)
+            return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
+
+        if (_ids.includes(''))
+            return res.status(400).json({ error: "email is not valid" });
+                
+        for(let id of _ids) {
+            if(!(await transactions.countDocuments({_id: id}))) {
+                return res.status(400).json({ error: `${id} transaction does not exist` })
             }
         }
-        const res = await transactions.deleteMany( {_id: {$in: _id} } )
+        const res = await transactions.deleteMany( {_id: {$in: _ids} } )
         console.log(res)
         
-        res.json(createAPIobj('deleted', res))
+        res.status(200).json({data: {message: "Transactions deleted"}, refreshedTokenMessage: res.locals.refreshedTokenMessage})
     } catch (error) {
         res.status(500).json({ error: error.message })
     }

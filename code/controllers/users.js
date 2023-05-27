@@ -4,7 +4,6 @@ import { verifyAuth, verifyAuthUser, verifyAuthAdmin, verifyAuthGroup  } from ".
 
 
 import mongoose from "mongoose";
-import { createAPIobj } from "./utils.js";
 /**
  * Return all the users
   - Request Body Content: None
@@ -63,8 +62,8 @@ export const getUser = async (req, res) => {
     - error 401 is returned if there is already an existing group with the same name
     - error 401 is returned if all the `memberEmails` either do not exist or are already in a group
     
-  NEW according to slack
->>> TODO check new official requirement when theu will be published
+    TODO:
+      - user email not in list ==> add it ( at admin side ) 
     */
 export const createGroup = async (req, res) => {
   
@@ -91,25 +90,44 @@ export const createGroup = async (req, res) => {
   }
 
   try {
-    
+    const emailMatch = new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
+    const currentUserEmail = await User.findOne( {refreshToken: cookie.refreshToken}, {_id: 0, email: 1} ).email
+
     const cookie = req.cookies
     let name = req.body.name
     let memberEmails = req.body.memberEmails
 
+    // wrong body
+    if (!name || !memberEmails || name === '' )
+      return res.status(400).json({error: "body does not contain all the necessary attributes"})
+
+    // not valid email found
+    if (memberEmails.includes(''))
+      return res.status(400).json({ error: "email is not valid" });
+    if ( memberEmails.map(item => item.match(emailMatch)).includes(null) )
+      return res.status(400).json({ error: "email is not valid" });
+
     // group name already exists
-    const found = await Group.findOne( {name: name} )
+    let found = await Group.findOne( {name: name} )
     if (found) {
-      return res.status(400).json({ message: "group's name not available" });
+      return res.status(400).json({ error: "group's name not available" });
     }
+
+    // user already in group
+    found = await Group.findOne( {members: { $elemMatch: {email: currentUserEmail} }} )    
+    if (found) {
+      return res.status(400).json({ error: "user is already in group" });
+    }  
+
+    
 
     const userAuthInfo = await verifyAuthUser(req, res)
     const adminAuthInfo = verifyAuthAdmin(req, res)
 
     if (!userAuthInfo.authorized)
-      return res.status(401).json({ message: userAuthInfo.cause })
+      return res.status(401).json({ error: userAuthInfo.cause })
     // if it's not an admin I need to be part of the group otherwise it does not (TO BE verified with new requirements)
     if (!adminAuthInfo.authorized) {
-      const currentUserEmail = await User.findOne( {refreshToken: cookie.refreshToken}, {_id: 0, email: 1} ).email
       if (!memberEmails.includes(currentUserEmail)) 
         memberEmails.push(currentUserEmail)
     }
@@ -141,8 +159,9 @@ export const createGroup = async (req, res) => {
       }
     }
 
+    // no one has been added
     if(memberEmails.length === alreadyInGroup.length + membersNotFound.length)
-      return res.status(400).json({ message: "all the `memberEmails` either do not exist or are already in a group" });
+      return res.status(400).json({ error: "all the `memberEmails` either do not exist or are already in a group" });
 
     // creating object to return
     const returnedObj = {
@@ -157,7 +176,16 @@ export const createGroup = async (req, res) => {
         return {"email": elem.email, "user": elem.user._id} 
       })
     })
-    .then( res.json( createAPIobj(returnedObj, res) ) )
+    .then( res.status(200)
+              .json({
+                data: {
+                  group: returnedObj.group, 
+                  membersNotFound: returnedObj.membersNotFound,
+                  alreadyInGroup: returnedObj.alreadyInGroup
+                }, 
+                refreshedTokenMessage: res.locals.refreshedTokenMessage
+              })
+    ) 
     .catch(err => {
       throw (err)
     })
@@ -176,12 +204,8 @@ export const createGroup = async (req, res) => {
  */
 export const getGroups = async (req, res) => {
   try {
-    //const userAuthInfo = await verifyAuthUser(req, res)
-    const adminAuthInfo = await verifyAuthAdmin(req, res)
+    const adminAuthInfo = verifyAuthAdmin(req, res)
 
-    // if(!userAuthInfo.authorized) {
-    //   return res.status(401).json({ message: userAuthInfo.cause })
-    // }
     if(!adminAuthInfo.authorized) {
       return res.status(401).json({ error: adminAuthInfo.cause })
     }
@@ -204,25 +228,19 @@ export const getGroups = async (req, res) => {
 export const getGroup = async (req, res) => {
   try {
     const name = req.params.name
-    const userAuthInfo = await verifyAuthUser(req, res)
     const adminAuthInfo = verifyAuthAdmin(req, res)
     const groupAuthInfo = await verifyAuthGroup(req, res, name)
-    if ( !userAuthInfo.authorized ) {
-        return res.status(401).json({ message: userAuthInfo.cause })
-    }
-    if ( !adminAuthInfo.authorized && !groupAuthInfo.authorized) {
-        return res.status(401).json({ message: groupAuthInfo.cause })
-    }
-    if ( !userAuthInfo.authorized && !adminAuthInfo.authorized) {
-        return res.status(401).json({ message: 'unauthorized' })
-    }
 
+    // checking authentication
+    if ( !groupAuthInfo.authorized || !adminAuthInfo.authorized )
+      return res.status(401).json({ error: 'authenticated user who is neither part of the group nor an admin' })
+
+    // checking group in db
     const groups = await Group.findOne( {name: name}, {name: 1, members: 1, _id: 0} )
-
     if(!groups) 
-      return res.status(400).json({ message: "group does not exist" });
+      return res.status(400).json({ error: "group does not exist" });
       
-    res.json( createAPIobj(groups, res) )
+      res.status(200).json({data: {group: groups, refreshedTokenMessage: res.locals.refreshedTokenMessage}})
   } catch (err) {
       res.status(500).json(err.message)
   }
