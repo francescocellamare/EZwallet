@@ -2,8 +2,9 @@
 import request from 'supertest';
 import { app } from '../app';
 import { User } from '../models/User.js';
-import  {getUser, getUsers} from '../controllers/users';
-import { verifyAuthAdmin } from '../controllers/utils';
+import * as utils from '../controllers/utils';
+import  {getGroups, getUser, getUsers} from '../controllers/users';
+
 /**
  * In order to correctly mock the calls to external modules it is necessary to mock them using the following line.
  * Without this operation, it is not possible to replace the actual implementation of the external functions with the one
@@ -26,10 +27,6 @@ beforeEach(() => {
 describe("getUsers", () => {
   let mockReq, mockResp;
 
-  jest.mock('../controllers/utils.js', ()=> ({
-    verifyAuthAdmin: jest.fn()
-  }));
-
   beforeEach(
     
     ()=>{
@@ -38,6 +35,9 @@ describe("getUsers", () => {
       mockResp ={
         status: jest.fn(()=>mockResp),
         json: jest.fn(),
+        locals: {
+          refreshTokenMessage : "dummy message"
+        }
       }
     }
   );
@@ -45,33 +45,43 @@ describe("getUsers", () => {
   test("T1:no users -> return 200 and empty list", async () => {
     //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
     //sverifyAuthAdmin.mockImplementation(()=>({ authorized: false, cause: "Unauthorized"}))
-    jest.spyOn(User, "find").mockImplementation(() => [])
     
-
+    jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+      {authorized: true,
+        cause:"Authorized"
+      }
+    ));
+    jest.spyOn(User, "find").mockImplementation(() => []);
     await getUsers(mockReq, mockResp);
 
     expect(mockResp.status).toHaveBeenCalledWith(200)
     const jsonResp = mockResp.json.mock.calls[0][0];
-    expect(jsonResp.data.users).toEqual([])
+    expect(jsonResp.data).toEqual([])
+
   })
 
   test("T2: at least one user exists -> return 200 and list of retrieved users", async () => {
     const retrievedUsers = [{ username: 'test1', email: 'test1@example.com', password: 'hashedPassword1' }, { username: 'test2', email: 'test2@example.com', password: 'hashedPassword2' }]
-    verifyAuthAdmin.mockReturnValueOnce({
-      authorized: true
-    })
+    jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+      {authorized: true,
+        cause:"Authorized"
+      }
+    ))
     jest.spyOn(User, "find").mockImplementation(() => [...retrievedUsers]);
     
     await getUsers(mockReq, mockResp);
     expect(mockResp.status).toHaveBeenCalledWith(200);
-    expect(mockResp.json.mock.calls[0][0].data.users).toEqual(retrievedUsers);
+    expect(mockResp.json.mock.calls[0][0].data).toEqual(retrievedUsers);
+    expect(mockResp.locals).toEqual({refreshTokenMessage : "dummy message"});
   })
 
   test("T3:not authentified -> return 401", async () => {
     //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
-    verifyAuthAdmin.mockReturnValueOnce({
-      authorized: false
-    })    
+    jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+      {authorized: false,
+        cause:"Unauthorized"
+      }
+    ))  
     await getUsers(mockReq, mockResp);
 
     expect(mockResp.status).toHaveBeenCalledWith(401);
@@ -97,6 +107,9 @@ beforeEach(
        mockResp ={
         status: jest.fn(()=>mockResp),
         json: jest.fn(),
+        locals: {
+          refreshTokenMessage: "dummy message"
+        }
       };
       
     }
@@ -110,23 +123,43 @@ test('T1: user exists -> return 200 and user info', async ()=>{
     refreshToken: 'refreshToken'
   }
   jest.spyOn(User, "findOne").mockImplementation(()=>user);
-
+  jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+    {authorized: true,
+      cause:"Authorized"
+    }
+  ))
+  jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
+    {authorized: true,
+      cause:"Authorized"
+    }
+  ))
   await getUser(mockReq, mockResp);
   expect(mockResp.status).toHaveBeenCalledWith(200);
-  const jsonResp = mockResp.json.mock.call[0][0];
-  expect(jsonResp.data.username).toBe('user');
-  expect(jsonResp.data.email).toBe('test@example.com');
-  expect(jsonResp.data.role).toBe('role');
+  const jsonResp = mockResp.json.mock.calls[0][0];
+  expect(mockResp.json).toHaveBeenCalledWith({
+    data: user,
+    refreshTokenMessage: mockResp.locals.refreshTokenMessage,
+  });
 
 
 })
 
 test('T2: user not found -> return 401 and message: user not found', async()=>{
+  jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+    {authorized: true,
+      cause:"Authorized"
+    }
+  ))
+  jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
+    {authorized: true,
+      cause:"Authorized"
+    }
+  ))
   jest.spyOn(User, "findOne").mockImplementation(()=> null);
 
   await getUser(mockReq, mockResp);
   expect(mockResp.status).toHaveBeenCalledWith(401);
-  expect(mockResp.json.mock.call[0][0].data.message).toBe('User not found')
+  expect(mockResp.json.mock.calls[0][0].error).toBe('User not found')
 })
 
 test('T3: different username -> return 401 and message: unauthorized', async ()=>
@@ -137,17 +170,134 @@ test('T3: different username -> return 401 and message: unauthorized', async ()=
   refreshToken: 'refreshToken'
   
 }
+jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+  {authorized: true,
+    cause:"Authorized"
+  }
+))
+jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
+  {authorized: true,
+    cause:"Authorized"
+  }
+))
 jest.spyOn(User, "findOne").mockImplementation(()=> user);
 await getUser(mockReq, mockResp);
 expect(mockResp.status).toHaveBeenCalledWith(401);
-expect(mockResp.json.mock.call[0][0].data.message).toBe('Unauthorized');
+expect(mockResp.json.mock.calls[0][0].error).toBe('Unauthorized');
 
 })
+
+test('T4: different username -> return 401 and message: unauthorized', async ()=>
+{ const user ={
+  username: 'differentUser',
+  email: 'test@example.com',
+  role: 'role',
+  refreshToken: 'refreshToken'
+  
+}
+
+
+jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+  {authorized: true,
+    cause:"Authorized"
+  }
+))
+jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
+  {authorized: true,
+    cause:"Authorized"
+  }
+))
+jest.spyOn(User, "findOne").mockImplementation(()=> user);
+await getUser(mockReq, mockResp);
+expect(mockResp.status).toHaveBeenCalledWith(401);
+expect(mockResp.json.mock.calls[0][0].error).toBe('Unauthorized');
+
 })
 
-describe("createGroup", () => { })
 
-describe("getGroups", () => { })
+
+})
+
+describe("createGroup", () => {
+
+ })
+
+describe("getGroups", () => { 
+
+  let mockReq, mockResp;
+
+  beforeEach(
+    
+    ()=>{
+      
+      mockReq = {};
+      mockResp ={
+        status: jest.fn(()=>mockResp),
+        json: jest.fn(),
+        locals: {
+          refreshedTokenMessage : "dummy message"
+        }
+      }
+    }
+  );
+
+  test("T1:no groups -> return 200 and empty list", async () => {
+    //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
+    //sverifyAuthAdmin.mockImplementation(()=>({ authorized: false, cause: "Unauthorized"}))
+    
+    jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+      {authorized: true,
+        cause:"Authorized"
+      }
+    ));
+    jest.spyOn(User, "find").mockImplementation(() => []);
+    await getGroups(mockReq, mockResp);
+
+    expect(mockResp.status).toHaveBeenCalledWith(200)
+    const jsonResp = mockResp.json.mock.calls[0][0];
+    expect(mockResp.json).toHaveBeenCalledWith({
+      data: [],
+      refreshedTokenMessage: mockResp.locals.refreshedTokenMessage,
+    });
+  
+
+  })
+
+  test("T2: at least one group exists -> return 200 and list of retrieved groups", async () => {
+    const retrievedGroups = '[{name: "Family", members: [{email: "mario.red@email.com"}, {email: "luigi.red@email.com"}]';
+    jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+      {authorized: true,
+        cause:"Authorized"
+      }
+    ))
+    jest.spyOn(User, "find").mockImplementation(() => retrievedGroups);
+    
+    await getGroups(mockReq, mockResp);
+    expect(mockResp.status).toHaveBeenCalledWith(200);
+    expect(mockResp.json).toHaveBeenCalledWith({
+      data: retrievedGroups,
+      refreshedTokenMessage: mockResp.locals.refreshedTokenMessage,
+    });
+  
+  })
+
+  test("T3:not authentified -> return 401", async () => {
+    //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
+    jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+      {authorized: false,
+        cause:"Unauthorized"
+      }
+    ))  
+    await getGroups(mockReq, mockResp);
+
+    expect(mockResp.status).toHaveBeenCalledWith(401);
+  })
+
+
+
+
+
+})
 
 describe("getGroup", () => { })
 

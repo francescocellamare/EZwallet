@@ -77,7 +77,7 @@ test("T2: user already exist -> return 400 and message: you are already register
         const jsonResponse = mockResp.json.mock.calls[0][0];
         
     // Check the value of data.message
-        expect(jsonResponse.data.message).toBe('you are already registered');
+        expect(jsonResponse.error).toBe('you are already registered');
     })
 
 
@@ -98,7 +98,7 @@ test("T3: invalid email -> return 400 and message: invalid email ", async () =>{
         const jsonResponse = mockResp.json.mock.calls[0][0];
 
         // Check the value of data.message
-        expect(jsonResponse.data.message).toBe('invalid email');
+        expect(jsonResponse.error).toBe('invalid email');
     })
 test("T4: missing fields -> return 400 and message: some fields are missing ", async () =>{
         let mockReqIncomplete;
@@ -115,7 +115,7 @@ test("T4: missing fields -> return 400 and message: some fields are missing ", a
         // Get the argument passed to the json method
         const jsonResponse = mockResp.json.mock.calls[0][0];
         // Check the value of data.message
-        expect(jsonResponse.data.message).toBe('some fields are missing');
+        expect(jsonResponse.error).toBe('some fields are missing');
     })
 test("T5: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
         let mockReqIncomplete;
@@ -133,7 +133,19 @@ test("T5: field with empty string -> return 400 and message: empty fields are no
         // Get the argument passed to the json method
         const jsonResponse = mockResp.json.mock.calls[0][0];
         // Check the value of data.message
-        expect(jsonResponse.data.message).toBe('empty fields are not allowed');
+        expect(jsonResponse.error).toBe('empty fields are not allowed');
+    })
+
+    test("T6:Network error -> return 500 and error message", async()=>{
+        const errorMsg = '[Error: Database connection error]';
+        jest.spyOn(User, "findOne").mockRejectedValue(new Error(errorMsg));
+        
+        await register(mockReq, mockResp);
+
+        expect(mockResp.status).toHaveBeenCalledWith(500);
+        expect(mockResp.json).toHaveBeenCalledWith({
+            error: errorMsg
+        })
     })
 
 
@@ -201,7 +213,7 @@ describe("registerAdmin", () => {
          const jsonResponse = mockResp.json.mock.calls[0][0];
 
         // Check the value of data.message
-        expect(jsonResponse.data.message).toBe('you are already registered');
+        expect(jsonResponse.error).toBe('you are already registered');
 
     });
 
@@ -223,7 +235,7 @@ describe("registerAdmin", () => {
         const jsonResponse = mockResp.json.mock.calls[0][0];
 
         // Check the value of data.message
-        expect(jsonResponse.data.message).toBe('invalid email');
+        expect(jsonResponse.error).toBe('invalid email');
     })
     test("T4: missing fields -> return 400 and message: some fields are missing ", async () =>{
         let mockReqIncomplete;
@@ -240,7 +252,7 @@ describe("registerAdmin", () => {
         // Get the argument passed to the json method
         const jsonResponse = mockResp.json.mock.calls[0][0];
         // Check the value of data.message
-        expect(jsonResponse.data.message).toBe('some fields are missing');
+        expect(jsonResponse.error).toBe('some fields are missing');
     })
 
     test("T5: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
@@ -259,7 +271,19 @@ describe("registerAdmin", () => {
         // Get the argument passed to the json method
         const jsonResponse = mockResp.json.mock.calls[0][0];
         // Check the value of data.message
-        expect(jsonResponse.data.message).toBe('empty fields are not allowed');
+        expect(jsonResponse.error).toBe('empty fields are not allowed');
+    })
+
+    test("T6:Network error -> return 500 and error message", async()=>{
+        const errorMsg = '[Database connection error]';
+        jest.spyOn(User, "findOne").mockRejectedValue(new Error(errorMsg));
+        
+        await registerAdmin(mockReq, mockResp);
+
+        expect(mockResp.status).toHaveBeenCalledWith(500);
+        expect(mockResp.json).toHaveBeenCalledWith({
+            error: errorMsg
+        })
     })
 
 
@@ -329,7 +353,7 @@ afterEach(()=>{
         jest.spyOn(User, "findOne").mockImplementation(()=>null) //user does not exist
         await login(mockReq, mockResp)
         expect(mockResp.status).toHaveBeenCalledWith(400);
-        expect(mockResp.json.mock.calls[0][0].data.message).toBe('please you need to register')
+        expect(mockResp.json.mock.calls[0][0].error).toBe('please you need to register')
 
     })
 
@@ -343,7 +367,7 @@ afterEach(()=>{
         bcrypt.compare.mockResolvedValue(false);
         await login(mockReq, mockResp);
         expect(mockResp.status).toHaveBeenCalledWith(400);
-        expect(mockResp.json.mock.calls[0][0].data.message).toBe('wrong credentials')
+        expect(mockResp.json.mock.calls[0][0].error).toBe('wrong credentials')
         
     })
 
@@ -370,7 +394,7 @@ afterEach(()=>{
         const jsonResponse = mockResp.json.mock.calls[0][0];
 
         // Check the value of data.message
-        expect(jsonResponse.data.message).toBe('invalid email');
+        expect(jsonResponse.error).toBe('invalid email');
     })
     test("T5: missing fields -> return 400 and message: some fields are missing ", async () =>{
         let mockReqIncomplete;
@@ -392,7 +416,7 @@ afterEach(()=>{
         // Get the argument passed to the json method
         const jsonResponse = mockResp.json.mock.calls[0][0];
         // Check the value of data.message
-        expect(jsonResponse.data.message).toBe('some fields are missing');
+        expect(jsonResponse.error).toBe('some fields are missing');
     })
 
     test("T6: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
@@ -415,8 +439,21 @@ afterEach(()=>{
         // Get the argument passed to the json method
         const jsonResponse = mockResp.json.mock.calls[0][0];
         // Check the value of data.message
-        expect(jsonResponse.data.message).toBe('empty fields are not allowed');
+        expect(jsonResponse.error).toBe('empty fields are not allowed');
     })
+
+    test("T7:Network error -> return 500 and error message", async()=>{
+        const errorMsg = '[Error: Database connection error]';
+        jest.spyOn(User, "findOne").mockRejectedValue(new Error(errorMsg));
+        
+        await login(mockReq, mockResp);
+
+        expect(mockResp.status).toHaveBeenCalledWith(500);
+        expect(mockResp.json).toHaveBeenCalledWith({
+            error: errorMsg
+        })
+    })
+    
 
 
        
@@ -479,7 +516,7 @@ describe('logout', () => {
         expect(mockResp.status).toHaveBeenCalledWith(400);
 
         const jsonResponse = mockResp.json.mock.calls[0][0];
-        expect((jsonResponse.data.message)).toBe("user not found")
+        expect((jsonResponse.error)).toBe("user not found")
         
 
     });
@@ -489,7 +526,19 @@ describe('logout', () => {
         await logout(mockReq, mockResp);
         
         expect(mockResp.status).toHaveBeenCalledWith(400);
-        expect((mockResp.json.mock.calls[0][0].data.message)).toBe("user not found")
+        expect((mockResp.json.mock.calls[0][0].error)).toBe("user not found")
+    })
+
+    test("T4:Network error -> return 500 and error message", async()=>{
+        const errorMsg = '[Error: Database connection error]';
+        jest.spyOn(User, "findOne").mockRejectedValue(new Error(errorMsg));
+        
+        await logout(mockReq, mockResp);
+
+        expect(mockResp.status).toHaveBeenCalledWith(500);
+        expect(mockResp.json).toHaveBeenCalledWith({
+            error: errorMsg
+        })
     })
 
 });

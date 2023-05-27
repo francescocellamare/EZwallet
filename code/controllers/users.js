@@ -17,11 +17,10 @@ export const getUsers = async (req, res) => {
 
       const adminAuthInfo = verifyAuthAdmin(req, res)
       if(!adminAuthInfo.authorized) {
-        return res.status(401).json({message: adminAuthInfo.cause})
+        return res.status(401).json({error: adminAuthInfo.cause})
       }
         const users = await User.find();
-        res.status(200).json({data:{
-          users: users}, message:''});
+        res.status(200).json({data: users, refreshedTokenMessage: res.locals.refreshedTokenMessage});
     } catch (error) {
         res.status(500).json(error.message);
     }
@@ -36,17 +35,20 @@ export const getUsers = async (req, res) => {
  */
 export const getUser = async (req, res) => {
     try {
-        // const cookie = req.cookies
-        // if (!cookie.accessToken || !cookie.refreshToken) {
-        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        // }
-        const username = req.params.username
+      const cookie  = req.cookies;
+      const username = req.params.username
+      const userAuthInfo = verifyAuthUser(req, res, username)
+      const adminAuthInfo = verifyAuthAdmin(req, res)
+      if((!userAuthInfo.authorized)||(!adminAuthInfo.authorized)){
+        return res.status(401)
+      }
+
         const user = await User.findOne({ refreshToken: cookie.refreshToken })
-        if (!user) return res.status(401).json({ message: "User not found" })
-        if (user.username !== username) return res.status(401).json({data:{ message: "Unauthorized" }, message:''})
-        res.status(200).json({data:user, message:''})
+        if (!user) return res.status(401).json({ error: "User not found" })
+        if (user.username !== username) return res.status(401).json({error: "Unauthorized" })
+        res.status(200).json({data:user, refreshTokenMessage:res.locals.refreshTokenMessage})
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({error: error.message})
     }
 }
 
@@ -174,20 +176,20 @@ export const createGroup = async (req, res) => {
  */
 export const getGroups = async (req, res) => {
   try {
-    const userAuthInfo = await verifyAuthUser(req, res)
-    const adminAuthInfo = await (req, res)
+    //const userAuthInfo = await verifyAuthUser(req, res)
+    const adminAuthInfo = await verifyAuthAdmin(req, res)
 
-    if(!userAuthInfo.authorized) {
-      return res.status(401).json({ message: userAuthInfo.cause })
-    }
+    // if(!userAuthInfo.authorized) {
+    //   return res.status(401).json({ message: userAuthInfo.cause })
+    // }
     if(!adminAuthInfo.authorized) {
-      return res.status(401).json({ message: adminAuthInfo.cause })
+      return res.status(401).json({ error: adminAuthInfo.cause })
     }
 
     const groups = await Group.find( {}, {name: 1, members: 1, _id: 0} )
-    res.json( createAPIobj(groups, res) )
+    res.status(200).json({data: groups, refreshedTokenMessage: res.locals.refreshedTokenMessage})
   } catch (err) {
-      res.status(500).json(err.message)
+      res.status(500).json({error: err.message})
   }
 }
 

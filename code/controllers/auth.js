@@ -19,34 +19,29 @@ export const register = async (req, res) => {
             {username: req.body.username}
             ]});
         if (existingUser) return res.status(400).json({ 
-        data:{message: "you are already registered"},
-        message:"" });
+        error: "you are already registered"});
         if((username=="")||(email=="")||(password=="")){
             return res.status(400).json({
-                data: {
-                    message: "empty fields are not allowed"
-                },
-                message: ""
-            })
+                error: "empty fields are not allowed"
+                })
         }
 
         if((!username)||(!email)||(!password))
         {return res.status(400).json({ 
-            data:{message: "some fields are missing"},
-            message:"" });}
+            error: "some fields are missing"});}
         
         let regex = new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
         const emailValid = regex.test(email)
-        if(!emailValid) return res.status(400).json({data:{message:'invalid email'}, message:""});
+        if(!emailValid) return res.status(400).json({error:'invalid email'});
         const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = await User.create({
             username,
             email,
             password: hashedPassword,
         });
-        res.status(200).json({data:{message: 'user added succesfully'}, message:""});
+        res.status(200).json({data:{message: 'user added succesfully'}});
     } catch (err) {
-        res.status(400).json(err);
+        res.status(500).json({error: err});
     }
 };
     
@@ -66,25 +61,19 @@ export const registerAdmin = async (req, res) => {
             {username: req.body.username}
             ]});
         if (existingUser) return res.status(400).json({ 
-            data : {
-            message: "you are already registered" 
-        },
-            message : ""});
+            error: "you are already registered" 
+        });
         if((username=="")||(email=="")||(password=="")){
             return res.status(400).json({
-                data: {
-                    message: "empty fields are not allowed"
-                },
-                message: ""
-            })
+                error: "empty fields are not allowed"
+                })
         }
         if((!username)||(!email)||(!password))
         {return res.status(400).json({ 
-            data:{message: "some fields are missing"},
-            message:"" });}
+            error: "some fields are missing"});}
         let regex = new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
         const emailValid = regex.test(email)
-        if(!emailValid) return res.status(400).json({data:{message:'invalid email'}, message:""});
+        if(!emailValid) return res.status(400).json({error:'invalid email'});
         const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = await User.create({
             username,
@@ -98,13 +87,12 @@ export const registerAdmin = async (req, res) => {
             {
                 data : {
                     message : "admin added succesfully"
-                },
-                message : ""
+                }
             });
             
        
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({error:err});
     }
 
 }
@@ -124,25 +112,21 @@ export const login = async (req, res) => {
         const { email, password } = req.body
         const cookie = req.cookies
         const existingUser = await User.findOne({ email: email })
-        if (!existingUser) return res.status(400).json({data:{ message: 'please you need to register'}, message:''})
+        if (!existingUser) return res.status(400).json({error: 'please you need to register'})
         try {
             if((email=="")||(password=="")){
                 return res.status(400).json({
-                    data: {
-                        message: "empty fields are not allowed"
-                    },
-                    message: ""
-                })
+                    error: "empty fields are not allowed"
+                    })
             }
             if((!email)||(!password))
             {return res.status(400).json({ 
-                data:{message: "some fields are missing"},
-                message:"" });}
+                error: "some fields are missing"})}
             let regex = new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
             const emailValid = regex.test(email)
-            if(!emailValid) return res.status(400).json({data:{message:'invalid email'}, message:""});
+            if(!emailValid) return res.status(400).json({error:'invalid email'});
             const match = await bcrypt.compare(password, existingUser.password)
-            if (!match) return res.status(400).json({data:{message:'wrong credentials'}, message:''})
+            if (!match) return res.status(400).json({error:'wrong credentials'})
             //CREATE ACCESSTOKEN
             const accessToken = jwt.sign({
                 email: existingUser.email,
@@ -164,7 +148,7 @@ export const login = async (req, res) => {
             res.cookie('refreshToken', refreshToken, expect.objectContaining({ httpOnly: true, domain: "localhost", path: '/api', maxAge: 7 * 24 * 60 * 60 * 1000, sameSite: 'none', secure: true }))
             res.status(200).json({ data: { accessToken: accessToken, refreshToken: refreshToken } })
         } catch (error) {
-            res.status(500).json(error)
+            res.status(500).json({error: error})
         }
     }
     
@@ -179,19 +163,17 @@ export const login = async (req, res) => {
  */
 export const logout = async (req, res) => {
     const refreshToken = req.cookies.refreshToken
-    if (!refreshToken) return res.status(400).json({data:{message: "user not found"}, message:""})
+    if (!refreshToken) return res.status(400).json({error: "user not found"})
     const user = await User.findOne({ refreshToken: refreshToken })
-    if (!user) return res.status(400).json({data: {
-        message:'user not found'},
-    message: ''})
+    if (!user) return res.status(400).json({error:'user not found'})
     try {
         user.refreshToken = null
         res.cookie("accessToken", "", { httpOnly: true, path: '/api', maxAge: 0, sameSite: 'none', secure: true })
         res.cookie('refreshToken', "", { httpOnly: true, path: '/api', maxAge: 0, sameSite: 'none', secure: true })
         const savedUser = await user.save()
-        res.status(200).json({data:{message:'logged out'}, message:""})
+        res.status(200).json({data:{message:'logged out'}})
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json({error: error})
     }
 }
 

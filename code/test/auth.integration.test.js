@@ -25,6 +25,27 @@ afterAll(async () => {
 });
 
 describe('register', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+  })
+
+  test('T1: register new user -> return 200 and message: user added succesfully', async()=>{
+    const newUser = {
+      username : 'user',
+      email: 'test@example.com',
+      password: '123'
+    };
+
+    const resp = await request(app)
+    .post(`/register`)
+    .send(newUser);
+     
+
+    expect(resp.status).toBe(200);
+    expect(resp.body.data.message).toBe('user added succesfully')
+
+
+  })
 });
 
 describe("registerAdmin", () => { 

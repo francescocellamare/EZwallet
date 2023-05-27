@@ -299,3 +299,5 @@ export async function verifyAuthGroup(req, res, groupName) {
     const emails = document.members.map(member => member.email)
     return verifyAuth(req, res, {authType: 'Group', emails: emails})
 }
+
+
