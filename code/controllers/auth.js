@@ -144,8 +144,8 @@ export const login = async (req, res) => {
             //SAVE REFRESH TOKEN TO DB
             existingUser.refreshToken = refreshToken
             const savedUser = await existingUser.save()
-            res.cookie("accessToken", accessToken, expect.objectContaining({ httpOnly: true, domain: "localhost", path: "/api", maxAge: 60 * 60 * 1000, sameSite: "none", secure: true }))
-            res.cookie('refreshToken', refreshToken, expect.objectContaining({ httpOnly: true, domain: "localhost", path: '/api', maxAge: 7 * 24 * 60 * 60 * 1000, sameSite: 'none', secure: true }))
+            res.cookie("accessToken", accessToken, { httpOnly: true, domain: "localhost", path: "/api", maxAge: 60 * 60 * 1000, sameSite: "none", secure: true })
+            res.cookie('refreshToken', refreshToken, { httpOnly: true, domain: "localhost", path: '/api', maxAge: 7 * 24 * 60 * 60 * 1000, sameSite: 'none', secure: true })
             res.status(200).json({ data: { accessToken: accessToken, refreshToken: refreshToken } })
         } catch (error) {
             res.status(500).json({error: error})
