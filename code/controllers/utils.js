@@ -127,23 +127,6 @@ export const verifyAuth = (req, res, info) => {
 } catch (err) {
     if (err.name === "TokenExpiredError") {
         try {
-
-            if (info.authType === 'User') {
-                if (decodecRefreshToken.username != requestedUsername) {
-                    return { authorized: false, cause: "Username does not match with requested one" }
-                }
-            }
-            else if (info.authType === 'Admin') {
-                if (decodecRefreshToken.role != 'Admin') {
-                    return { authorized: false, cause: "User does not have admin role" }
-                }
-            } 
-            else if (info.authType === 'Group') {
-                if (!requestedEmails.includes(decodedRefreshToken.email)) {
-                    return { authorized: false, cause: "User is not in the group" }
-                }    
-            }
-
             const refreshToken = jwt.verify(cookie.refreshToken, process.env.ACCESS_KEY)
             const newAccessToken = jwt.sign({
                 username: refreshToken.username,
@@ -153,6 +136,23 @@ export const verifyAuth = (req, res, info) => {
             }, process.env.ACCESS_KEY, { expiresIn: '1h' })
             res.cookie('accessToken', newAccessToken, { httpOnly: true, path: '/api', maxAge: 60 * 60 * 1000, sameSite: 'none', secure: true })
             res.locals.message = 'Access token has been refreshed. Remember to copy the new one in the headers of subsequent calls'
+            if (info.authType === 'User') {
+                const requestedUsername = info.username
+                if (refreshToken.username != requestedUsername) {
+                    return { authorized: false, cause: "Username does not match with requested one" }
+                }
+            }
+            else if (info.authType === 'Admin') {
+                if (refreshToken.role != 'Admin') {
+                    return { authorized: false, cause: "User does not have admin role" }
+                }
+            } 
+            else if (info.authType === 'Group') {
+                const requestedEmails = info.emails
+                if (!requestedEmails.includes(refreshToken.email)) {
+                    return { authorized: false, cause: "User is not in the group" }
+                }    
+            }
             return { authorized: true, cause: "Authorized" }
         } catch (err) {
             if (err.name === "TokenExpiredError") {
@@ -199,20 +199,6 @@ export const handleAmountFilterParams = (req) => {
 /*----------------------------------------------------
     not in the original project
 ----------------------------------------------------*/
-
-/*
-    it's used for creating the required data according to code/README.md
-    datafield is for the required data
-    resfield is the response object received by each function
-*/
-
-export function createAPIobj(datafield, resfield) {
-    const dataobj = {
-        data: datafield,
-        message: resfield.locals.message
-    }
-    return dataobj
-}
 
 /*
     functions verifyAuthUser(), verifyAuthAdmin(), verifyAuthGroup() are used as wrapper for calling to verifyAuth() 
@@ -273,26 +259,30 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
 }
 */
 
+export function verifyAuthSimple(req, res) {
+    return verifyAuth(req, res, {authType: 'Simple'})
+}
 
-export async function verifyAuthUser(req, res) {
+export async function verifyAuthUser(req, res, username) {
     const cookie = req.cookies
-    const userByRefreshToken = await User.findOne( {refreshToken: cookie.refreshToken}, {username: 1, _id: 0})
+    const userByRefreshToken = await User.findOne( {username: username}, {username: 1, _id: 0})
     if (!userByRefreshToken) 
         return { authorized: false, cause: "Unauthorized"}
 
-    return verifyAuth(req, res, {authType: 'User', username: userByRefreshToken.username})
+    return verifyAuth(req, res, {authType: 'User', username: username})
 }
 
 export function verifyAuthAdmin(req, res) {
     return verifyAuth(req, res, {authType: 'Admin'})
 }
 
+
 export async function verifyAuthGroup(req, res, groupName) {
     const cookie = req.cookies
-    const userEmail = await User.findOne( {refreshToken: cookie.refreshToken}, {email: 1, _id: 0})
-    // check at the user's email in the database
-    if (!userEmail)
-        return { authorized: false, cause: "Unauthorized"}
+    // const userEmail = await User.findOne( {refreshToken: cookie.refreshToken}, {email: 1, _id: 0})
+    // // check at the user's email in the database
+    // if (!userEmail)
+    //     return { authorized: false, cause: "Unauthorized"}
     const document = await Group.findOne({name: groupName}, {members: 1, _id: 0})
     if (!document)
         return { authorized: false, cause: "Unauthorized"}
