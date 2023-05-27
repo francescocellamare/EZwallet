@@ -1,6 +1,6 @@
 import { Group, User } from "../models/User.js";
 import { transactions } from "../models/model.js";
-import { verifyAuth, verifyAuthUser, verifyAuthAdmin, verifyAuthGroup  } from "./utils.js";
+import { verifyAuthSimple, verifyAuthUser, verifyAuthAdmin, verifyAuthGroup  } from "./utils.js";
 
 
 import mongoose from "mongoose";
@@ -36,6 +36,7 @@ export const getUser = async (req, res) => {
     try {
       const cookie  = req.cookies;
       const username = req.params.username
+
       const userAuthInfo = verifyAuthUser(req, res, username)
       const adminAuthInfo = verifyAuthAdmin(req, res)
       if((!userAuthInfo.authorized)||(!adminAuthInfo.authorized)){
@@ -67,6 +68,9 @@ export const getUser = async (req, res) => {
     */
 export const createGroup = async (req, res) => {
   
+  const {authorized, cause} = verifyAuthSimple(req, res);
+  if(!authorized) return res.status(401).json({error: cause})
+
   // null for user not found
   async function getUserId(email){
     const id = await User.findOne( {email: email}, {_id: 1} )
@@ -205,7 +209,6 @@ export const createGroup = async (req, res) => {
 export const getGroups = async (req, res) => {
   try {
     const adminAuthInfo = verifyAuthAdmin(req, res)
-
     if(!adminAuthInfo.authorized) {
       return res.status(401).json({ error: adminAuthInfo.cause })
     }
@@ -258,10 +261,6 @@ export const getGroup = async (req, res) => {
  */
 export const addToGroup = async (req, res) => { //Only own group or admin any group
   try {
-    /*const cookie = req.cookies
-    if (!cookie.accessToken) {
-      return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-    }*/
 
     const group = await Group.findOne({ name: req.params.name });
     if (!group) return res.status(401).json({ error: "Group not found" })

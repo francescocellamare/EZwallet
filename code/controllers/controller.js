@@ -19,7 +19,7 @@ export const createCategory = async (req, res) => {
     try {
 
         // check if an admin sent the request
-        const {authorized, cause} = await verifyAuthAdmin(req, res);
+        const {authorized, cause} = verifyAuthAdmin(req, res);
         if(!authorized) return res.status(401).json({error: cause})
 
         // validate request body
@@ -66,7 +66,7 @@ export const updateCategory = async (req, res) => {
     try {
 
         // authentication
-        const {authorized, cause} = await verifyAuthAdmin(req, res);
+        const {authorized, cause} = verifyAuthAdmin(req, res);
         if(!authorized) return res.status(401).json({error: cause})
 
         const {type} = req.params;
@@ -180,7 +180,7 @@ export const deleteCategory = async (req, res) => {
     try {
 
         // authentication
-        const {authorized, cause} = await verifyAuthAdmin(req, res);
+        const {authorized, cause} = verifyAuthAdmin(req, res);
         if(!authorized) return res.status(401).json({error: cause})
 
         const {types} = req.body;
@@ -322,11 +322,36 @@ export const getCategories = async (req, res) => {
 export const createTransaction = async (req, res) => {
     try {
 
-        const {username} = req.params;
-        const {username, amount, type } = req.body;
+        let {authorized, cause} = verifyAuthUser(req, res, req.params.username);
+        if(!authorized) res.status(401).json({error : cause});
+
+        const {username_param} = req.params;
+        const {username_body, amount, type } = req.body;
+
+        if(!username_body && username_body === "") res.status(400).json({error : "username was not provided in requests body"});
+        if(!amount        && amount        === "") res.status(400).json({error : "amount was not provided in requests body"});
+        if(!type          && type          === "") res.status(400).json({error : "category type was not provided in requests body"});
+
+        // check if username in request body and parameters are the same
+        if(username_body !== username_param) res.status(400).json({error : "Username provided in the request body does not match the username provided in the request params"});
+
+        // check if amount string passed in body contains a float
+        if(!/^[-+]?[0-9]*\.?[0-9]+$/.test(amount)) res.status(400).json({error : "Amount should be a number"});
+
+        // check if the category type in the body represents a category in the database
+        let result = await categories.countDocuments({type})
+        if(result !== 1) res.status(400).json({error : "Category does not exist"});
+
+        // check if the username provided in the request reperesents a user in the database
+        result = await User.countDocuments({username_param})
+        if(result !== 1) res.status(400).json({error : "User does not exist"});
+
         const new_transactions = new transactions({ username, amount, type });
         new_transactions.save()
-            .then(data => res.json(data))
+            .then(data => res.json({
+                data,
+                refreshedTokenMessage: res.locals.refreshedTokenMessage
+            }))
             .catch(err => { throw err })
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -335,17 +360,18 @@ export const createTransaction = async (req, res) => {
 
 /**
  * Return all transactions made by all users
-  - Request Body Content: None
-  - Response `data` Content: An array of objects, each one having attributes `username`, `type`, `amount`, `date` and `color`
-  - Optional behavior:
-    - empty array must be returned if there are no transactions
- */
+ - Request Parameters: None
+ - Request Body Content: None
+ - Response `data` Content: An array of objects, each one having attributes `username`, `type`, `amount`, `date` and `color`
+  - Example: `res.status(200).json({data: [{username: "Mario", amount: 100, type: "food", date: "2023-05-19T00:00:00", color: "red"}, {username: "Mario", amount: 70, type: "health", date: "2023-05-19T10:00:00", color: "green"}, {username: "Luigi", amount: 20, type: "food", date: "2023-05-19T10:00:00", color: "red"} ], refreshedTokenMessage: res.locals.refreshedTokenMessage})`
+ - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin)
+**/
 export const getAllTransactions = async (req, res) => {
     try {
-        // const cookie = req.cookies
-        // if (!cookie.accessToken) {
-        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        // }
+        
+        let {authorized, cause} = verifyAuthAdmin(req, res);
+        if(!authorized) res.status(401).json({error : cause});
+
         transactions.aggregate([
             {
                 $lookup: {
@@ -358,7 +384,10 @@ export const getAllTransactions = async (req, res) => {
             { $unwind: "$categories_info" }
         ]).then((result) => {
             let data = result.map(v => Object.assign({}, { /*_id: v._id,*/ username: v.username, amount: v.amount, type: v.type, color: v.categories_info.color, date: v.date }))
-            res.json(data);
+            res.json({
+                data,
+                refreshedTokenMessage: res.locals.refreshedTokenMessage
+            });
         }).catch(error => { throw (error) })
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -385,14 +414,14 @@ export const getTransactionsByUser = async (req, res) => {
         let filters;      
         if (req.url.indexOf("/transactions/users/") >= 0) {
             // admin authentication
-            const {authorized, cause} = await verifyAuthAdmin(req, res);
+            const {authorized, cause} = verifyAuthAdmin(req, res);
             if(!authorized) return res.status(401).json({error: cause})
             
 
             filters = {};                        
         } else {
             // regular user authentication            
-            const {authorized, cause} = await verifyAuthUser(req, res, req.params.user);            
+            const {authorized, cause} = verifyAuthUser(req, res, req.params.user);            
             if(!authorized) return res.status(401).json({error: cause})
 
             const amountFilter = handleAmountFilterParams(req);
@@ -467,18 +496,18 @@ export const getTransactionsByUser = async (req, res) => {
 */
 export const getTransactionsByUserByCategory = async (req, res) => {
     try {  
+
+        const {username, category : type} = req.params;
         
         if (req.url.indexOf("/transactions/users/") >= 0) {
             // admin authentication
-            const {authorized, cause} = await verifyAuthAdmin(req, res);
+            const {authorized, cause} = verifyAuthAdmin(req, res);
             if(!authorized) return res.status(401).json({error: cause})                       
         } else {
             // regular user authentication
-            const {authorized, cause} = await verifyAuthUser(req, res);
+            const {authorized, cause} = verifyAuthUser(req, res, username);
             if(!authorized) return res.status(401).json({error: cause})
         }       
-
-        const {username, category : type} = req.params;
 
         // check if username passed in params represents a user in the database
         let result = await User.countDocuments({username});
@@ -538,36 +567,34 @@ export const getTransactionsByUserByCategory = async (req, res) => {
 
 /**
  * Return all transactions made by members of a specific group
-  - Request Parameters: A string equal to the `name` of the requested group, a string equal to the requested `category`
-    - Example: `/api/groups/Family/transactions/category/food` (user route)
-    - Example: `/api/transactions/groups/Family/category/food` (admin route)
-  - Request Body Content: None
-  - Response `data` Content: An array of objects, each one having attributes `username`, `type`, `amount`, `date` and `color`, filtered so that `type` is the same for all objects.
-    - Example: `res.status(200).json({data: [{username: "Mario", amount: 100, type: "food", date: "2023-05-19T00:00:00", color: "red"}, {username: "Luigi", amount: 20, type: "food", date: "2023-05-19T10:00:00", color: "red"} ] refreshedTokenMessage: res.locals.refreshedTokenMessage})`
-  - Returns a 400 error if the group name passed as a route parameter does not represent a group in the database
-  - Returns a 400 error if the category passed as a route parameter does not represent a category in the database
-  - Returns a 401 error if called by an authenticated user who is not part of the group (authType = Group) if the route is `/api/groups/:name/transactions/category/:category`
-  - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin) if the route is `/api/transactions/groups/:name/category/:category`
+  - Request Parameters: A string equal to the `name` of the requested group
+  - Example: `/api/groups/Family/transactions` (user route)
+  - Example: `/api/transactions/groups/Family` (admin route)
+   - Request Body Content: None
+   - Response `data` Content: An array of objects, each one having attributes `username`, `type`, `amount`, `date` and `color`
+  - Example: `res.status(200).json({data: [{username: "Mario", amount: 100, type: "food", date: "2023-05-19T00:00:00", color: "red"}, {username: "Mario", amount: 70, type: "health", date: "2023-05-19T10:00:00", color: "green"}, {username: "Luigi", amount: 20, type: "food", date: "2023-05-19T10:00:00", color: "red"} ] refreshedTokenMessage: res.locals.refreshedTokenMessage})`
+   - Returns a 400 error if the group name passed as a route parameter does not represent a group in the database
+   - Returns a 401 error if called by an authenticated user who is not part of the group (authType = Group) if the route is `/api/groups/:name/transactions`
+  - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin) if the route is `/api/transactions/groups/:name`
 */ 
 export const getTransactionsByGroup = async (req, res) => {
     try {
+        const {name} = req.params;  
 
         if (req.url.indexOf("/transactions/groups/") >= 0) {
             // admin authentication
-            const {authorized, cause} = await verifyAuthAdmin(req, res);
+            const {authorized, cause} = verifyAuthAdmin(req, res);
             if(!authorized) return res.status(401).json({error: cause})                       
         } else {
             // regular user authentication
-            const {authorized, cause} = await verifyAuthGroup(req, res);
+            const {authorized, cause} = await verifyAuthGroup(req, res, name);
             if(!authorized) return res.status(401).json({error: cause})
         }   
 
         // check if group exists
-        const {name} = req.params;  
-
         let result = await Group.findOne({name});        
         if(!result){
-            return res.status(401).json({ error : "Group does not exist" })
+            return res.status(400).json({ error : "Group does not exist" })
         }
 
         const { members } = result;
@@ -627,7 +654,7 @@ export const getTransactionsByGroup = async (req, res) => {
     - error 401 is returned if the group or the category does not exist
     - empty array must be returned if there are no transactions made by the group with the specified category
  */
-export const getTransactionsByGroupByCategory = async (req, res) => {
+export const getTransactionsByGroupByCategory = async (req, res) => {  
 
     function Query(username, type, amount, date, color) {
         this.username = username
@@ -657,12 +684,12 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
 
 
         // checking privileges
-        const adminAuthInfo = verifyAuthAdmin(req, res)
-        const groupAuthInfo = await verifyAuthGroup(req, res, groupName)
         if ( !req.path.match(regexp) ) { // user path
+            const groupAuthInfo = await verifyAuthGroup(req, res, groupName)
             if(!groupAuthInfo.authorized)
                 return res.status(401).json({ error: 'authenticated user who is not part of the group' })
         } else {    //admin path
+            const adminAuthInfo = verifyAuthAdmin(req, res)
             if(!adminAuthInfo.authorized)
                 return res.status(401).json({ error: 'authenticated user who is not an admin' })
         }
@@ -720,20 +747,27 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
 
 /**
  * Delete a transaction made by a specific user
-  - Request Body Content: The `_id` of the transaction to be deleted
-  - Response `data` Content: A string indicating successful deletion of the transaction
-  - Optional behavior:
-    - error 401 is returned if the user or the transaction does not exist 
-   */
+ - Request Parameters: A string equal to the `username` of the involved user
+  - Example: `/api/users/Mario/transactions`
+- Request Body Content: The `_id` of the transaction to be deleted
+  - Example: `{_id: "6hjkohgfc8nvu786"}`
+- Response `data` Content: A string indicating successful deletion of the transaction
+  - Example: `res.status(200).json({data: {message: "Transaction deleted"}, refreshedTokenMessage: res.locals.refreshedTokenMessage})`
+- Returns a 400 error if the request body does not contain all the necessary attributes
+- Returns a 400 error if the username passed as a route parameter does not represent a user in the database
+- Returns a 400 error if the `_id` in the request body does not represent a transaction in the database
+- Returns a 401 error if called by an authenticated user who is not the same user as the one in the route (authType = User)
+*/
 export const deleteTransaction = async (req, res) => {
-    try {
-        const cookie = req.cookies
+    try {            
         const id = req.body.id
         const username = req.params.username
 
+        const {authorized, cause} = verifyAuthUser(req, res, username);
+        if(!authorized) return res.status(401).json({error: cause})           
+
         // body is not complete
-        if (!id)
-            return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
+        if (!id) return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
         
         // user not found
         let found = User.findOne({username: username})

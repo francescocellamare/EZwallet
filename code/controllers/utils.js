@@ -263,7 +263,7 @@ export function verifyAuthSimple(req, res) {
     return verifyAuth(req, res, {authType: 'Simple'})
 }
 
-export async function verifyAuthUser(req, res, username) {
+export function verifyAuthUser(req, res, username) {
     return verifyAuth(req, res, {authType: 'User', username})
 }
 
