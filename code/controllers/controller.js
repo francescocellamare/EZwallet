@@ -1,23 +1,46 @@
 import { categories, transactions } from "../models/model.js";
 import { Group, User } from "../models/User.js";
-import { handleDateFilterParams, handleAmountFilterParams, verifyAuth, verifyAuthUser, verifyAuthGroup, verifyAuthAdmin } from "./utils.js";
+import { handleDateFilterParams, handleAmountFilterParams, verifyAuthSimple, verifyAuthUser, verifyAuthGroup, verifyAuthAdmin } from "./utils.js";
 
 import mongoose from "mongoose";
 /**
  * Create a new category
-  - Request Body Content: An object having attributes `type` and `color`
-  - Response `data` Content: An object having attributes `type` and `color`
- */
-export const createCategory = (req, res) => {
+    - Request Parameters: None
+    - Request Body Content: An object having attributes `type` and `color`
+     - Example: `{type: "food", color: "red"}`
+    - Response `data` Content: An object having attributes `type` and `color`
+     - Example: `res.status(200).json({data: {type: "food", color: "red"}, refreshedTokenMessage: res.locals.refreshedTokenMessage})`
+    - Returns a 400 error if the request body does not contain all the necessary attributes
+    - Returns a 400 error if at least one of the parameters in the request body is an empty string
+    - Returns a 400 error if the type of category passed in the request body represents an already existing category in the database
+    - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin)
+*/
+export const createCategory = async (req, res) => {
     try {
-        // const cookie = req.cookies
-        // if (!cookie.accessToken) {
-        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        // }
+
+        // check if an admin sent the request
+        const {authorized, cause} = await verifyAuthAdmin(req, res);
+        if(!authorized) return res.status(401).json({error: cause})
+
+        // validate request body
         const { type, color } = req.body;
+
+        if(!type  || type  === "") return res.status(400).json({error: "type is empty or not provided"});
+        if(!color || color === "") return res.status(400).json({error: "color is empty or not provided"});
+
+        let result = await categories.countDocuments({type});
+        if(result === 1){
+            res.status(400).json({error : "category type is already in use"});
+        }
+
         const new_categories = new categories({ type, color });
         new_categories.save()
-            .then(data => res.json(data))
+            .then(data => {
+                return res.status(200).json({
+                    data,
+                    refreshedTokenMessage: res.locals.refreshedTokenMessage
+                })
+            })
             .catch(err => { throw err })
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -254,22 +277,26 @@ export const deleteCategory = async (req, res) => {
 
 /**
  * Return all the categories
-  - Request Body Content: None
-  - Response `data` Content: An array of objects, each one having attributes `type` and `color`
-  - Optional behavior:
-    - empty array is returned if there are no categories
- */
+- Request Parameters: None
+- Request Body Content: None
+- Response `data` Content: An array of objects, each one having attributes `type` and `color`
+  - Example: `res.status(200).json({data: [{type: "food", color: "red"}, {type: "health", color: "green"}], refreshedTokenMessage: res.locals.refreshedTokenMessage})`
+- Returns a 401 error if called by a user who is not authenticated (authType = Simple)
+*/
 export const getCategories = async (req, res) => {
     try {
-        // const cookie = req.cookies
-        // if (!cookie.accessToken) {
-        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        // }
+
+        const {authorized, cause} = verifyAuthSimple(req, res);
+        if(!authorized) return res.status(401).json({error: cause})
+        
         let data = await categories.find({})
 
         let filter = data.map(v => Object.assign({}, { type: v.type, color: v.color }))
 
-        return res.json(filter)
+        return res.json({
+            data : filter,
+            refreshedTokenMessage: res.locals.refreshedTokenMessage
+        })
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
@@ -277,18 +304,26 @@ export const getCategories = async (req, res) => {
 
 /**
  * Create a new transaction made by a specific user
-  - Request Body Content: An object having attributes `username`, `type` and `amount`
-  - Response `data` Content: An object having attributes `username`, `type`, `amount` and `date`
-  - Optional behavior:
-    - error 401 is returned if the username or the type of category does not exist
- */
+- Request Parameters: A string equal to the `username` of the involved user
+  - Example: `/api/users/Mario/transactions`
+- Request Body Content: An object having attributes `username`, `type` and `amount`
+  - Example: `{username: "Mario", amount: 100, type: "food"}`
+- Response `data` Content: An object having attributes `username`, `type`, `amount` and `date`
+  - Example: `res.status(200).json({data: {username: "Mario", amount: 100, type: "food", date: "2023-05-19T00:00:00"}, refreshedTokenMessage: res.locals.refreshedTokenMessage})`
+- Returns a 400 error if the request body does not contain all the necessary attributes
+- Returns a 400 error if at least one of the parameters in the request body is an empty string
+- Returns a 400 error if the type of category passed in the request body does not represent a category in the database
+- Returns a 400 error if the username passed in the request body is not equal to the one passed as a route parameter
+- Returns a 400 error if the username passed in the request body does not represent a user in the database
+- Returns a 400 error if the username passed as a route parameter does not represent a user in the database
+- Returns a 400 error if the amount passed in the request body cannot be parsed as a floating value (negative numbers are accepted)
+- Returns a 401 error if called by an authenticated user who is not the same user as the one in the route parameter (authType = User)
+*/
 export const createTransaction = async (req, res) => {
     try {
-        // const cookie = req.cookies
-        // if (!cookie.accessToken) {
-        //     return res.status(401).json({ message: "Unauthorized" }) // unauthorized
-        // }
-        const { username, amount, type } = req.body;
+
+        const {username} = req.params;
+        const {username, amount, type } = req.body;
         const new_transactions = new transactions({ username, amount, type });
         new_transactions.save()
             .then(data => res.json(data))
@@ -352,11 +387,12 @@ export const getTransactionsByUser = async (req, res) => {
             // admin authentication
             const {authorized, cause} = await verifyAuthAdmin(req, res);
             if(!authorized) return res.status(401).json({error: cause})
+            
 
             filters = {};                        
         } else {
             // regular user authentication            
-            const {authorized, cause} = await verifyAuthUser(req, res);            
+            const {authorized, cause} = await verifyAuthUser(req, res, req.params.user);            
             if(!authorized) return res.status(401).json({error: cause})
 
             const amountFilter = handleAmountFilterParams(req);

@@ -264,26 +264,15 @@ export function verifyAuthSimple(req, res) {
 }
 
 export async function verifyAuthUser(req, res, username) {
-    const cookie = req.cookies
-    const userByRefreshToken = await User.findOne( {username: username}, {username: 1, _id: 0})
-    if (!userByRefreshToken) 
-        return { authorized: false, cause: "Unauthorized"}
-
-    return verifyAuth(req, res, {authType: 'User', username: username})
+    return verifyAuth(req, res, {authType: 'User', username})
 }
 
 export function verifyAuthAdmin(req, res) {
     return verifyAuth(req, res, {authType: 'Admin'})
 }
 
-
-export async function verifyAuthGroup(req, res, groupName) {
-    const cookie = req.cookies
-    // const userEmail = await User.findOne( {refreshToken: cookie.refreshToken}, {email: 1, _id: 0})
-    // // check at the user's email in the database
-    // if (!userEmail)
-    //     return { authorized: false, cause: "Unauthorized"}
-    const document = await Group.findOne({name: groupName}, {members: 1, _id: 0})
+export async function verifyAuthGroup(req, res, group) {
+    const document = await Group.findOne({name: group}, {members: 1, _id: 0})
     if (!document)
         return { authorized: false, cause: "Unauthorized"}
     const emails = document.members.map(member => member.email)
