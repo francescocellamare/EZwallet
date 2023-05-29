@@ -816,14 +816,21 @@ export const deleteTransactions = async (req, res) => {
 
         if (_ids.includes(''))
             return res.status(400).json({ error: "email is not valid" });
-                
-        for(let id of _ids) {
-            if(!(await transactions.countDocuments({_id: id}))) {
-                return res.status(400).json({ error: `${id} transaction does not exist` })
+             
+        let result = await transactions.find({
+            _id : {
+                $in : _ids
             }
+        }).select({_id : 1});
+
+        result = result.map(obj => obj._id.toString());
+        let notFound = _ids.filter(id => !result.includes(id));
+
+        if(notFound.length !== 0){
+            return res.status(400).json({ error: `the following transactions don't exist : ${notFound.join(",")}` });
         }
-        const res = await transactions.deleteMany( {_id: {$in: _ids} } )
-        console.log(res)
+        
+        result = await transactions.deleteMany( {_id: {$in: _ids} } )        
         
         res.status(200).json({data: {message: "Transactions deleted"}, refreshedTokenMessage: res.locals.refreshedTokenMessage})
     } catch (error) {
