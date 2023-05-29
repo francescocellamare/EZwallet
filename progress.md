@@ -20,10 +20,10 @@
 | createGroup |✓ |
 | getGroups |✓ |
 | getGroup |✓ |
-| addToGroup | ? |
-| removeFromGroup | ? |
-| deleteUser | ? |
-| deleteGroup | ? |
+| addToGroup | ✓ | | Some parts that depend on authentication are missing|
+| removeFromGroup | ✓ ||  Some parts that depend on authentication are missing|
+| deleteUser | ✓ ||  Some parts that depend on authentication are missing|
+| deleteGroup | ✓ ||  Some parts that depend on authentication are missing|
 | handleDateFilterParams | ✓ |
 | verifyAuth |✓ |
 | handleAmountFilterParams |✓ |
