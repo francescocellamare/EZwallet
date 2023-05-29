@@ -9,7 +9,7 @@
 | deleteCategory |✓ |
 | getCategories |✓ |
 | createTransaction |✓ |
-| getAllTransactions |✓ |
+| getAllTransactions |✓ |✓ |
 | getTransactionsByUser|✓ | ✓ |
 | getTransactionsByUserByCategory |✓ | ✓ |
 | getTransactionsByGroup |✓ |
@@ -24,9 +24,9 @@
 | removeFromGroup | ✓ ||  Some parts that depend on authentication are missing|
 | deleteUser | ✓ ||  Some parts that depend on authentication are missing|
 | deleteGroup | ✓ ||  Some parts that depend on authentication are missing|
-| handleDateFilterParams | ✓ |
-| verifyAuth |✓ |
-| handleAmountFilterParams |✓ |
+| handleDateFilterParams | ✓ |✓ |
+| verifyAuth |✓ |✓ |
+| handleAmountFilterParams |✓ |✓ |
 | verifyAuthAdmin |✓ |
 | verifyAuthUser |✓ |
 | verifyAuthGroup |✓ |

@@ -47,7 +47,7 @@ describe("createTransaction", () => {
     });
 })
 
-describe.only("getAllTransactions", () => { 
+describe("getAllTransactions", () => { 
     afterEach(() => {
         jest.clearAllMocks()
     })
