@@ -1,9 +1,172 @@
 import { handleDateFilterParams, verifyAuth, handleAmountFilterParams } from '../controllers/utils';
 import jwt from 'jsonwebtoken';
 
+beforeEach(()=>{
+    jest.clearAllMocks();
+    jest.resetAllMocks()
+})
+
+
 describe("handleDateFilterParams", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+    test('T1: any parameter is defined', () => {
+        const mockReq = {
+            query: {
+                
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = {}
+        const response = handleDateFilterParams(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    });
+
+    test.failing('T2: date and from are used together', () => {
+        const mockReq = {
+            query: {
+                date: '2023-04-30',
+                from: '2023-04-30'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const response = handleDateFilterParams(mockReq, mockRes)
+    });
+
+    test.failing('T3: date and upTo are used together', () => {
+        const mockReq = {
+            query: {
+                date: '2023-04-30',
+                upTo: '2023-04-30'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const response = handleDateFilterParams(mockReq, mockRes)
+    });
+
+    test.failing('T4: date invalid format', () => {
+        const mockReq = {
+            query: {
+                date: '30-04-2023'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const response = handleDateFilterParams(mockReq, mockRes)
+    });
+
+    test.failing('T5: from invalid format', () => {
+        const mockReq = {
+            query: {
+                from: '30-04-2023'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const response = handleDateFilterParams(mockReq, mockRes)
+    });
+  
+    test.failing('T6: upTo invalid format', () => {
+        const mockReq = {
+            query: {
+                upTo: '30-04-2023'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const response = handleDateFilterParams(mockReq, mockRes)
+    });
+
+    test('T7: date valid format without other parameters', () => {
+        const mockReq = {
+            query: {
+                date: '2023-04-30'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = {
+            date: {
+                $gte: new Date(2023, 3, 30, 0, 0, 0),
+                $lte: new Date(2023, 3, 30, 23, 59, 59)
+            }
+        }
+        const response = handleDateFilterParams(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    });
+    
+    test('T8: from is the only defined parameter', () => {
+        const mockReq = {
+            query: {
+                from: '2023-04-30'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = {
+            date: {
+                $gte: new Date(2023, 3, 30, 0, 0, 0),
+            }
+        }
+        const response = handleDateFilterParams(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    });
+
+    test('T9: upTo is the only defined parameter', () => {
+        const mockReq = {
+            query: {
+                upTo: '2023-04-30'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = {
+            date: {
+                $lte: new Date(2023, 3, 30, 23, 59, 59)
+            }
+        }
+        const response = handleDateFilterParams(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    });
+
+    test('T10: from and upTo are the only defined parameters', () => {
+        const mockReq = {
+            query: {
+                from: '2023-03-30',
+                upTo: '2023-04-30'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = {
+            date: {
+                $gte: new Date(2023, 2, 30, 0, 0, 0),
+                $lte: new Date(2023, 3, 30, 23, 59, 59)
+            }
+        }
+        const response = handleDateFilterParams(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
     });
 })
 
@@ -490,7 +653,9 @@ describe("verifyAuth", () => {
         }
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            cookie: jest.fn(),
+            locals: jest.fn()
         }
         const info = {
             authType: "User",
@@ -515,7 +680,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test.only('T16: authentication as user and requested username does not matches and accessToken is expired', () => {
+    test('T16: authentication as user and requested username does not matches and accessToken is expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -524,18 +689,20 @@ describe("verifyAuth", () => {
         }
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            cookie: jest.fn(),
+            locals: jest.fn()
         }
         const info = {
             authType: "User",
             username: "anotherusertest"
         }
         // throws error for expired token at first call
-        jest.spyOn(jwt, 'verify').mockImplementationOnce( () => {
+        jest.spyOn(jwt, 'verify').mockImplementationOnce(() => {
             const err = new Error("MyError")
             err.name = 'TokenExpiredError'
             throw err
-        })
+        });
         jest.spyOn(jwt, 'verify').mockImplementationOnce( () => {
             const obj = {
                 id: 1,
@@ -545,7 +712,7 @@ describe("verifyAuth", () => {
             }
             return obj
         })
-        jest.spyOn(jwt, 'sign').mockImplementationOnce( () => {'newAccessToken'} )
+        jest.spyOn(jwt, 'sign').mockImplementationOnce( () => 'newAccessToken' )
         const expectedRespone = { authorized: false, cause: "Username does not match with requested one" }
         const response = verifyAuth(mockReq, mockRes, info)
         expect(response).toEqual(expectedRespone)
@@ -560,7 +727,9 @@ describe("verifyAuth", () => {
         }
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            cookie: jest.fn(),
+            locals: jest.fn()
         }
         const info = {
             authType: "User",
@@ -596,7 +765,9 @@ describe("verifyAuth", () => {
         }
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            cookie: jest.fn(),
+            locals: jest.fn()
         }
         const info = {
             authType: "Admin"
@@ -621,7 +792,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T18: authentication as group and user is not into the group and accessToken is expired ', () => {
+    test('T19: authentication as group and user is not into the group and accessToken is expired ', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -630,7 +801,9 @@ describe("verifyAuth", () => {
         }
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            cookie: jest.fn(),
+            locals: jest.fn()
         }
         const info = {
             authType: "Group", 
@@ -654,12 +827,13 @@ describe("verifyAuth", () => {
             }
             return obj
         })
-        const expectedRespone = { authorized: false, cause: "User is not part of the group" }
+        jest.spyOn(jwt, 'sign').mockImplementationOnce( () => 'newAccessToken' )
+        const expectedRespone = { authorized: false, cause: "User is not in the group" }
         const response = verifyAuth(mockReq, mockRes, info)
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T19: authentication as group and user is into the group and accessToken is expired', () => {
+    test('T20: authentication as group and user is into the group and accessToken is expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -668,7 +842,9 @@ describe("verifyAuth", () => {
         }
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            cookie: jest.fn(),
+            locals: jest.fn()
         }
         const info = {
             authType: "Group", 
@@ -693,12 +869,13 @@ describe("verifyAuth", () => {
             }
             return obj
         })
+        jest.spyOn(jwt, 'sign').mockImplementationOnce( () => 'newAccessToken' )
         const expectedRespone = { authorized: true, cause: "Authorized" }
         const response = verifyAuth(mockReq, mockRes, info)
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T19: authentication as group and user is into the group and accessToken is expired', () => {
+    test('T21: authentication as group and user is into the group and accessToken is expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -707,7 +884,9 @@ describe("verifyAuth", () => {
         }
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            cookie: jest.fn(),
+            locals: jest.fn()
         }
         const info = {
             authType: "Group", 
@@ -715,30 +894,30 @@ describe("verifyAuth", () => {
                 'mailtest1',
                 'mailtest2',
                 'mailtest3',
-                'mailtestnotingroup'
+                'mailtestingroup'
             ]
         }
         // throws error for expired token at first call
         jest.spyOn(jwt, 'verify').mockImplementationOnce( () => {
-            // const err = new Error("MyError")
-            // err.name = 'TokenExpiredError'
-            // throw err
-            throw new Error({name: 'TokenExpiredError'});
+            const err = new Error("MyError")
+            err.name = 'TokenExpiredError'
+            throw err
         })
         jest.spyOn(jwt, 'verify').mockImplementationOnce( () => {
             const obj = {
-                email: "mailtestnotingroup",
+                email: "mailtestingroup",
                 username: "usertest",
                 role: "IamnotAdmin"
             }
             return obj
         })
+        jest.spyOn(jwt, 'sign').mockImplementationOnce( () => 'newAccessToken' )
         const expectedRespone = { authorized: true, cause: "Authorized" }
         const response = verifyAuth(mockReq, mockRes, info)
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T20: accessToken and refreshToken are both expired', () => {
+    test('T22: accessToken and refreshToken are both expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -747,7 +926,9 @@ describe("verifyAuth", () => {
         }
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            cookie: jest.fn(),
+            locals: jest.fn()
         }
         const info = {
             authType: "User",
@@ -755,22 +936,22 @@ describe("verifyAuth", () => {
         }
         // throws error for expired token at first call
         jest.spyOn(jwt, 'verify').mockImplementationOnce( () => {
-            const err = new Error("MyError1")
-            err.name = 'TokenExpiredError'
-            throw err
+            const err1 = new Error("MyError1")
+            err1.name = 'TokenExpiredError'
+            throw err1
         })
         // throws error for expired token at second call
         jest.spyOn(jwt, 'verify').mockImplementationOnce( () => {
-            const err = new Error("MyError2")
-            err.name = 'TokenExpiredError'
-            throw err
+            const err2 = new Error("MyError2")
+            err2.name = 'TokenExpiredError'
+            throw err2
         })
         const expectedRespone = { authorized: false, cause: "Perform login again" }
         const response = verifyAuth(mockReq, mockRes, info)
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T21: accessToken is expired and a generic error is thrown', () => {
+    test('T23: accessToken is expired and a generic error is thrown', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -779,7 +960,9 @@ describe("verifyAuth", () => {
         }
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            cookie: jest.fn(),
+            locals: jest.fn()
         }
         const info = {
             authType: "User",
@@ -802,7 +985,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T22: generic error is thrown and accessToken is not expired', () => {
+    test('T24: generic error is thrown and accessToken is not expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -811,7 +994,9 @@ describe("verifyAuth", () => {
         }
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            cookie: jest.fn(),
+            locals: jest.fn()
         }
         const info = {
             authType: "User",
@@ -823,6 +1008,7 @@ describe("verifyAuth", () => {
             err.name = 'GenericError'
             throw err
         })
+        jest.spyOn(jwt, 'sign').mockImplementationOnce( () => 'newAccessToken' )
         const expectedRespone = { authorized: false, cause: 'GenericError' }
         const response = verifyAuth(mockReq, mockRes, info)
         expect(response).toEqual(expectedRespone)
@@ -830,7 +1016,89 @@ describe("verifyAuth", () => {
 })
 
 describe("handleAmountFilterParams", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+    test('T1: min and max are not defined', () => {
+        const mockReq = {
+            query: {
+                min: undefined,
+                max: undefined
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = {}
+        const response = handleAmountFilterParams(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    });
+
+    test('T2: only max is defined', () => {
+        const mockReq = {
+            query: {
+                max: 20
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = {
+            "amount": {
+                "$lte": 20
+            }
+        }
+        const response = handleAmountFilterParams(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    });
+
+    test('T3: only min is defined', () => {
+        const mockReq = {
+            query: {
+                min: 12
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = {
+            "amount": {
+                "$gte": 12
+            }
+        }
+        const response = handleAmountFilterParams(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    });
+
+    test.failing('T4: min is not a number', () => {
+        const mockReq = {
+            query: {
+                min: 'notAnumber',
+                max: 20
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = Error("min param is not a number")
+        const response = handleAmountFilterParams(mockReq, mockRes)
+        expect(response).toThrow(Error)
+    });
+
+    test.failing('T5: max is not a number', () => {
+        const mockReq = {
+            query: {
+                min: 12,
+                max: 'notAnumber'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = Error("min param is not a number")
+        const response = handleAmountFilterParams(mockReq, mockRes)
+        expect(response).toThrow(Error)
     });
 })

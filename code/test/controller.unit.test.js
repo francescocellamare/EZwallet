@@ -3,7 +3,8 @@ import { app } from '../app';
 import { categories, transactions } from '../models/model';
 import * as utils from '../controllers/utils';
 import { Group, User } from '../models/User';
-import { getTransactionsByUserByCategory, getTransactionsByUser } from '../controllers/controller';
+import { getTransactionsByUserByCategory, getTransactionsByUser, getAllTransactions } from '../controllers/controller';
+import { response } from 'express';
 
 jest.mock('../models/model');
 
@@ -46,7 +47,7 @@ describe("createTransaction", () => {
     });
 })
 
-describe("getAllTransactions", () => { 
+describe.only("getAllTransactions", () => { 
     afterEach(() => {
         jest.clearAllMocks()
     })
@@ -141,6 +142,21 @@ describe("getAllTransactions", () => {
                 "color": "#222222"
             }
         ])
+    })
+
+    test('T3: transactions.aggregate() throws an error', async () => {
+        const mockReq = {}
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+
+        jest.spyOn(transactions, 'aggregate').mockImplementationOnce( () => {
+            const err = new Error('transactions aggregate error');
+            throw err 
+        })
+        await getAllTransactions(mockReq, mockRes)
+        expect(mockRes.status).toHaveBeenCalledWith(500)
     })
 })
 
