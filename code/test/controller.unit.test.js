@@ -2,7 +2,7 @@ import { categories, transactions } from '../models/model';
 import * as utils from '../controllers/utils';
 import { Group, User } from '../models/User';
 import mongoose from "mongoose";
-import { deleteTransaction, getTransactionsByGroup , getTransactionsByUserByCategory, getTransactionsByUser, getAllTransactions } from '../controllers/controller';
+import { getTransactionsByGroupByCategory, deleteTransaction, deleteTransactions, getTransactionsByGroup , getTransactionsByUserByCategory, getTransactionsByUser, getAllTransactions } from '../controllers/controller';
 import { response } from 'express';
 
 jest.mock('../models/model');
@@ -17,31 +17,31 @@ beforeEach(() => {
 });
 
 describe("createCategory", () => { 
-    test('Dummy test, change it', () => {
+    test('dummy test, change it', () => {
         expect(true).toBe(true);
     });
 })
 
 describe("updateCategory", () => { 
-    test('Dummy test, change it', () => {
+    test('dummy test, change it', () => {
         expect(true).toBe(true);
     });
 })
 
 describe("deleteCategory", () => { 
-    test('Dummy test, change it', () => {
+    test('dummy test, change it', () => {
         expect(true).toBe(true);
     });
 })
 
 describe("getCategories", () => { 
-    test('Dummy test, change it', () => {
+    test('dummy test, change it', () => {
         expect(true).toBe(true);
     });
 })
 
 describe("createTransaction", () => { 
-    test('Dummy test, change it', () => {
+    test('dummy test, change it', () => {
         expect(true).toBe(true);
     });
 })
@@ -421,7 +421,7 @@ describe("getTransactionsByUser", () => {
         });
 
         jest.spyOn(User, "countDocuments").mockImplementation(() => {
-            throw new Error('Dummy exception');
+            throw new Error('dummy exception');
           });
 
         // call function under test
@@ -431,7 +431,7 @@ describe("getTransactionsByUser", () => {
         expect(User.countDocuments).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({
-            error : "Dummy exception"
+            error : "dummy exception"
         });
     });
 
@@ -628,7 +628,7 @@ describe("getTransactionsByUserByCategory", () => {
         req.url = `/users/${req.params.username}/transactions`;
 
         jest.spyOn(utils, "verifyAuthUser").mockImplementation(() => {
-            throw new Error('Dummy exception');
+            throw new Error('dummy exception');
         });
 
         // call function under test
@@ -637,7 +637,7 @@ describe("getTransactionsByUserByCategory", () => {
         expect(utils.verifyAuthUser).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({
-            error : "Dummy exception"
+            error : "dummy exception"
         });
     });
 })
@@ -746,13 +746,13 @@ describe("getTransactionsByGroup", () => {
         });        
         
         jest.spyOn(Group, "findOne").mockResolvedValue({
-            name : "Dummy_name",
-            members : ["Dummy_member_1", "Dummy_member_2"]
+            name : "dummy_name",
+            members : ["dummy_member_1", "dummy_member_2"]
         })
         
         jest.spyOn(transactions, "aggregate").mockResolvedValue([
-            {username : "Dummy_member_1", type : "testCategory", date : "test-date", amount : 0, category : [{color : "red"}]},
-            {username : "Dummy_member_2", type : "testCategory", date : "test-date", amount : 1, category : [{color : "red"}]},
+            {username : "dummy_member_1", type : "testCategory", date : "test-date", amount : 0, category : [{color : "red"}]},
+            {username : "dummy_member_2", type : "testCategory", date : "test-date", amount : 1, category : [{color : "red"}]},
         ]);
         
         // call function under test
@@ -761,15 +761,15 @@ describe("getTransactionsByGroup", () => {
         expect(utils.verifyAuthAdmin).toHaveBeenCalled();
         expect(Group.findOne).toHaveBeenCalled();
         expect(transactions.aggregate).toHaveBeenCalledWith([
-            {$match : {username : {$in : ["Dummy_member_1", "Dummy_member_2"]}}},
+            {$match : {username : {$in : ["dummy_member_1", "dummy_member_2"]}}},
             {$lookup : {from: "categories", localField: "type", foreignField: "type", as: "category"}},
             {$project : {_id: 0, username : 1, type : 1, amount : 1, date : 1, color : 1, category : 1}}
         ]);
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith({
             data : [
-                {username : "Dummy_member_1", color : "red", type : "testCategory", amount : 0, date : "test-date"},
-                {username : "Dummy_member_2", color : "red", type : "testCategory", amount : 1, date : "test-date"}
+                {username : "dummy_member_1", color : "red", type : "testCategory", amount : 0, date : "test-date"},
+                {username : "dummy_member_2", color : "red", type : "testCategory", amount : 1, date : "test-date"}
             ],
             refreshedTokenMessage : "dummy message"
         });
@@ -786,8 +786,8 @@ describe("getTransactionsByGroup", () => {
         });        
     
         jest.spyOn(Group, "findOne").mockResolvedValue({
-            name : "Dummy_name",
-            members : ["Dummy_member_1", "Dummy_member_2"]
+            name : "dummy_name",
+            members : ["dummy_member_1", "dummy_member_2"]
         })
     
         jest.spyOn(transactions, "aggregate").mockResolvedValue([]);
@@ -798,7 +798,7 @@ describe("getTransactionsByGroup", () => {
         expect(utils.verifyAuthAdmin).toHaveBeenCalled();
         expect(Group.findOne).toHaveBeenCalled();
         expect(transactions.aggregate).toHaveBeenCalledWith([
-            {$match : {username : {$in : ["Dummy_member_1", "Dummy_member_2"]}}},
+            {$match : {username : {$in : ["dummy_member_1", "dummy_member_2"]}}},
             {$lookup : {from: "categories", localField: "type", foreignField: "type", as: "category"}},
             {$project : {_id: 0, username : 1, type : 1, amount : 1, date : 1, color : 1, category : 1}}
         ]);
@@ -815,7 +815,7 @@ describe("getTransactionsByGroup", () => {
         req.url = `/transactions/groups/`;
     
         jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(() => {
-            throw new Error('Dummy exception');
+            throw new Error('dummy exception');
         });
 
         // call function under test
@@ -824,7 +824,7 @@ describe("getTransactionsByGroup", () => {
         expect(utils.verifyAuthAdmin).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({
-            error : "Dummy exception"
+            error : "dummy exception"
         });
     });
 })
@@ -839,6 +839,7 @@ describe("getTransactionsByGroupByCategory", () => {
         req = {
             params : {
                 name : "dummy_group",
+                category : "dummy_category"
             }
         }
 
@@ -856,8 +857,69 @@ describe("getTransactionsByGroupByCategory", () => {
         jest.clearAllMocks();
     })
 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+    test("Should return an error indicating that the user is not authorized", async () => {
+        
+        // called by user
+        req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
+
+        jest.spyOn(utils, "verifyAuthGroup").mockResolvedValue({
+            authorized : false,
+            cause : "dummy error"
+        });
+
+        await getTransactionsByGroupByCategory(req, res);
+        
+        expect(utils.verifyAuthGroup).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "dummy error"
+        });
+    });
+
+    test("Should return an error indicating that the user is not authorized", async () => {
+        
+        // called by group
+        req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : false,
+            cause : "dummy error"
+        });
+
+        await getTransactionsByGroupByCategory(req, res);
+
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "dummy error"
+        });
+    });
+
+    test("Should return an error indicating that the group does not exist (auth type doesn't matter)", async () => {
+        
+        // called by group (doesn't matter as both auth types have the same functionality)
+        req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : true,
+            cause : "authorized"
+        });
+
+        // jest.spyOn(Group, "findOne").mockReturnValue({
+        //     name : req.params.name,
+        //     members : ["dummy_user_1", "dummy_user_2"]
+        // });
+            
+        jest.spyOn(Group, "findOne").mockResolvedValue(null);
+
+        await getTransactionsByGroupByCategory(req, res);
+
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        expect(Group.findOne).toHaveBeenCalled();
+        // expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "group does not exist"
+        });
     });
 })
 
@@ -1123,7 +1185,7 @@ describe("deleteTransaction", () => {
         });
 
         jest.spyOn(User, "findOne").mockImplementation(() => {
-            throw new Error('Dummy exception');
+            throw new Error('dummy exception');
         });
 
         // call function under test
@@ -1133,13 +1195,233 @@ describe("deleteTransaction", () => {
         expect(User.findOne).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({
-            error : "Dummy exception"
+            error : "dummy exception"
         });
     });
 })
 
 describe("deleteTransactions", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+
+    let req;
+    let res;
+
+    beforeEach(() => {
+        // mock response
+        res = {
+            locals : {
+                refreshedTokenMessage : "dummy message"
+            },
+            status : jest.fn().mockReturnThis(),
+            json : jest.fn()
+        }
+    });
+
+    afterEach(()=>{
+        jest.clearAllMocks();
+    })
+
+    test("Should return an error indicating that the user is not authorized", async () => {
+        
+        // mock request
+        req = {
+            params : {
+                username : "dummy_user_1",                
+            },
+            body : {
+                id : "dummy_id"
+            }
+        }
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : false,
+            cause : "dummy error"
+        });
+
+        // call function under test
+        await deleteTransactions(req, res);
+
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "dummy error"
+        });
+    });
+
+    test("Should return an error indicating that not all attributes in body are present", async () => {
+        // mock request
+        req = {
+            params : {
+                username : "dummy_user_1",                
+            },
+            body : {}
+        }
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : true,
+            cause : "authorized"
+        });
+
+        // call function under test
+        await deleteTransactions(req, res);
+
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "body does not contain all the necessary attributes"
+        });
+    });
+
+    test("Should return an error indicating that the IDs are not valid", async () => {
+        // mock request
+        req = {
+            params : {
+                username : "dummy_user_1",                
+            },
+            body : {
+                _ids : ["", "dummy_id_2"]
+            }
+        }
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : true,
+            cause : "authorized"
+        });        
+
+        // call function under test
+        await deleteTransactions(req, res);
+
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();        
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "input _ids are not valid"
+        });
+    });
+
+    test("Should return an error indicating that some of the IDs are not found", async () => {
+        // mock request
+        req = {
+            params : {
+                username : "dummy_user_1",                
+            },
+            body : {
+                _ids : ["dummy_id_1", "dummy_id_2", "dummy_id_3"]
+            }
+        }
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : true,
+            cause : "authorized"
+        });  
+        
+        jest.spyOn(transactions, "find").mockResolvedValue([{_id : "dummy_id_1"}]);        
+
+        // call function under test
+        await deleteTransactions(req, res);
+
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();        
+        expect(transactions.find).toHaveBeenCalled(); 
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "the following transactions don't exist : dummy_id_2,dummy_id_3"
+        });
+    });
+
+
+    test("Should return an error indicating that all of the IDs are not found", async () => {
+        // mock request
+        req = {
+            params : {
+                username : "dummy_user_1",                
+            },
+            body : {
+                _ids : ["dummy_id_1", "dummy_id_2", "dummy_id_3"]
+            }
+        }
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : true,
+            cause : "authorized"
+        });  
+        
+        jest.spyOn(transactions, "find").mockResolvedValue([]);        
+
+        // call function under test
+        await deleteTransactions(req, res);
+
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();        
+        expect(transactions.find).toHaveBeenCalled(); 
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "the following transactions don't exist : dummy_id_1,dummy_id_2,dummy_id_3"
+        });
+    });
+
+    test("Should return a message indicating that the transactions were deleted", async () => {
+        // mock request
+        req = {
+            params : {
+                username : "dummy_user_1",                
+            },
+            body : {
+                _ids : ["dummy_id_1", "dummy_id_2", "dummy_id_3"]
+            }
+        }
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : true,
+            cause : "authorized"
+        });  
+        
+        jest.spyOn(transactions, "find").mockResolvedValue([
+            {_id : "dummy_id_1"},
+            {_id : "dummy_id_2"},
+            {_id : "dummy_id_3"}
+        ]);        
+
+        jest.spyOn(transactions, "deleteMany").mockResolvedValue({
+            deletedCount : 3
+        });        
+
+        // call function under test
+        await deleteTransactions(req, res);
+
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();        
+        expect(transactions.find).toHaveBeenCalled(); 
+        expect(transactions.deleteMany).toHaveBeenCalledWith({
+            _id : {$in : ["dummy_id_1", "dummy_id_2", "dummy_id_3"]}
+        }); 
+        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({
+            data : {
+                message : "Transactions deleted"
+            },
+            refreshedTokenMessage : "dummy message"
+        });
+    });
+
+    test("Should return an error caused by an exception", async () => {
+        
+        // mock request
+        req = {
+            params : {
+                username : "dummy_user_1",                
+            },
+            body : {
+                id : "dummy_id"
+            }
+        }
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(() => {
+            throw new Error('dummy exception');
+        });
+
+        // call function under test
+        await deleteTransactions(req, res);
+
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "dummy exception"
+        });
     });
 })
