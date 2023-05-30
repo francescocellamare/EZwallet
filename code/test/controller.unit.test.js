@@ -252,31 +252,46 @@ describe("createTransaction", () => {
     });
 })
 
-describe("getAllTransactions", () => { 
+describe.only("getAllTransactions", () => { 
     afterEach(() => {
         jest.clearAllMocks()
     })
 
     test('T1: get all transactions by all users but there are none -> should return an empty array', async () => {
-        const mockReq = {}
+        const mockReq = {
+            cookie: {
+                accessToken: 'accessoToken',
+                refreshToken: 'refreshToken'
+            }
+        }
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            locals : {
+                refreshedTokenMessage : "test message"
+            }
         }
         const emptyDb = []
-        jest.spyOn(transactions, 'aggregate').mockReturnValue(Promise.resolve(emptyDb))
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
+        jest.spyOn(transactions, 'aggregate').mockResolvedValue(emptyDb)
 
         await getAllTransactions(mockReq, mockRes)
 
-        expect(mockRes.json.mock.calls[0][0]).toEqual([])
-        expect(mockRes.json.mock.calls[0][0]).toHaveLength(0)
+        expect(mockRes.json).toHaveBeenCalledWith({
+            data: [],
+            refreshedTokenMessage: 'test message'
+        })
     });
 
     test('T2: get all transactions by all users and there is at least one transaction -> should return a proper array of object', async () => {
         const mockReq = {}
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            locals : {
+                refreshedTokenMessage : "test message"
+            }
+
         }
 
         const expectedValue = [
@@ -311,20 +326,24 @@ describe("getAllTransactions", () => {
                 }
             }
         ]
+
+        const expectedResponeAuth = { authorized: true, cause: "authorized" }
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue(expectedResponeAuth)
         jest.spyOn(transactions, 'aggregate').mockReturnValue(Promise.resolve(expectedValue))
         await getAllTransactions(mockReq, mockRes)
 
         expect(transactions.aggregate).toHaveBeenCalledTimes(1)
         expect(mockRes.json).toBeDefined()
-        expect(mockRes.json.mock.calls[0][0]).toHaveLength(3)
+        expect(mockRes.json.mock.calls[0][0].data).toHaveLength(3)
         
-        expect(mockRes.json.mock.calls[0][0][0]).toHaveProperty('username')
-        expect(mockRes.json.mock.calls[0][0][0]).toHaveProperty('type')
-        expect(mockRes.json.mock.calls[0][0][0]).toHaveProperty('amount')
-        expect(mockRes.json.mock.calls[0][0][0]).toHaveProperty('date')
-        expect(mockRes.json.mock.calls[0][0][0]).toHaveProperty('color')
+        expect(mockRes.json.mock.calls[0][0].data[0]).toHaveProperty('username')
+        expect(mockRes.json.mock.calls[0][0].data[0]).toHaveProperty('type')
+        expect(mockRes.json.mock.calls[0][0].data[0]).toHaveProperty('amount')
+        expect(mockRes.json.mock.calls[0][0].data[0]).toHaveProperty('date')
+        expect(mockRes.json.mock.calls[0][0].data[0]).toHaveProperty('color')
 
-        expect(mockRes.json).toHaveBeenCalledWith([
+        expect(mockRes.json).toHaveBeenCalledWith({
+            data :  [
             {
                 "username": "user1",
                 "type": "investment",
@@ -346,22 +365,52 @@ describe("getAllTransactions", () => {
                 "date": "01/01/2023",
                 "color": "#222222"
             }
-        ])
+        ],
+        refreshedTokenMessage: 'test message'
+    })
     })
 
     test('T3: transactions.aggregate() throws an error', async () => {
         const mockReq = {}
         const mockRes = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
+            locals : {
+                refreshedTokenMessage : "test message"
+            }
         }
 
+        const expectedResponeAuth = { authorized: true, cause: "authorized" }
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue(expectedResponeAuth)
         jest.spyOn(transactions, 'aggregate').mockImplementationOnce( () => {
             const err = new Error('transactions aggregate error');
             throw err 
         })
         await getAllTransactions(mockReq, mockRes)
         expect(mockRes.status).toHaveBeenCalledWith(500)
+        expect(mockRes.json).toHaveBeenCalledWith({error: 'transactions aggregate error'})
+    })
+
+    test('T4: admin is not authorized', async () => {
+        const mockReq = {
+            cookie: {
+                accessToken: 'accessoToken',
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn(),
+            locals : {
+                refreshedTokenMessage : "test message"
+            }
+        }
+        const emptyDb = []
+        const expectedResponeAuth = { authorized: false, cause: "Not authorized" }
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue(expectedResponeAuth)
+        const expectedRespone = { error: 'Not authorized' }
+        await getAllTransactions(mockReq, mockRes)
+        expect(mockRes.json).toHaveBeenCalledWith(expectedRespone)
     })
 })
 
