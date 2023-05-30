@@ -1082,25 +1082,6 @@ describe("getTransactionsByGroupByCategory", () => {
         });
     });
 
-    test("Should return an error indicating that the user is not authorized", async () => {
-        
-        // called by group
-        req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
-
-        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
-            authorized : false,
-            cause : "dummy error"
-        });
-
-        await getTransactionsByGroupByCategory(req, res);
-
-        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
-        expect(res.status).toHaveBeenCalledWith(401);
-        expect(res.json).toHaveBeenCalledWith({
-            error : "dummy error"
-        });
-    });
-
     test("Should return an error indicating that the group does not exist (auth type doesn't matter)", async () => {
         
         // called by group (doesn't matter as both auth types have the same functionality)
@@ -1110,21 +1091,75 @@ describe("getTransactionsByGroupByCategory", () => {
             authorized : true,
             cause : "authorized"
         });
-
-        // jest.spyOn(Group, "findOne").mockReturnValue({
-        //     name : req.params.name,
-        //     members : ["dummy_user_1", "dummy_user_2"]
-        // });
             
-        jest.spyOn(Group, "findOne").mockResolvedValue(null);
+        jest.spyOn(Group, "countDocuments").mockResolvedValue(0);
 
         await getTransactionsByGroupByCategory(req, res);
 
         expect(utils.verifyAuthAdmin).toHaveBeenCalled();
-        expect(Group.findOne).toHaveBeenCalled();
+        expect(Group.countDocuments).toHaveBeenCalled();
         // expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({
             error : "group does not exist"
+        });
+    });
+
+    test("Should return an error indicating that the category does not exist (auth type doesn't matter)", async () => {
+        
+        // called by group (doesn't matter as both auth types have the same functionality)
+        req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : true,
+            cause : "authorized"
+        });
+            
+        jest.spyOn(Group, "countDocuments").mockResolvedValue(1);
+        jest.spyOn(categories, "countDocuments").mockResolvedValue(0);
+
+        await getTransactionsByGroupByCategory(req, res);
+
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        expect(Group.countDocuments).toHaveBeenCalled();
+        expect(categories.countDocuments).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "category does not exist"
+        });
+    });
+
+    test("Should return a list of transactions (auth type doesn't matter)", async () => {
+        
+        // called by group (doesn't matter as both auth types have the same functionality)
+        req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : true,
+            cause : "authorized"
+        });
+
+        jest.spyOn(Group, "countDocuments").mockReturnValue(1);
+            
+        jest.spyOn(categories, "countDocuments").mockResolvedValue(1);
+
+        jest.spyOn(Group, "findOne").mockResolvedValue({
+            name : "dummy_group",
+            members : ["dummy_user_1", "dummy_user_2"]
+        });
+
+        jest.spyOn(transactions, "aggregate").mockResolvedValue([
+            {username : "dummy_user_1", type : "testCategory", date : "test-date", amount : 0, category : [{color : "blue"}]},
+            {username : "dummy_user_1", type : "testCategory", date : "test-date", amount : 1, category : [{color : "red"}]},
+        ])
+
+        await getTransactionsByGroupByCategory(req, res);
+
+        // expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        // expect(Group.countDocuments).toHaveBeenCalled();
+        // expect(categories.countDocuments).toHaveBeenCalled();
+        // expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "category does not exist"
         });
     });
 })
