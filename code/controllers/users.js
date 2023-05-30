@@ -268,16 +268,17 @@ export const getGroup = async (req, res) => {
       - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin) if the route is `api/groups/:name/insert` */
       try {
     
-        /*
-        if(req.url.indexOf("/groups/:name/insert") >= 0) { //Admin: any group
-          verifyAuthAdmin();
+        const regexpAdmin = new RegExp('\/groups\/(.*)\/insert')  // admin route
+        const groupName = req.params.name
+
+        if(!req.url.match(regexpAdmin)) {
+          const {authorized, cause} = await verifyAuthGroup(req, res, groupName);
+          if(!authorized) return res.status(401).json({error: cause})
+        } 
+        else {
+          const {authorized, cause} = verifyAuthAdmin(req, res);
+          if(!authorized) return res.status(401).json({error: cause})
         }
-    
-        if(req.url.indexOf("/groups/:name/add") >= 0) { //User-Group: only own group
-          const userAuthInfo = await verifyAuthUser(req, res); 
-          const groupAuthInfo = await verifyAuthGroup(req, res, req.params.name); //If user does not belong to group: false, else if he belongs: true
-        }*/
-        
         if (req.body.emails == '' || (req.body.emails && !req.body.emails.every(email => email.trim().length))) {
           return res.status(400).json({ error: "One or more emails are empty strings" });
         }
@@ -378,6 +379,18 @@ export const getGroup = async (req, res) => {
         if (!cookie.accessToken) {
           return res.status(400).json({ message: "Bad request" }) // unauthorized
         }*/
+
+        const regexpAdmin = new RegExp('\/groups\/(.*)\/pull')  // admin route
+        const groupName = req.params.name
+
+        if(!req.url.match(regexpAdmin)) {
+          const {authorized, cause} = await verifyAuthGroup(req, res, groupName);
+          if(!authorized) return res.status(401).json({error: cause})
+        } 
+        else {
+          const {authorized, cause} = verifyAuthAdmin(req, res);
+          if(!authorized) return res.status(401).json({error: cause})
+        }
     
         if (req.body.emails == '' || (req.body.emails && !req.body.emails.every(email => email.trim().length))) {
           return res.status(400).json({ error: "One or more emails are empty strings" });

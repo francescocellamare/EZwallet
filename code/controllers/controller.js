@@ -689,7 +689,7 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         } 
         else {
                 // admin authentication                     
-            const {authorized, cause} = await verifyAuthAdmin(req, res, groupName);
+            const {authorized, cause} = verifyAuthAdmin(req, res);
             if(!authorized) return res.status(401).json({error: cause})
         }
 
