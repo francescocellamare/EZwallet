@@ -260,18 +260,26 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
 */
 
 export function verifyAuthSimple(req, res) {
+    if(!req.cookies.accessToken || !req.cookies.refreshToken) 
+        return { authorized: false, cause: "Unauthorized"}
     return verifyAuth(req, res, {authType: 'Simple'})
 }
 
 export function verifyAuthUser(req, res, username) {
+    if(!req.cookies.accessToken || !req.cookies.refreshToken || !username) 
+        return { authorized: false, cause: "Unauthorized"}
     return verifyAuth(req, res, {authType: 'User', username})
 }
 
 export function verifyAuthAdmin(req, res) {
+    if(!req.cookies.accessToken || !req.cookies.refreshToken) 
+        return { authorized: false, cause: "Unauthorized"}
     return verifyAuth(req, res, {authType: 'Admin'})
 }
 
 export async function verifyAuthGroup(req, res, group) {
+    if(!req.cookies.accessToken || !req.cookies.refreshToken || !group) 
+        return { authorized: false, cause: "Unauthorized"}
     const document = await Group.findOne({name: group}, {members: 1, _id: 0})
     if (!document)
         return { authorized: false, cause: "Unauthorized"}

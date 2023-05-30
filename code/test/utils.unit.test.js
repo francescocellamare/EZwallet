@@ -1,5 +1,6 @@
-import { handleDateFilterParams, verifyAuth, handleAmountFilterParams } from '../controllers/utils';
+import { handleDateFilterParams, verifyAuth, handleAmountFilterParams, verifyAuthSimple, verifyAuthUser, verifyAuthAdmin, verifyAuthGroup } from '../controllers/utils';
 import jwt from 'jsonwebtoken';
+import { Group } from '../models/User';
 
 beforeEach(()=>{
     jest.clearAllMocks();
@@ -1101,4 +1102,317 @@ describe("handleAmountFilterParams", () => {
         const response = handleAmountFilterParams(mockReq, mockRes)
         expect(response).toThrow(Error)
     });
+})
+
+describe("verifyAuthSimple", () => { 
+    test('T1: accessToken is not defined', () => {
+        const mockReq = {
+            cookies: {
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = verifyAuthSimple(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T2: refreshToken is not defined', () => {
+        const mockReq = {
+            cookies: {
+                accessToken: 'accesssToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = verifyAuthSimple(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T3: accessToken and refreshToken are not defined', () => {
+        const mockReq = {
+            cookies: {
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = verifyAuthSimple(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T4: both tokens are defined', () => {
+        const mockReq = {
+            cookies: {
+                accessToken: 'accesssToken',
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const response = verifyAuthSimple(mockReq, mockRes)
+        expect(response).toBeDefined()
+    })
+})
+
+describe("verifyAuthUser", () => { 
+    test('T1: accessToken is not defined', () => {
+        const username = 'usertest'
+        const mockReq = {
+            cookies: {
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = verifyAuthUser(mockReq, mockRes, username)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T2: refreshToken is not defined', () => {
+        const username = 'usertest'
+        const mockReq = {
+            cookies: {
+                accessToken: 'accesssToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = verifyAuthUser(mockReq, mockRes, username)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T3: accessToken and refreshToken are not defined', () => {
+        const username = 'usertest'
+        const mockReq = {
+            cookies: {
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = verifyAuthUser(mockReq, mockRes, username)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T4: both tokens are defined as well username', () => {
+        const username = 'usertest'
+        const mockReq = {
+            cookies: {
+                accessToken: 'accesssToken',
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const response = verifyAuthUser(mockReq, mockRes, username)
+        expect(response).toBeDefined()
+    })
+
+    test('T5: both tokens are defined but username is not', () => {
+        const username = undefined
+        const mockReq = {
+            cookies: {
+                accessToken: 'accesssToken',
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = verifyAuthUser(mockReq, mockRes, username)
+        expect(response).toEqual(expectedRespone)
+    })
+})
+
+describe("verifyAuthAdmin", () => { 
+    test('T1: accessToken is not defined', () => {
+        const mockReq = {
+            cookies: {
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = verifyAuthAdmin(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T2: refreshToken is not defined', () => {
+        const mockReq = {
+            cookies: {
+                accessToken: 'accesssToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = verifyAuthAdmin(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T3: accessToken and refreshToken are not defined', () => {
+        const mockReq = {
+            cookies: {
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = verifyAuthAdmin(mockReq, mockRes)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T4: both tokens are defined', () => {
+        const mockReq = {
+            cookies: {
+                accessToken: 'accesssToken',
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const response = verifyAuthAdmin(mockReq, mockRes)
+        expect(response).toBeDefined()
+    })
+})
+
+describe("verifyAuthGroup", () => { 
+    test('T1: accessToken is not defined', async () => {
+        const group = 'groupTest'
+        const mockReq = {
+            cookies: {
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = await verifyAuthGroup(mockReq, mockRes, group)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T2: refreshToken is not defined', async () => {
+        const group = 'groupTest'
+        const mockReq = {
+            cookies: {
+                accessToken: 'accesssToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = await verifyAuthGroup(mockReq, mockRes, group)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T3: accessToken and refreshToken are not defined', async () => {
+        const group = 'groupTest'
+        const mockReq = {
+            cookies: {
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = await verifyAuthGroup(mockReq, mockRes, group)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T4: both tokens are defined as well group', async () => {
+        const group = 'groupTest'
+        const mockReq = {
+            cookies: {
+                accessToken: 'accesssToken',
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        jest.spyOn(Group, 'findOne').mockImplementation(() => { 
+            return {
+                name: group, 
+                members: [ 
+                    {email: 'email1', id: 1},
+                    {email: 'email2', id: 2}
+                ]
+            }
+        })
+        const response = await verifyAuthGroup(mockReq, mockRes, group)
+        expect(response).toBeDefined()
+    })
+
+    test('T5: both tokens are defined but group is not', async () => {
+        const group = undefined
+        const mockReq = {
+            cookies: {
+                accessToken: 'accesssToken',
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = await verifyAuthGroup(mockReq, mockRes, group)
+        expect(response).toEqual(expectedRespone)
+    })
+
+    test('T6: both tokens are defined as well group and any group is found', async () => {
+        const group = 'groupTest'
+        const mockReq = {
+            cookies: {
+                accessToken: 'accesssToken',
+                refreshToken: 'refreshToken'
+            }
+        }
+        const mockRes = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        }
+        jest.spyOn(Group, 'findOne').mockImplementation( () => null)
+        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const response = await verifyAuthGroup(mockReq, mockRes, group)
+        expect(response).toEqual(expectedRespone)
+    })
 })

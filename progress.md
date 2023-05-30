@@ -27,6 +27,6 @@
 | handleDateFilterParams | ✓ |✓ |
 | verifyAuth |✓ |✓ |
 | handleAmountFilterParams |✓ |✓ |
-| verifyAuthAdmin |✓ |
-| verifyAuthUser |✓ |
-| verifyAuthGroup |✓ |
+| verifyAuthAdmin |✓ |✓ |
+| verifyAuthUser |✓ |✓ |
+| verifyAuthGroup |✓ |✓ |
