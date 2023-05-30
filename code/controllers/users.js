@@ -1,3 +1,4 @@
+
 import { Group, User } from "../models/User.js";
 import { transactions } from "../models/model.js";
 import { verifyAuthSimple, verifyAuthUser, verifyAuthAdmin, verifyAuthGroup  } from "./utils.js";
@@ -79,7 +80,7 @@ export const createGroup = async (req, res) => {
     return id
   }
 
-  async function isPartOfOtherGroups(email) {
+  async  function isPartOfOtherGroups(email) {
     const inAnyGroup = await Group.find({}, {_id: 0, members: 1})
     let emails= []
     
@@ -276,7 +277,7 @@ export const getGroup = async (req, res) => {
           const userAuthInfo = await verifyAuthUser(req, res); 
           const groupAuthInfo = await verifyAuthGroup(req, res, req.params.name); //If user does not belong to group: false, else if he belongs: true
         }*/
-    
+        
         if (req.body.emails == '' || (req.body.emails && !req.body.emails.every(email => email.trim().length))) {
           return res.status(400).json({ error: "One or more emails are empty strings" });
         }
@@ -485,6 +486,10 @@ export const getGroup = async (req, res) => {
         if (!cookie.accessToken) {
             return res.status(400).json({ message: "Bad request" }) // unauthorized
         }*/
+        const adminAuthInfo = verifyAuthAdmin(req, res)
+        if(!adminAuthInfo.authorized) {
+          return res.status(401).json({ error: adminAuthInfo.cause })
+        }
     
         if (req.body.email == '' || (req.body.email && !req.body.email.trim().length)) {
           return res.status(400).json({ error: "The email passed is an empty string" });
@@ -501,7 +506,7 @@ export const getGroup = async (req, res) => {
     
         const user = await User.findOne({ email: req.body.email })
         if (!user) {
-          return res.status(401).json({ message: "The email does not represent a user in the database" })
+          return res.status(401).json({ error: "The email does not represent a user in the database" })
         }
         let userDeleted = await User.deleteOne({ email: req.body.email });
     
@@ -529,7 +534,7 @@ export const getGroup = async (req, res) => {
     
         res.status(200).json(data);
       } catch (err) {
-        res.status(500).json(err.message)
+        res.status(500).json({error : err.message})
       }
     }
     
@@ -547,6 +552,11 @@ export const getGroup = async (req, res) => {
         if (!cookie.accessToken) {
             return res.status(400).json({ message: "Bad request" })
         }*/
+        const adminAuthInfo = verifyAuthAdmin(req, res)
+        if(!adminAuthInfo.authorized) {
+          return res.status(401).json({ error: adminAuthInfo.cause })
+        }
+
         if (req.body.name == '' || (req.body.name && !req.body.name.trim().length)) {
           return res.status(400).json({ error: "The name passed is an empty string" });
         }
@@ -558,12 +568,12 @@ export const getGroup = async (req, res) => {
     
         const group = await Group.findOne({ name: req.body.name })
         if (!group) {
-          return res.status(401).json({ message: "The name passed does not represent a group in the database" })
+          return res.status(400).json({ error: "The name passed does not represent a group in the database" })
         }
     
         await Group.deleteOne({ name: req.body.name });
-        res.status(200).json({data: {message: "Group deleted successfully"} /*, refreshedTokenMessage: res.locals.refreshedTokenMessage*/});
+        res.status(200).json({data: {message: "Group deleted successfully"}, refreshedTokenMessage: res.locals.refreshedTokenMessage});
       } catch (err) {
-        res.status(500).json(err.message)
+        res.status(500).json({error: err.message})
       }
     }
