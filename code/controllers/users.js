@@ -3,6 +3,8 @@ import { transactions } from "../models/model.js";
 import { verifyAuthSimple, verifyAuthUser, verifyAuthAdmin, verifyAuthGroup  } from "./utils.js";
 
 
+
+
 import mongoose from "mongoose";
 /**
  * Return all the users
@@ -21,7 +23,7 @@ export const getUsers = async (req, res) => {
         const users = await User.find();
         res.status(200).json({data: users, refreshedTokenMessage: res.locals.refreshedTokenMessage});
     } catch (error) {
-        res.status(500).json(error.message);
+        res.status(500).json({error: error.message});
     }
 }
 
@@ -114,7 +116,7 @@ export const createGroup = async (req, res) => {
     // group name already exists
     let found = await Group.findOne( {name: name} )
     if (found) {
-      return res.status(400).json({ error: "group's name not available" });
+      return res.status(400).json({ error: "group's name already available" });
     }
 
     // user already in group
@@ -194,7 +196,7 @@ export const createGroup = async (req, res) => {
       throw (err)
     })
   } catch (err) {
-      res.status(500).json(err.message)
+      res.status(500).json({error: err.message})
   }
 }
 
@@ -245,7 +247,7 @@ export const getGroup = async (req, res) => {
       
       res.status(200).json({data: {group: groups, refreshedTokenMessage: res.locals.refreshedTokenMessage}})
   } catch (err) {
-      res.status(500).json(err.message)
+      res.status(500).json({error: err.message})
   }
 }
 

@@ -222,7 +222,7 @@ Route parameters (where needed) cannot be empty, as not having them would define
 
 ### users.js
 
-#### `getUsers`
+#### X `getUsers`
 
 - Request Parameters: None
 - Request Body Content: None
@@ -230,7 +230,7 @@ Route parameters (where needed) cannot be empty, as not having them would define
   - Example: `res.status(200).json({data: [{username: "Mario", email: "mario.red@email.com"}, {username: "Luigi", email: "luigi.red@email.com"}, {username: "admin", email: "admin@email.com"} ], refreshedTokenMessage: res.locals.refreshedTokenMessage})`
 - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin)
 
-#### `getUser`
+#### X `getUser`
 
 - Request Parameters: A string equal to the `username` of the involved user
   - Example: `/api/users/Mario`
@@ -257,23 +257,23 @@ Route parameters (where needed) cannot be empty, as not having them would define
 - Returns a 400 error if at least one of the member emails is an empty string
 - Returns a 401 error if called by a user who is not authenticated (authType = Simple)
 
-#### `getGroups`
+#### X `getGroups`
 
-- Request Parameters: None
-- Request Body Content: None
-- Response `data` Content: An array of objects, each one having a string attribute for the `name` of the group and an array for the `members` of the group
-  - Example: `res.status(200).json({data: [{name: "Family", members: [{email: "mario.red@email.com"}, {email: "luigi.red@email.com"}]}] refreshedTokenMessage: res.locals.refreshedTokenMessage})`
-- Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin)
+- X Request Parameters: None
+- X Request Body Content: None
+- X Response `data` Content: An array of objects, each one having a string attribute for the `name` of the group and an array for the `members` of the group
+  - X Example: `res.status(200).json({data: [{name: "Family", members: [{email: "mario.red@email.com"}, {email: "luigi.red@email.com"}]}] refreshedTokenMessage: res.locals.refreshedTokenMessage})`
+- X Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin)
 
-#### `getGroup`
+#### X `getGroup` 200 -> giving an error
 
 - Request Parameters: A string equal to the `name` of the requested group
   - Example: `/api/groups/Family`
 - Request Body Content: None
 - Response `data` Content: An object having a string attribute for the `name` of the group and an array for the `members` of the group
   - Example: `res.status(200).json({data: {group: {name: "Family", members: [{email: "mario.red@email.com"}, {email: "luigi.red@email.com"}]}} refreshedTokenMessage: res.locals.refreshedTokenMessage})`
-- Returns a 400 error if the group name passed as a route parameter does not represent a group in the database
-- Returns a 401 error if called by an authenticated user who is neither part of the group (authType = Group) nor an admin (authType = Admin)
+- X Returns a 400 error if the group name passed as a route parameter does not represent a group in the database
+- X Returns a 401 error if called by an authenticated user who is neither part of the group (authType = Group) nor an admin (authType = Admin)
 
 #### `addToGroup`
 

@@ -137,15 +137,13 @@ test("T5: field with empty string -> return 400 and message: empty fields are no
     })
 
     test("T6:Network error -> return 500 and error message", async()=>{
-        const errorMsg = '[Error: Database connection error]';
-        jest.spyOn(User, "findOne").mockRejectedValue(new Error(errorMsg));
+       
+        jest.spyOn(User, "findOne").mockImplementationOnce(() => {throw new Error('server crash');});
         
         await register(mockReq, mockResp);
 
         expect(mockResp.status).toHaveBeenCalledWith(500);
-        expect(mockResp.json).toHaveBeenCalledWith({
-            error: errorMsg
-        })
+        expect(mockResp.json).toHaveBeenCalledWith({error:'server crash'})
     })
 
 
@@ -275,15 +273,13 @@ describe("registerAdmin", () => {
     })
 
     test("T6:Network error -> return 500 and error message", async()=>{
-        const errorMsg = '[Database connection error]';
-        jest.spyOn(User, "findOne").mockRejectedValue(new Error(errorMsg));
+       
+        jest.spyOn(User, "findOne").mockImplementationOnce(() => {throw new Error('server crash');});
         
         await registerAdmin(mockReq, mockResp);
 
         expect(mockResp.status).toHaveBeenCalledWith(500);
-        expect(mockResp.json).toHaveBeenCalledWith({
-            error: errorMsg
-        })
+        expect(mockResp.json).toHaveBeenCalledWith({error:'server crash'})
     })
 
 
@@ -443,17 +439,15 @@ afterEach(()=>{
     })
 
     test("T7:Network error -> return 500 and error message", async()=>{
-        const errorMsg = '[Error: Database connection error]';
-        jest.spyOn(User, "findOne").mockRejectedValue(new Error(errorMsg));
+       
+        jest.spyOn(User, "findOne").mockImplementationOnce(() => {throw new Error('server crash');});
         
         await login(mockReq, mockResp);
 
         expect(mockResp.status).toHaveBeenCalledWith(500);
-        expect(mockResp.json).toHaveBeenCalledWith({
-            error: errorMsg
-        })
+        expect(mockResp.json).toHaveBeenCalledWith({error:'server crash'})
     })
-    
+
 
 
        
@@ -530,15 +524,13 @@ describe('logout', () => {
     })
 
     test("T4:Network error -> return 500 and error message", async()=>{
-        const errorMsg = '[Error: Database connection error]';
-        jest.spyOn(User, "findOne").mockRejectedValue(new Error(errorMsg));
+       
+        jest.spyOn(User, "findOne").mockImplementationOnce(() => {throw new Error('server crash');});
         
         await logout(mockReq, mockResp);
 
         expect(mockResp.status).toHaveBeenCalledWith(500);
-        expect(mockResp.json).toHaveBeenCalledWith({
-            error: errorMsg
-        })
+        expect(mockResp.json).toHaveBeenCalledWith({error:'server crash'})
     })
 
 });
