@@ -682,17 +682,15 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         const groupName = req.params.name
         const categoryType = req.params.category
 
-
-        // checking privileges
-        if ( !req.path.match(regexp) ) { // user path
-            const groupAuthInfo = await verifyAuthGroup(req, res, groupName)
-            if(!groupAuthInfo.authorized)
-                return res.status(401).json({ error: 'authenticated user who is not part of the group' })
-        } else {    //admin path
-            const adminAuthInfo = verifyAuthAdmin(req, res)
-            if(!adminAuthInfo.authorized)
-                return res.status(401).json({ error: 'authenticated user who is not an admin' })
-        }
+        if (req.url.indexOf("/transactions/groups/") >= 0) {
+            // group authentication                     
+            const {authorized, cause} = await verifyAuthGroup(req, res, groupName);
+            if(!authorized) return res.status(401).json({error: cause})
+        } else {
+            // admin authentication
+            const {authorized, cause} = verifyAuthAdmin(req, res, groupName);
+            if(!authorized) return res.status(401).json({error: cause})
+        } 
 
         // group is not into the db
         let found = await Group.findOne( {name: groupName} )
@@ -763,7 +761,7 @@ export const deleteTransaction = async (req, res) => {
         const id = req.body.id
         const username = req.params.username        
 
-        const userAuthInfo = await verifyAuthUser(req, res, username)
+        const userAuthInfo = verifyAuthUser(req, res, username)
 
         if (!userAuthInfo.authorized) {
             return res.status(401).json({ error: userAuthInfo.cause })
@@ -811,14 +809,16 @@ export const deleteTransactions = async (req, res) => {
         if(!_ids)
             return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
 
-        if (_ids.includes(''))
-            return res.status(400).json({ error: "email is not valid" });
+        if (_ids.includes(""))
+            return res.status(400).json({ error: "input _ids are not valid" });
              
         let result = await transactions.find({
-            _id : {
-                $in : _ids
-            }
-        }).select({_id : 1});
+                _id : {
+                    $in : _ids
+                }
+            },
+            {_id : 1}
+        );
 
         result = result.map(obj => obj._id.toString());
         let notFound = _ids.filter(id => !result.includes(id));
