@@ -682,19 +682,20 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         const groupName = req.params.name
         const categoryType = req.params.category
 
-        if (req.url.indexOf("/transactions/groups/") >= 0) {
-            // group authentication                     
+        if(!req.url.match(regexp)) {
+                // group authentication                     
             const {authorized, cause} = await verifyAuthGroup(req, res, groupName);
             if(!authorized) return res.status(401).json({error: cause})
-        } else {
-            // admin authentication
-            const {authorized, cause} = verifyAuthAdmin(req, res, groupName);
-            if(!authorized) return res.status(401).json({error: cause})
         } 
+        else {
+                // admin authentication                     
+            const {authorized, cause} = await verifyAuthAdmin(req, res, groupName);
+            if(!authorized) return res.status(401).json({error: cause})
+        }
 
         // group is not into the db
         let found = await Group.findOne( {name: groupName} )
-        if(!members) {
+        if(!found) {
             return res.status(400).json({ error: "group does not exist" })
         }
         // category is not into the db
