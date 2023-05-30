@@ -1,7 +1,8 @@
 import { categories, transactions } from '../models/model';
 import * as utils from '../controllers/utils';
 import { Group, User } from '../models/User';
-import { getTransactionsByUserByCategory, getTransactionsByUser, getAllTransactions } from '../controllers/controller';
+import mongoose from "mongoose";
+import { deleteTransaction, getTransactionsByGroup , getTransactionsByUserByCategory, getTransactionsByUser, getAllTransactions } from '../controllers/controller';
 import { response } from 'express';
 
 jest.mock('../models/model');
