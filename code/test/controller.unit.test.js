@@ -1,8 +1,9 @@
 import { categories, transactions } from '../models/model';
 import * as utils from '../controllers/utils';
 import { Group, User } from '../models/User';
-import { getTransactionsByUserByCategory, getTransactionsByUser, createCategory, updateCategory, deleteCategory, getCategories, createTransaction } from '../controllers/controller';
-import { verifyAuthAdmin, verifyAuthSimple } from '../controllers/utils';
+import { deleteTransactions, deleteTransaction, getTransactionsByGroup, getAllTransactions, getTransactionsByGroupByCategory, getTransactionsByUserByCategory, getTransactionsByUser, createCategory, updateCategory, deleteCategory, getCategories, createTransaction } from '../controllers/controller';
+import { verifyAuthAdmin, verifyAuthSimple, verifyAuthUser, verifyAuthGroup } from '../controllers/utils';
+import mongoose from "mongoose";
 jest.mock('../models/model');
 
 jest.mock('../controllers/utils', () => ({
@@ -12,7 +13,6 @@ jest.mock('../controllers/utils', () => ({
 jest.mock('../controllers/utils', () => ({
     verifyAuthSimple: jest.fn(),
 }));
-
 
 beforeEach(() => {
   categories.find.mockClear();
