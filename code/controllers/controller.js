@@ -665,7 +665,7 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
     }
 
     try {
-        const regexp = new RegExp('/transactions/groups/(.*)/category/(.*)')
+        const regexp = new RegExp('\/transactions\/groups\/(.*)\/category\/(.*)')
         /**
          * MongoDB equivalent to the query 
          * 
@@ -761,29 +761,26 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
 export const deleteTransaction = async (req, res) => {
     try {            
         const id = req.body.id
-        const username = req.params.username
-
-        const {authorized, cause} = verifyAuthUser(req, res, username);
-        if(!authorized) return res.status(401).json({error: cause})           
-
-        // body is not complete
-        if (!id) return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
-        
-        // user not found
-        let found = User.findOne({username: username})
-        if(!found)
-            return res.status(400).json({ error: 'user not found' })
-
-        // transaction not found
-        found = transactions.findOne( {_id: id} )
-        if(!found)
-            return res.status(400).json({ error: 'transaction not found' })
+        const username = req.params.username        
 
         const userAuthInfo = await verifyAuthUser(req, res, username)
 
         if (!userAuthInfo.authorized) {
             return res.status(401).json({ error: userAuthInfo.cause })
         }
+
+        // body is not complete
+        if (!id) return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
+        
+        // user not found
+        let found = await User.findOne({username: username})
+        if(!found)
+            return res.status(400).json({ error: 'user not found' })
+
+        // transaction not found
+        found = await transactions.findOne( {_id: id} )
+        if(!found)
+            return res.status(400).json({ error: 'transaction not found' })
 
         const query = { _id: mongoose.Types.ObjectId(req.body.id), username: username }
         const data = await transactions.deleteOne(query);
