@@ -37,7 +37,7 @@ describe('register', () => {
     };
 
     const resp = await request(app)
-    .post(`/register`)
+    .post(`/api/register`)
     .send(newUser);
      
 
@@ -46,6 +46,83 @@ describe('register', () => {
 
 
   })
+
+    test('T2: one field is empty -> return 200 and error message', async()=>{
+    const newUser = {
+      username : '',
+      email: 'test@example.com',
+      password: '123'
+    };
+
+    const resp = await request(app)
+    .post(`/api/register`)
+    .send(newUser);
+     
+
+    expect(resp.status).toBe(400);
+    expect(resp.body.error).toBe("empty fields are not allowed")
+
+
+  })
+
+  test('T3: one field is missing -> return 400 and error message', async()=>{
+    const newUser = {
+      email: 'test@example.com',
+      password: '123'
+    };
+
+    const resp = await request(app)
+    .post(`/api/register`)
+    .send(newUser);
+     
+
+    expect(resp.status).toBe(400);
+    expect(resp.body.error).toBe("some fields are missing")
+
+
+  })
+
+  
+  test('T4: invalid email-> return 400 and error message', async()=>{
+    const newUser = {
+      username: 'user',
+      email: 'testexample.com',
+      password: '123'
+    };
+
+    const resp = await request(app)
+    .post(`/api/register`)
+    .send(newUser);
+     
+
+    expect(resp.status).toBe(400);
+    expect(resp.body.error).toBe("invalid email")
+
+
+  })
+
+  test('T5: user already in db-> return 400 and error message', async()=>{
+    const user = {
+      username: 'user',
+      email: 'testexample.com',
+      password: '123'
+    };
+
+    await User.create(user);
+
+    const resp = await request(app)
+    .post(`/api/register`)
+    .send(user);
+     
+
+    expect(resp.status).toBe(400);
+    expect(resp.body.error).toBe("you are already registered")
+
+
+  })
+
+
+
 });
 
 describe("registerAdmin", () => { 

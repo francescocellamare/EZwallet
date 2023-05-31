@@ -1,9 +1,9 @@
 | Function  | author (unit/integration)| Implementation | unit test | integration test | notes |
 | -----------| --- | -------------------------------|---- |---- |--- |
-| register | I/I | ✓ | |
-| registerAdmin | I/I | ✓ | |
-| login | I/I |✓ | |
-| logout | I/I |✓ | |
+| register | I/I | ✓ | ✓|✓|
+| registerAdmin | I/I | ✓ | ✓|
+| login | I/I |✓ | ✓|
+| logout | I/I |✓ | ✓|
 | createCategory | V/V |✓ | | | fix to auth mocks | 
 | updateCategory | V/V|✓ | | | fix to auth mocks |
 | deleteCategory | V/V|✓ | | | fix to auth mocks |

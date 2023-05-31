@@ -545,7 +545,7 @@ describe("getGroup", () => {
     ))
    
     
-    jest.spyOn(Group, "findOne").mockImplementationOnce(()=>group_r);
+    jest.spyOn(Group, "findOne").mockImplementation(()=>group_r);
     await getGroup(mockReq, mockResp);
     expect(mockResp.status).toHaveBeenCalledWith(200);
     expect(mockResp.json).toHaveBeenCalledWith({data: {group:group_r, refreshedTokenMessage: mockResp.locals.refreshedTokenMessage}})
@@ -598,7 +598,7 @@ describe("getGroup", () => {
         cause:"Authorized"
       }
     ))
-    jest.spyOn(Group, "findOne").mockImplementationOnce(()=> {throw new Error('server crash')});
+    jest.spyOn(Group, "findOne").mockImplementation(()=> {throw new Error('server crash')});
   
     await getGroup(mockReq, mockResp);
   
@@ -631,7 +631,7 @@ describe("deleteUser", () => {
             refreshedTokenMessage: "dummy message"
           }
         };
-       
+        jest.clearAllMocks();
       }
       )
       
@@ -647,12 +647,12 @@ describe("deleteUser", () => {
                 }
               ))
             const user = { email: 'user@example.com' };
-            jest.spyOn(User, "findOne").mockResolvedValue(user);
-            jest.spyOn(User, "deleteOne").mockResolvedValue({deletedCount: 1});
-            jest.spyOn(transactions, "deleteMany").mockResolvedValue({deletedCount: 2});
+            jest.spyOn(User, "findOne").mockImplementation(()=>user);
+            jest.spyOn(User, "deleteOne").mockImplementation(()=>{deletedCount: 1});
+            jest.spyOn(transactions, "deleteMany").mockImplementation(()=>{deletedCount: 2});
             const group = { _id: 'group-id', members: [{ email: 'user@example.com' }] };
-            jest.spyOn(Group, "findOne").mockResolvedValue(group);
-            jest.spyOn(Group, "deleteOne").mockResolvedValue({});
+            jest.spyOn(Group, "findOne").mockImplementation(()=>group);
+            jest.spyOn(Group, "deleteOne").mockImplementation(()=>{});
       
             await deleteUser(mockReq, mockResp);
             expect(mockResp.status).toHaveBeenCalledWith(200);
