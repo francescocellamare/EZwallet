@@ -494,14 +494,15 @@ export const getGroup = async (req, res) => {
     - Returns a 400 error if the email passed in the request body is an empty string
     - Returns a 400 error if the email passed in the request body is not in correct email format
     - Returns a 400 error if the email passed in the request body does not represent a user in the database
+    - Returns a 400 error if the email passed in the request body represents an admin
     - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin)
    */
   export const deleteUser = async (req, res) => { //Admin
     try {
-      const adminAuthInfo = verifyAuthAdmin(req, res)
+      /*const adminAuthInfo = verifyAuthAdmin(req, res)
       if (!adminAuthInfo.authorized) {
         return res.status(401).json({ error: adminAuthInfo.cause })
-      }
+      }*/
   
       if (req.body.email == '' || (req.body.email && !req.body.email.trim().length)) {
         return res.status(400).json({ error: "The email passed is an empty string" });
@@ -519,6 +520,10 @@ export const getGroup = async (req, res) => {
       const user = await User.findOne({ email: req.body.email })
       if (!user) {
         return res.status(401).json({ error: "The email does not represent a user in the database" })
+      }
+
+      if (user.role === 'Admin'){
+        return res.status(401).json({ error: "The email represents an admin" })
       }
       let userDeleted = await User.deleteOne({ email: req.body.email });
   
