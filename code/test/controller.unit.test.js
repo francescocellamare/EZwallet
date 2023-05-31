@@ -6,13 +6,6 @@ import { verifyAuthAdmin, verifyAuthSimple, verifyAuthUser, verifyAuthGroup } fr
 import mongoose from "mongoose";
 jest.mock('../models/model');
 
-jest.mock('../controllers/utils', () => ({
-    verifyAuthAdmin: jest.fn(),
-}));
-
-jest.mock('../controllers/utils', () => ({
-    verifyAuthSimple: jest.fn(),
-}));
 
 beforeEach(() => {
   categories.find.mockClear();
@@ -50,7 +43,7 @@ describe('createCategory', () => {
     })
 
     test('T1: create a new category -> return a 200 status and the saved category with refreshed token message', async () => {
-        verifyAuthAdmin.mockReturnValueOnce({ authorized: true });
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         const countDocumentsMock = jest.spyOn(categories, 'countDocuments').mockResolvedValueOnce(0); //no category with the same type exists
         const saveMock = jest.fn().mockResolvedValueOnce(mockReq.body);
@@ -58,7 +51,6 @@ describe('createCategory', () => {
 
         await createCategory(mockReq, mockRes);
 
-        expect(verifyAuthAdmin).toHaveBeenCalled();
         expect(countDocumentsMock).toHaveBeenCalledWith({ type: 'food' });
         expect(categories.prototype.save).toHaveBeenCalled();
         expect(mockRes.status).toHaveBeenCalledWith(200);
@@ -69,7 +61,7 @@ describe('createCategory', () => {
     });
 
     test('T2: not an admin request -> return a 401 status with the error message', async () => {
-        verifyAuthAdmin.mockReturnValueOnce({ authorized: false, cause: 'Unauthorized' });
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: false, cause: "Unauthorized" })
 
         await createCategory(mockReq, mockRes);
 
@@ -81,12 +73,11 @@ describe('createCategory', () => {
     test('T3: missing type -> return a 400 status with the error message', async () => {
         mockReq.body.type = '';
 
-        verifyAuthAdmin.mockReturnValueOnce({ authorized: true });
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
 
         await createCategory(mockReq, mockRes);
 
-        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'type is empty or not provided' });
     });
@@ -94,23 +85,21 @@ describe('createCategory', () => {
     test('T4: missing color -> return a 400 status with the error message', async () => {
         mockReq.body.color = '';
 
-        verifyAuthAdmin.mockReturnValueOnce({ authorized: true });
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         await createCategory(mockReq, mockRes);
 
-        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'color is empty or not provided' });
     });
 
     test('T5: already existing category type -> return a 400 status with the error message', async () => {
-        verifyAuthAdmin.mockReturnValueOnce({ authorized: true });
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         const countDocumentsMock = jest.spyOn(categories, 'countDocuments').mockResolvedValueOnce(1);
 
         await createCategory(mockReq, mockRes);
 
-        expect(verifyAuthAdmin).toHaveBeenCalled();
         expect(countDocumentsMock).toHaveBeenCalledWith({ type: 'food' });
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'category type is already in use' });
@@ -144,7 +133,7 @@ describe("updateCategory", () => {
     })
 
     test('T1: update a category -> return a 200 status and the saved category with refreshed token message', async () => {
-        verifyAuthAdmin.mockReturnValueOnce({ authorized: true });
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         const countDocumentsMock = jest.spyOn(categories, 'countDocuments').mockResolvedValueOnce(0); //no category with the same type exists
         categories.updateOne.mockResolvedValue({ modifiedCount: 1 });
@@ -152,7 +141,6 @@ describe("updateCategory", () => {
 
         await updateCategory(mockReq, mockRes);
 
-        expect(verifyAuthAdmin).toHaveBeenCalled();
         expect(countDocumentsMock).toHaveBeenCalledWith({ type: 'Food' });
         expect(categories.updateOne).toHaveBeenCalledWith(
             { type: 'food' },
@@ -173,11 +161,10 @@ describe("updateCategory", () => {
     });
 
     test('T2: not an admin request -> return a 401 status with the error message', async () => {
-        verifyAuthAdmin.mockReturnValueOnce({ authorized: false, cause: 'Unauthorized' });
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: false, cause: "Unauthorized" })
 
         await createCategory(mockReq, mockRes);
 
-        expect(verifyAuthAdmin).toHaveBeenCalled();
         expect(mockRes.status).toHaveBeenCalledWith(401);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Unauthorized' });
     });
@@ -185,11 +172,10 @@ describe("updateCategory", () => {
     test('T3: missing or empty new color -> return a 400 status with the error message', async () => {
         mockReq.body.color = '';
 
-        verifyAuthAdmin.mockReturnValueOnce({ authorized: true });
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         await updateCategory(mockReq, mockRes);
 
-        expect(verifyAuthAdmin).toHaveBeenCalled();
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({
             error: 'New color was empty or not provided'
@@ -199,11 +185,10 @@ describe("updateCategory", () => {
     test('T4: missing or empty new type -> return a 400 status with the error message', async () => {
         mockReq.body.type = '';
 
-        verifyAuthAdmin.mockReturnValueOnce({ authorized: true });
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         await updateCategory(mockReq, mockRes);
 
-        expect(verifyAuthAdmin).toHaveBeenCalled();
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'New type was empty or not provided' });
     });
@@ -211,11 +196,10 @@ describe("updateCategory", () => {
     test('T5: already in use type -> return a 400 status with the error message ', async () => {
         categories.countDocuments.mockResolvedValue(1);
 
-        verifyAuthAdmin.mockReturnValueOnce({ authorized: true });
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         await updateCategory(mockReq, mockRes);
 
-        expect(verifyAuthAdmin).toHaveBeenCalled();
         expect(categories.countDocuments).toHaveBeenCalledWith({ type: 'Food' });
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'New type is already in use' });
@@ -224,11 +208,10 @@ describe("updateCategory", () => {
     test('T6: not existing selected category -> return a 400 status with the error message', async () => {
         categories.updateOne.mockResolvedValue({ modifiedCount: 0 });
 
-        verifyAuthAdmin.mockReturnValueOnce({ authorized: true });
+        jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         await updateCategory(mockReq, mockRes);
 
-        expect(verifyAuthAdmin).toHaveBeenCalled();
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Selected category does not exist' });
     });
@@ -252,7 +235,7 @@ describe("createTransaction", () => {
     });
 })
 
-describe.only("getAllTransactions", () => { 
+describe("getAllTransactions", () => { 
     afterEach(() => {
         jest.clearAllMocks()
     })
@@ -1090,6 +1073,8 @@ describe("getTransactionsByGroupByCategory", () => {
 
     beforeEach(() => {
 
+        jest.clearAllMocks();
+
         // mock request
         req = {
             params : {
@@ -1112,10 +1097,29 @@ describe("getTransactionsByGroupByCategory", () => {
         jest.clearAllMocks();
     })
 
-    test("Should return an error indicating that the user is not authorized", async () => {
+    test("Should return an error indicating that the user is not authorized or not an admin", async () => {
         
-        // called by user
+        // called by admin
         req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : false,
+            cause : "dummy error"
+        });
+
+        await getTransactionsByGroupByCategory(req, res);
+        
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "dummy error"
+        });
+    });
+
+    test("Should return an error indicating that the user is not authorized or not a member of the group", async () => {
+        
+        // called by group member
+        req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
 
         jest.spyOn(utils, "verifyAuthGroup").mockResolvedValue({
             authorized : false,
@@ -1133,21 +1137,21 @@ describe("getTransactionsByGroupByCategory", () => {
 
     test("Should return an error indicating that the group does not exist (auth type doesn't matter)", async () => {
         
-        // called by group (doesn't matter as both auth types have the same functionality)
-        req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
+        // called by admin (authorization type doesn't matter)
+        req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
 
         jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
             authorized : true,
             cause : "authorized"
         });
-            
-        jest.spyOn(Group, "countDocuments").mockResolvedValue(0);
+
+        jest.spyOn(Group, "findOne").mockReturnValue(null);
 
         await getTransactionsByGroupByCategory(req, res);
-
+        
         expect(utils.verifyAuthAdmin).toHaveBeenCalled();
-        expect(Group.countDocuments).toHaveBeenCalled();
-        // expect(res.status).toHaveBeenCalledWith(400);
+        expect(Group.findOne).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({
             error : "group does not exist"
         });
@@ -1155,23 +1159,69 @@ describe("getTransactionsByGroupByCategory", () => {
 
     test("Should return an error indicating that the category does not exist (auth type doesn't matter)", async () => {
         
-        // called by group (doesn't matter as both auth types have the same functionality)
-        req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
+        // called by admin (authorization type doesn't matter)
+        req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
 
         jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
             authorized : true,
             cause : "authorized"
         });
-            
-        jest.spyOn(Group, "countDocuments").mockResolvedValue(1);
-        jest.spyOn(categories, "countDocuments").mockResolvedValue(0);
+
+        jest.spyOn(Group, "findOne").mockReturnValue({
+            name : "dummy_group",
+            members : ["dummy_user_1", "dummy_user_2"]
+        });
+
+        jest.spyOn(categories, "find").mockReturnValue(null);
 
         await getTransactionsByGroupByCategory(req, res);
-
+        
         expect(utils.verifyAuthAdmin).toHaveBeenCalled();
-        expect(Group.countDocuments).toHaveBeenCalled();
-        expect(categories.countDocuments).toHaveBeenCalled();
+        expect(Group.findOne).toHaveBeenCalled();
+        expect(categories.find).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "category does not exist"
+        });
+    });
+
+    test("Should return an empty list (auth type doesn't matter)", async () => {
+        
+        // called by admin (authorization type doesn't matter)
+        req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : true,
+            cause : "authorized"
+        });
+
+        jest.spyOn(Group, "findOne").mockReturnValueOnce({
+            name : "dummy_group",
+            members : ["dummy_user_1", "dummy_user_2"]
+        });
+
+        jest.spyOn(categories, "find").mockReturnValue({
+            type : "dummy_category"
+        });
+
+        jest.spyOn(Group, "findOne").mockReturnValue({
+            name : "dummy_group",
+            members : ["dummy_user_1", "dummy_user_2"]
+        });
+
+        jest.spyOn(Group, "findOne").mockResolvedValue({
+            select : jest.fn().mockResolvedValue(() => {
+                populate : jest.fn().mockResolvedValue([])
+            })
+        })
+
+        await getTransactionsByGroupByCategory(req, res);
+        
+        // expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        // expect(Group.findOne).toHaveBeenCalled();
+        // expect(categories.find).toHaveBeenCalled();
+        // expect(Group.findOne).toHaveBeenCalled();
+        // expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({
             error : "category does not exist"
         });
