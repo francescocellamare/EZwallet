@@ -703,15 +703,30 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         if(!found)
             return res.status(400).json({ error: "category does not exist" })
 
-        let members = await Group.findOne({ name: groupName })
-        .select('members')
-        .populate('members.user')
-
+        let members = await Group.aggregate([
+            { $match: { name: groupName } },
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'members.user',
+                foreignField: '_id',
+                as: 'members'
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                members: 1
+              }
+            }
+        ]);
+        
+        members = members[0]
         if(!members) {
             return res.status(400).json({ message: "group or category does not exist" })
         }
-
-        members = members.members.map( item => item.user.username)
+        console.log(members.members)
+        members = members.members.map( item => item.username)
 
 
         const query = await transactions.aggregate([
