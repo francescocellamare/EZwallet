@@ -499,10 +499,10 @@ export const getGroup = async (req, res) => {
    */
   export const deleteUser = async (req, res) => { //Admin
     try {
-      /*const adminAuthInfo = verifyAuthAdmin(req, res)
+      const adminAuthInfo = verifyAuthAdmin(req, res)
       if (!adminAuthInfo.authorized) {
         return res.status(401).json({ error: adminAuthInfo.cause })
-      }*/
+      }
   
       if (req.body.email == '' || (req.body.email && !req.body.email.trim().length)) {
         return res.status(400).json({ error: "The email passed is an empty string" });
