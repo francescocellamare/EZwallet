@@ -4,8 +4,8 @@
 | registerAdmin | I/I | ✓ | ✓|
 | login | I/I |✓ | ✓|
 | logout | I/I |✓ | ✓|
-| createCategory | V/V |✓ | | | fix to auth mocks | 
-| updateCategory | V/V|✓ | | | fix to auth mocks |
+| createCategory | V/V |✓ | ✓| |  | 
+| updateCategory | V/V|✓ | | | the last test is failing |
 | deleteCategory | V/V|✓ | | | fix to auth mocks |
 | getCategories | V/V|✓ | |
 | createTransaction | V/V|✓ | |
