@@ -252,7 +252,7 @@ describe("createTransaction", () => {
     });
 })
 
-describe.only("getAllTransactions", () => { 
+describe("getAllTransactions", () => { 
     afterEach(() => {
         jest.clearAllMocks()
     })
@@ -1084,11 +1084,13 @@ describe("getTransactionsByGroup", () => {
     });
 })
 
-describe("getTransactionsByGroupByCategory", () => { 
+describe.only("getTransactionsByGroupByCategory", () => { 
     let req;
     let res;
 
     beforeEach(() => {
+
+        jest.clearAllMocks();
 
         // mock request
         req = {
@@ -1112,10 +1114,29 @@ describe("getTransactionsByGroupByCategory", () => {
         jest.clearAllMocks();
     })
 
-    test("Should return an error indicating that the user is not authorized", async () => {
+    test("Should return an error indicating that the user is not authorized or not an admin", async () => {
         
-        // called by user
+        // called by admin
         req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : false,
+            cause : "dummy error"
+        });
+
+        await getTransactionsByGroupByCategory(req, res);
+        
+        expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "dummy error"
+        });
+    });
+
+    test("Should return an error indicating that the user is not authorized or not a member of the group", async () => {
+        
+        // called by group member
+        req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
 
         jest.spyOn(utils, "verifyAuthGroup").mockResolvedValue({
             authorized : false,
@@ -1133,21 +1154,21 @@ describe("getTransactionsByGroupByCategory", () => {
 
     test("Should return an error indicating that the group does not exist (auth type doesn't matter)", async () => {
         
-        // called by group (doesn't matter as both auth types have the same functionality)
-        req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
+        // called by admin (authorization type doesn't matter)
+        req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
 
         jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
             authorized : true,
             cause : "authorized"
         });
-            
-        jest.spyOn(Group, "countDocuments").mockResolvedValue(0);
+
+        jest.spyOn(Group, "findOne").mockReturnValue(null);
 
         await getTransactionsByGroupByCategory(req, res);
-
+        
         expect(utils.verifyAuthAdmin).toHaveBeenCalled();
-        expect(Group.countDocuments).toHaveBeenCalled();
-        // expect(res.status).toHaveBeenCalledWith(400);
+        expect(Group.findOne).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({
             error : "group does not exist"
         });
@@ -1155,23 +1176,69 @@ describe("getTransactionsByGroupByCategory", () => {
 
     test("Should return an error indicating that the category does not exist (auth type doesn't matter)", async () => {
         
-        // called by group (doesn't matter as both auth types have the same functionality)
-        req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
+        // called by admin (authorization type doesn't matter)
+        req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
 
         jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
             authorized : true,
             cause : "authorized"
         });
-            
-        jest.spyOn(Group, "countDocuments").mockResolvedValue(1);
-        jest.spyOn(categories, "countDocuments").mockResolvedValue(0);
+
+        jest.spyOn(Group, "findOne").mockReturnValue({
+            name : "dummy_group",
+            members : ["dummy_user_1", "dummy_user_2"]
+        });
+
+        jest.spyOn(categories, "find").mockReturnValue(null);
 
         await getTransactionsByGroupByCategory(req, res);
-
+        
         expect(utils.verifyAuthAdmin).toHaveBeenCalled();
-        expect(Group.countDocuments).toHaveBeenCalled();
-        expect(categories.countDocuments).toHaveBeenCalled();
+        expect(Group.findOne).toHaveBeenCalled();
+        expect(categories.find).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.json).toHaveBeenCalledWith({
+            error : "category does not exist"
+        });
+    });
+
+    test("Should return an empty list (auth type doesn't matter)", async () => {
+        
+        // called by admin (authorization type doesn't matter)
+        req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({
+            authorized : true,
+            cause : "authorized"
+        });
+
+        jest.spyOn(Group, "findOne").mockReturnValueOnce({
+            name : "dummy_group",
+            members : ["dummy_user_1", "dummy_user_2"]
+        });
+
+        jest.spyOn(categories, "find").mockReturnValue({
+            type : "dummy_category"
+        });
+
+        jest.spyOn(Group, "findOne").mockReturnValue({
+            name : "dummy_group",
+            members : ["dummy_user_1", "dummy_user_2"]
+        });
+
+        jest.spyOn(Group, "findOne").mockResolvedValue({
+            select : jest.fn().mockResolvedValue(() => {
+                populate : jest.fn().mockResolvedValue([])
+            })
+        })
+
+        await getTransactionsByGroupByCategory(req, res);
+        
+        // expect(utils.verifyAuthAdmin).toHaveBeenCalled();
+        // expect(Group.findOne).toHaveBeenCalled();
+        // expect(categories.find).toHaveBeenCalled();
+        // expect(Group.findOne).toHaveBeenCalled();
+        // expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({
             error : "category does not exist"
         });
