@@ -1084,7 +1084,7 @@ describe("getTransactionsByGroup", () => {
     });
 })
 
-describe.only("getTransactionsByGroupByCategory", () => { 
+describe("getTransactionsByGroupByCategory", () => { 
     let req;
     let res;
 
