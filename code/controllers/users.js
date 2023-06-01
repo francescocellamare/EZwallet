@@ -37,8 +37,12 @@ export const getUsers = async (req, res) => {
  */
 export const getUser = async (req, res) => {
     try {
-      const cookie  = req.cookies;
+    
+       const cookie  = req.cookies;
       const username = req.params.username
+
+      const found = await User.findOne({username : username});
+      if (!found) return res.status(401).json({ error: "User not found" })
 
       const userAuthInfo = verifyAuthUser(req, res, username)
       const adminAuthInfo = verifyAuthAdmin(req, res)
@@ -46,8 +50,7 @@ export const getUser = async (req, res) => {
         return res.status(401)
       }
 
-        const user = await User.findOne({ refreshToken: cookie.refreshToken })
-        if (!user) return res.status(401).json({ error: "User not found" })
+    
         if (user.username !== username) return res.status(401).json({error: "Unauthorized" })
         res.status(200).json({data:user, refreshTokenMessage:res.locals.refreshTokenMessage})
     } catch (error) {
