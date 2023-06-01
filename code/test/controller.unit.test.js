@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 jest.mock('../models/model');
 
 
+
 beforeEach(() => {
     categories.find.mockClear();
     categories.prototype.save.mockClear();
@@ -237,67 +238,82 @@ describe("deleteCategory", () => {
     })
 
     test.only("T1: delete a category -> return 200 status, a message, the attribute `count`, and the refreshed token", async () => {
+
         mockReq = {
+            // what I want to delete
             body: {
-                types: ["health"],
-            },
+                types: ["health", "bills"],
+            }
         };
+
+        // the whole database (useless here)
+        const storedCategory = [
+            {type: 'health', color: '#ffffff'}, 
+            {type: 'bills', color: '#ffffff'}, 
+            {type: 'investment', color: '#ffffff'}, 
+            {type: 'cash', color: '#ffffff'}
+        ]
+
 
         jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({ authorized: true, cause: "Authorized" });
 
-        jest.spyOn(categories, "countDocuments").mockResolvedValue(2);
+        // there is at least one category | 4 in the database so no error 401
+        jest.spyOn(categories, "countDocuments").mockResolvedValue(4);
+        
+        // categories that find will returns from the database (both of them are defined)
+        const mockFindResult1 = [
+            {type: 'health'},
+            {type: 'bills'}
+        ]
+        // all the types we have in the database
+        jest.spyOn(categories, 'find').mockReturnValue({
+            sort: jest.fn().mockResolvedValue(mockFindResult1)
+        });
 
-        /*jest.spyOn(categories, "find").mockResolvedValue(
-            [{ type: "health", createdAt: "1" }, { type: "bills", createdAt: "2" }]
-        );*/
+        // N = given categories in the database too
+        // T = total number of categories 
+        // now T = 4 and N = 2 so N != T ==> else side
 
+        const mockFindResult2 = [
+            {type: 'bills'}
+        ]
+        // the oldest one
+        jest.spyOn(categories, 'findOne').mockReturnValue({
+            sort: jest.fn().mockResolvedValue(mockFindResult2)
+        });
 
-        jest.spyOn(categories, 'find').mockImplementation((a) => {
-            console.log(a);
-            return {
-                
-                select: jest.fn().mockImplementation(() => {
+        jest.spyOn(categories, 'deleteMany').mockResolvedValue({deletedCount: 2})
 
-                    return {
-                        sort: jest.fn().mockImplementation(() => {
-                            return [{ type: 'bills' }, {type: 'health'}];
-                        })
-                    }
-                })
-            }
-        })
-
-        jest.spyOn(categories, 'findOne').mockImplementation(() => {
-            return {
-                select: jest.fn().mockImplementation(() => {
-
-                    return {
-                        sort: jest.fn().mockImplementation(() => {
-                            return [{ type: 'bills' }];
-                        })
-                    }
-                })
-            }
-        })
-
-
-        jest.spyOn(categories, "deleteMany").mockResolvedValue([{ type: "health" }]);
-
-        jest.spyOn(transactions, "updateMany").mockResolvedValue({ modifiedCount: 1 });
+        jest.spyOn(transactions, 'updateMany').mockResolvedValue({modifiedCount: 3})
 
         await deleteCategory(mockReq, mockRes);
 
+        // check authentication
+        expect(mockRes.status).not.toHaveBeenCalledWith(401)
 
-        //expect(deleteManyMock).toHaveBeenCalledWith({ type: { $in: ["health"] } });
+        // check call to the db
+        expect(categories.countDocuments).toHaveBeenCalled()
 
-        expect(mockRes.status).toHaveBeenCalledWith(200);
-        expect(mockRes.json).toHaveBeenCalledWith({
-            data: {
-                message: "successfully deleted categories",
-                count: 1,
-            },
-            refreshedTokenMessage: "dummy message",
-        });
+        // check query for the whole set of category
+        expect(categories.find).toHaveBeenCalled()
+
+        // check if notFound !== 0 does not throw error
+        expect(mockRes.status).not.toHaveBeenCalledWith(400)
+
+        // check if at least one category has been deleted
+        expect(categories.deleteMany).toHaveBeenCalled()
+
+        // we can't say that there is at least a transaction for each category (RIGHT?)
+        // I've considered at least one in this case
+        expect(transactions.updateMany).toHaveBeenCalled()
+
+        expect(mockRes.status).toHaveBeenCalledWith(200)
+
+        // responseObj     mockobj, first call(only one) first argument
+        // console.log(mockRes.json.mock.calls[0][0])
+        expect(mockRes.json.mock.calls[0][0].data.message).toBeDefined()
+        expect(mockRes.json.mock.calls[0][0].data.count).toBe(3)
+        expect(mockRes.json.mock.calls[0][0].refreshedTokenMessage).toBeDefined()
     });
 
 })

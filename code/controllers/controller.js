@@ -202,7 +202,7 @@ export const deleteCategory = async (req, res) => {
             type : {
                 $in : types
             }
-        }).select({
+        }, {
             type : 1,            
             _id : 0    
         }).sort({
@@ -211,7 +211,7 @@ export const deleteCategory = async (req, res) => {
 
         toBeDeleted = toBeDeleted.map(category => category.type);
         const notFound = types.filter(type => !toBeDeleted.includes(type));
-        
+
         if(notFound.length !== 0){            
             res.status(400).json({ error : `the following categories don't exist : ${notFound.join(', ')}` });
         }
@@ -228,17 +228,17 @@ export const deleteCategory = async (req, res) => {
             toBeDeleted = toBeDeleted.slice(1);
         } else {
             // find oldest category
-            let oldest = await categories.findOne({
+            let oldest = await categories.find({
                 type : {
                     $nin : toBeDeleted
                 }
-            }).select({
+            }, {
                 type : 1,            
                 _id : 0    
             }).sort({
                 createdAt : -1
             });
-
+            oldest = oldest[0]
             newType = oldest.type;
         }
            
