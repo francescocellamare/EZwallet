@@ -784,7 +784,7 @@ export const deleteTransaction = async (req, res) => {
         }
 
         // body is not complete
-        if (!id) return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
+        if (!id || id === '') return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
         
         // user not found
         let found = await User.findOne({username: username})
@@ -795,6 +795,9 @@ export const deleteTransaction = async (req, res) => {
         found = await transactions.findOne( {_id: id} )
         if(!found)
             return res.status(400).json({ error: 'transaction not found' })
+
+        if(found.username != username)
+            return res.status(400).json({ error: 'transaction not found for the user' })
 
         const query = { _id: mongoose.Types.ObjectId(req.body.id), username: username }
         const data = await transactions.deleteOne(query);
