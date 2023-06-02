@@ -19,18 +19,31 @@ export const createCategory = async (req, res) => {
     try {
 
         // check if an admin sent the request
-        const {authorized, cause} = verifyAuthAdmin(req, res);
-        if(!authorized) return res.status(401).json({error: cause})
+        const { authorized, cause } = verifyAuthAdmin(req, res);
+        if (!authorized) return res.status(401).json({ error: cause })
 
         // validate request body
         const { type, color } = req.body;
 
-        if(!type  || type  === "") return res.status(400).json({error: "type is empty or not provided"});
-        if(!color || color === "") return res.status(400).json({error: "color is empty or not provided"});
+        if (type == '' || (type && !type.trim().length)) {
+            return res.status(400).json({ error: "type is empty" });
+        }
 
-        let result = await categories.countDocuments({type});
-        if(result === 1){
-            res.status(400).json({error : "category type is already in use"});
+        if (!type) {
+            return res.status(400).json({ error: "type is not provided" });
+        }
+
+        if (color == '' || (color && !color.trim().length)) {
+            return res.status(400).json({ error: "color is empty" });
+        }
+
+        if (!color) {
+            return res.status(400).json({ error: "color is not provided" });
+        }
+
+        let result = await categories.countDocuments({ type });
+        if (result === 1) {
+            res.status(400).json({ error: "category type is already in use" });
         }
 
         const new_categories = new categories({ type, color });
@@ -66,33 +79,43 @@ export const updateCategory = async (req, res) => {
     try {
 
         // authentication
-        const {authorized, cause} = verifyAuthAdmin(req, res);
-        if(!authorized) return res.status(401).json({error: cause})
+        const { authorized, cause } = verifyAuthAdmin(req, res);
+        if (!authorized) return res.status(401).json({ error: cause })
 
-        const {type} = req.params;
-        const {type : newType, color : newColor} = req.body; 
+        const { type } = req.params;
+        const { type: newType, color: newColor } = req.body;
 
         //
         // input validation
         //
 
-        // check if all attributes are provided and not empty
-        if(!newColor || newColor === "") return res.status(400).json({ error : "New color was empty or not provided" });
-        if(!newType  || newType  === "") return res.status(400).json({ error : "New type was empty or not provided" });
-        
-        // check that the new type is not in use 
-        if(newType !== type){            
-            const result = await categories.countDocuments({
-                type : newType
-            });
-        
-            if(result >= 1){
-                return res.status(400).json({
-                    error : "New type is already in use"
-                });
-            }   
+        if (newColor == '' || (newColor && !newColor.trim().length)) {
+            return res.status(400).json({ error: "New color is empty" });
         }
-        
+        if (!newColor) {
+            return res.status(400).json({ error: "New color is not provided" });
+        }
+
+        if (newType == '' || (newType && !newType.trim().length)) {
+            return res.status(400).json({ error: "New type is empty" });
+        }
+        if (!newType) {
+            return res.status(400).json({ error: "New type is not provided" });
+        }
+
+        // check that the new type is not in use 
+        if (newType !== type) {
+            const result = await categories.countDocuments({
+                type: newType
+            });
+
+            if (result >= 1) {
+                return res.status(400).json({
+                    error: "New type is already in use"
+                });
+            }
+        }
+
         // // check if new value stayed the same
         // if(newType == type && newColor == color){
         //     return res.status(400).json({
@@ -116,40 +139,40 @@ export const updateCategory = async (req, res) => {
         // update category
         const result = await categories.updateOne(
             {
-                type : type
+                type: type
             },
             {
-                type : newType,
-                color : newColor
+                type: newType,
+                color: newColor
             }
         )
-        
-        if(result.modifiedCount === 0){
+
+        if (result.modifiedCount === 0) {
             // category does not exist
             return res.status(400).json({
-                error : "Selected category does not exist"
+                error: "Selected category does not exist"
             })
         }
 
         // if type changed, update transactions to the new type 
         let modifiedCount = 0;
-        if(newType !== type){
+        if (newType !== type) {
             const result = await transactions.updateMany(
                 {
-                    type : type
+                    type: type
                 },
                 {
-                    type : newType
+                    type: newType
                 }
-            )                        
+            )
 
             modifiedCount = result.modifiedCount;
         }
 
         return res.status(200).json({
-            data : {
-                message : "Succesfully update category",
-                count : modifiedCount
+            data: {
+                message: "Succesfully update category",
+                count: modifiedCount
             },
             refreshedTokenMessage: res.locals.refreshedTokenMessage
         })
@@ -183,44 +206,44 @@ export const deleteCategory = async (req, res) => {
         const {authorized, cause} = verifyAuthAdmin(req, res);
         if(!authorized) return res.status(401).json({error: cause})
 
-        const {types} = req.body;
+        const { types } = req.body;
 
         // check if all required fields were provided
-        if(!types) return res.status(400).json({ error : "List of categories' types to deleted was not provided" });
-        
+        if (!types) return res.status(400).json({ error: "List of categories' types to deleted was not provided" });
+
         // check for empty strings
-        for (let type of types){
-            if(type === "") return res.status(400).json({ error : "The list of categories can't have empty entries" });
+        for (let type of types) {
+            if (type === "") return res.status(400).json({ error: "The list of categories can't have empty entries" });
         }
 
         // check if the database has at least one category
         let T = await categories.countDocuments();
-        if(T <= 1) return res.status(400).json({ error : "Cannot delete categories, there should be at least one category" });
-        
+        if (T <= 1) return res.status(400).json({ error: "Cannot delete categories, there should be at least one category" });
+
         // check if all categories to be deleted exist in the database 
         let toBeDeleted = await categories.find({
-            type : {
-                $in : types
+            type: {
+                $in: types
             }
         }, {
-            type : 1,            
-            _id : 0    
+            type: 1,
+            _id: 0
         }).sort({
-            createdAt : -1
+            createdAt: -1
         });
 
         toBeDeleted = toBeDeleted.map(category => category.type);
         const notFound = types.filter(type => !toBeDeleted.includes(type));
 
-        if(notFound.length !== 0){            
-            res.status(400).json({ error : `the following categories don't exist : ${notFound.join(', ')}` });
+        if (notFound.length !== 0) {
+            res.status(400).json({ error: `the following categories don't exist: ${notFound.join(', ')}` });
         }
-        
+
         // number of categories to be deleted
         const N = types.length;
         let newType;
 
-        if( N === T){
+        if (N === T) {
             // delete all categories except the oldest one   
             // types are sorted based on their creation date, so the oldest 
             // category is the first element of the types array         
@@ -229,48 +252,47 @@ export const deleteCategory = async (req, res) => {
         } else {
             // find oldest category
             let oldest = await categories.find({
-                type : {
-                    $nin : toBeDeleted
+                type: {
+                    $nin: toBeDeleted
                 }
             }, {
-                type : 1,            
-                _id : 0    
+                type: 1,
+                _id: 0
             }).sort({
-                createdAt : -1
+                createdAt: -1
             });
             oldest = oldest[0]
             newType = oldest.type;
         }
-           
+
         // delete categories
         let result = await categories.deleteMany({
-            type : {
-                $in : toBeDeleted
+            type: {
+                $in: toBeDeleted
             }
-        })        
+        })
 
         // update transactions that belong to deleted categories
         result = await transactions.updateMany(
             {
-                type : {
-                    $in : toBeDeleted
+                type: {
+                    $in: toBeDeleted
                 }
             },
             {
-                type : newType
+                type: newType
             }
         )
-        
+
         return res.status(200).json({
-            data : {
-                message : "successfully deleted categories",
-                count : result.modifiedCount
+            data: {
+                message: "successfully deleted categories",
+                count: result.modifiedCount
             },
             refreshedTokenMessage: res.locals.refreshedTokenMessage
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({ error: error.message })
     }
 }
@@ -287,15 +309,15 @@ export const deleteCategory = async (req, res) => {
 export const getCategories = async (req, res) => {
     try {
 
-        const {authorized, cause} = verifyAuthSimple(req, res);
-        if(!authorized) return res.status(401).json({error: cause})
-        
+        const { authorized, cause } = verifyAuthSimple(req, res);
+        if (!authorized) return res.status(401).json({ error: cause })
+
         let data = await categories.find({})
 
         let filter = data.map(v => Object.assign({}, { type: v.type, color: v.color }))
 
         return res.json({
-            data : filter,
+            data: filter,
             refreshedTokenMessage: res.locals.refreshedTokenMessage
         })
     } catch (error) {
@@ -323,31 +345,50 @@ export const getCategories = async (req, res) => {
 export const createTransaction = async (req, res) => {
     try {
 
-        let {authorized, cause} = verifyAuthUser(req, res, req.params.username);
-        if(!authorized) res.status(401).json({error : cause});
+        let { authorized, cause } = verifyAuthUser(req, res, req.params.username);
+        if (!authorized) return res.status(401).json({ error: cause });
 
-        const {username_param} = req.params;
-        const {username_body, amount, type } = req.body;
+        const { username_param } = req.params;
+        const username_body = req.body.username;
+        const amount = req.body.amount;
+        const type = req.body.type;
 
-        if(!username_body && username_body === "") res.status(400).json({error : "username was not provided in requests body"});
-        if(!amount        && amount        === "") res.status(400).json({error : "amount was not provided in requests body"});
-        if(!type          && type          === "") res.status(400).json({error : "category type was not provided in requests body"});
+        if (username_body == '' || (username_body && !username_body.trim().length)) {
+            return res.status(400).json({ error: "Username is empty" });
+        }
+        if (!username_body) {
+            return res.status(400).json({ error: "Username is not provided" });
+        }
+
+        if (amount == '') {
+            return res.status(400).json({ error: "Amount is empty" });
+        }
+        if (!amount) {
+            return res.status(400).json({ error: "Amount is not provided" });
+        }
+
+        if (type == '' || (type && !type.trim().length)) {
+            return res.status(400).json({ error: "Category is empty" });
+        }
+        if (!type) {
+            return res.status(400).json({ error: "Category is not provided" });
+        }
 
         // check if username in request body and parameters are the same
-        if(username_body !== username_param) res.status(400).json({error : "Username provided in the request body does not match the username provided in the request params"});
+        if (username_body !== username_param) res.status(400).json({ error: "Username provided in the request body does not match the username provided in the request params" });
 
         // check if amount string passed in body contains a float
-        if(!/^[-+]?[0-9]*\.?[0-9]+$/.test(amount)) res.status(400).json({error : "Amount should be a number"});
+        if (!/^[-+]?[0-9]*\.?[0-9]+$/.test(amount)) res.status(400).json({ error: "Amount should be a number" });
 
         // check if the category type in the body represents a category in the database
-        let result = await categories.countDocuments({type})
-        if(result !== 1) res.status(400).json({error : "Category does not exist"});
+        let result = await categories.countDocuments({ type })
+        if (result !== 1) res.status(400).json({ error: "Category does not exist" });
 
         // check if the username provided in the request reperesents a user in the database
-        result = await User.countDocuments({username_param})
-        if(result !== 1) res.status(400).json({error : "User does not exist"});
+        result = await User.countDocuments({ username_param })
+        if (result !== 1) res.status(400).json({ error: "User does not exist" });
 
-        const new_transactions = new transactions({ username, amount, type });
+        const new_transactions = new transactions({ username: username_body, amount, type });
         new_transactions.save()
             .then(data => res.json({
                 data,
@@ -355,6 +396,7 @@ export const createTransaction = async (req, res) => {
             }))
             .catch(err => { throw err })
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: error.message })
     }
 }
@@ -369,9 +411,9 @@ export const createTransaction = async (req, res) => {
 **/
 export const getAllTransactions = async (req, res) => {
     try {
-        
-        let {authorized, cause} = verifyAuthAdmin(req, res);
-        if(!authorized) res.status(401).json({error : cause});
+
+        let { authorized, cause } = verifyAuthAdmin(req, res);
+        if (!authorized) res.status(401).json({ error: cause });
 
         transactions.aggregate([
             {
@@ -412,45 +454,45 @@ export const getTransactionsByUser = async (req, res) => {
     try {
         //Distinction between route accessed by Admins or Regular users for functions that can be called by both
         //and different behaviors and access rights
-        let filters;      
+        let filters;
         if (req.url.indexOf("/transactions/users/") >= 0) {
             // admin authentication
-            const {authorized, cause} = verifyAuthAdmin(req, res);
-            if(!authorized) return res.status(401).json({error: cause})
-            
+            const { authorized, cause } = verifyAuthAdmin(req, res);
+            if (!authorized) return res.status(401).json({ error: cause })
 
-            filters = {};                        
+
+            filters = {};
         } else {
             // regular user authentication            
-            const {authorized, cause} = verifyAuthUser(req, res, req.params.user);            
-            if(!authorized) return res.status(401).json({error: cause})
+            const { authorized, cause } = verifyAuthUser(req, res, req.params.user);
+            if (!authorized) return res.status(401).json({ error: cause })
 
             const amountFilter = handleAmountFilterParams(req);
             const dateFilter = handleDateFilterParams(req);
 
-            filters = {$and : []}
+            filters = { $and: [] }
 
             filters["$and"].push(amountFilter);
             filters["$and"].push(dateFilter);
-        }                  
+        }
 
-        const {username} = req.params;
+        const { username } = req.params;
 
         // check if username passed in params represents a user in the database
-        let result = await User.countDocuments({username});
-        if(result !== 1){
-            return res.status(400).json({ error : "User does not exist"});
+        let result = await User.countDocuments({ username });
+        if (result !== 1) {
+            return res.status(400).json({ error: "User does not exist" });
         }
-            
+
         const projection = {
-            _id: 0, username : 1, type : 1, amount : 1, date : 1, color : 1, "category.color" : 1
+            _id: 0, username: 1, type: 1, amount: 1, date: 1, color: 1, "category.color": 1
         }
 
         result = await transactions.aggregate(
             [{
-                $match : filters
-            },{
-                $lookup : {
+                $match: filters
+            }, {
+                $lookup: {
                     from: "categories",
                     localField: "type",
                     foreignField: "type",
@@ -458,21 +500,22 @@ export const getTransactionsByUser = async (req, res) => {
                 }
             },
             {
-                $project : projection
+                $project: projection
             }]
-        );        
+        );
 
         result = result.map(transaction => {
             return {
-            color : transaction.category[0].color,
-            username : transaction.username,
-            type : transaction.type,
-            amount : transaction.amount,
-            date : transaction.date}
+                color: transaction.category[0].color,
+                username: transaction.username,
+                type: transaction.type,
+                amount: transaction.amount,
+                date: transaction.date
+            }
         });
 
         res.status(200).json({
-            data : result,
+            data: result,
             refreshedTokenMessage: res.locals.refreshedTokenMessage
         })
 
@@ -496,45 +539,45 @@ export const getTransactionsByUser = async (req, res) => {
     - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin) if the route is `/api/transactions/users/:username/category/:category`
 */
 export const getTransactionsByUserByCategory = async (req, res) => {
-    try {  
+    try {
 
-        const {username, category : type} = req.params;
-        
+        const { username, category: type } = req.params;
+
         if (req.url.indexOf("/transactions/users/") >= 0) {
             // admin authentication
-            const {authorized, cause} = verifyAuthAdmin(req, res);
-            if(!authorized) return res.status(401).json({error: cause})                       
+            const { authorized, cause } = verifyAuthAdmin(req, res);
+            if (!authorized) return res.status(401).json({ error: cause })
         } else {
             // regular user authentication
-            const {authorized, cause} = verifyAuthUser(req, res, username);
-            if(!authorized) return res.status(401).json({error: cause})
-        }       
+            const { authorized, cause } = verifyAuthUser(req, res, username);
+            if (!authorized) return res.status(401).json({ error: cause })
+        }
 
         // check if username passed in params represents a user in the database
-        let result = await User.countDocuments({username});
-        if(result !== 1){
-            return res.status(400).json({ error : "User does not exist" });
+        let result = await User.countDocuments({ username });
+        if (result !== 1) {
+            return res.status(400).json({ error: "User does not exist" });
         }
 
         // check if category passed in params represents a category in the database
-        result = await categories.countDocuments({type});
-        if(result !== 1){
-            return res.status(400).json({ error : "Category does not exist" })
+        result = await categories.countDocuments({ type });
+        if (result !== 1) {
+            return res.status(400).json({ error: "Category does not exist" })
         }
 
         const projection = {
-            _id: 0, username : 1, type : 1, amount : 1, date : 1, color : 1, category : 1
+            _id: 0, username: 1, type: 1, amount: 1, date: 1, color: 1, category: 1
         }
 
         result = await transactions.aggregate(
             [
                 {
-                    $match : {
+                    $match: {
                         type
-                    }    
+                    }
                 },
                 {
-                    $lookup : {
+                    $lookup: {
                         from: "categories",
                         localField: "type",
                         foreignField: "type",
@@ -542,22 +585,23 @@ export const getTransactionsByUserByCategory = async (req, res) => {
                     }
                 },
                 {
-                    $project : projection
+                    $project: projection
                 }
             ]
         );
 
         result = result.map(transaction => {
             return {
-            color : transaction.category[0].color,
-            username : transaction.username,
-            type : transaction.type,
-            amount : transaction.amount,
-            date : transaction.date}
+                color: transaction.category[0].color,
+                username: transaction.username,
+                type: transaction.type,
+                amount: transaction.amount,
+                date: transaction.date
+            }
         });
 
         res.status(200).json({
-            data : result,
+            data: result,
             refreshedTokenMessage: res.locals.refreshedTokenMessage
         })
 
@@ -577,45 +621,45 @@ export const getTransactionsByUserByCategory = async (req, res) => {
    - Returns a 400 error if the group name passed as a route parameter does not represent a group in the database
    - Returns a 401 error if called by an authenticated user who is not part of the group (authType = Group) if the route is `/api/groups/:name/transactions`
   - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin) if the route is `/api/transactions/groups/:name`
-*/ 
+*/
 export const getTransactionsByGroup = async (req, res) => {
     try {
-        const {name} = req.params;  
+        const { name } = req.params;
 
         if (req.url.indexOf("/transactions/groups/") >= 0) {
             // admin authentication
-            const {authorized, cause} = verifyAuthAdmin(req, res);
-            if(!authorized) return res.status(401).json({error: cause})                       
+            const { authorized, cause } = verifyAuthAdmin(req, res);
+            if (!authorized) return res.status(401).json({ error: cause })
         } else {
             // regular user authentication
-            const {authorized, cause} = await verifyAuthGroup(req, res, name);
-            if(!authorized) return res.status(401).json({error: cause})
-        }   
+            const { authorized, cause } = await verifyAuthGroup(req, res, name);
+            if (!authorized) return res.status(401).json({ error: cause })
+        }
 
         // check if group exists
-        let result = await Group.findOne({name});        
-        if(!result){
-            return res.status(400).json({ error : "Group does not exist" })
+        let result = await Group.findOne({ name });
+        if (!result) {
+            return res.status(400).json({ error: "Group does not exist" })
         }
 
         const { members } = result;
 
         // get transactions
         const projection = {
-            _id: 0, username : 1, type : 1, amount : 1, date : 1, color : 1, category : 1
+            _id: 0, username: 1, type: 1, amount: 1, date: 1, color: 1, category: 1
         }
 
         result = await transactions.aggregate(
             [
                 {
-                    $match : {
-                        username : {
-                            $in : members
+                    $match: {
+                        username: {
+                            $in: members
                         }
-                    }    
+                    }
                 },
                 {
-                    $lookup : {
+                    $lookup: {
                         from: "categories",
                         localField: "type",
                         foreignField: "type",
@@ -623,22 +667,23 @@ export const getTransactionsByGroup = async (req, res) => {
                     }
                 },
                 {
-                    $project : projection
+                    $project: projection
                 }
             ]
         );
 
         result = result.map(transaction => {
             return {
-            color : transaction.category[0].color,
-            username : transaction.username,
-            type : transaction.type,
-            amount : transaction.amount,
-            date : transaction.date}
+                color: transaction.category[0].color,
+                username: transaction.username,
+                type: transaction.type,
+                amount: transaction.amount,
+                date: transaction.date
+            }
         });
 
         res.status(200).json({
-            data : result,
+            data: result,
             refreshedTokenMessage: res.locals.refreshedTokenMessage
         })
 
@@ -655,7 +700,7 @@ export const getTransactionsByGroup = async (req, res) => {
     - error 401 is returned if the group or the category does not exist
     - empty array must be returned if there are no transactions made by the group with the specified category
  */
-export const getTransactionsByGroupByCategory = async (req, res) => {  
+export const getTransactionsByGroupByCategory = async (req, res) => {
 
     function Query(username, type, amount, date, color) {
         this.username = username
@@ -678,62 +723,62 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
          * TRANSACTION.TYPE = CATEGORIES.TYPE AND
          * CATEGORIES.TYPE = $CATEGORYTYPE
          * 
-         *  */      
+         *  */
 
         const groupName = req.params.name
         const categoryType = req.params.category
 
-        if(!req.url.match(regexp)) {
-                // group authentication                     
-            const {authorized, cause} = await verifyAuthGroup(req, res, groupName);
-            if(!authorized) return res.status(401).json({error: cause})
-        } 
+        if (!req.url.match(regexp)) {
+            // group authentication                     
+            const { authorized, cause } = await verifyAuthGroup(req, res, groupName);
+            if (!authorized) return res.status(401).json({ error: cause })
+        }
         else {
-                // admin authentication                     
-            const {authorized, cause} = verifyAuthAdmin(req, res);
-            if(!authorized) return res.status(401).json({error: cause})
+            // admin authentication                     
+            const { authorized, cause } = verifyAuthAdmin(req, res);
+            if (!authorized) return res.status(401).json({ error: cause })
         }
 
         // group is not into the db
-        let found = await Group.findOne( {name: groupName} )
-        if(!found) {
+        let found = await Group.findOne({ name: groupName })
+        if (!found) {
             return res.status(400).json({ error: "group does not exist" })
         }
         // category is not into the db
-        found = await categories.find( {type: categoryType} )
-        if(!found)
+        found = await categories.find({ type: categoryType })
+        if (!found)
             return res.status(400).json({ error: "category does not exist" })
 
         let members = await Group.aggregate([
             { $match: { name: groupName } },
             {
-              $lookup: {
-                from: 'users',
-                localField: 'members.user',
-                foreignField: '_id',
-                as: 'members'
-              }
+                $lookup: {
+                    from: 'users',
+                    localField: 'members.user',
+                    foreignField: '_id',
+                    as: 'members'
+                }
             },
             {
-              $project: {
-                _id: 0,
-                members: 1
-              }
+                $project: {
+                    _id: 0,
+                    members: 1
+                }
             }
         ]);
-        
+
         members = members[0]
-        if(!members) {
+        if (!members) {
             return res.status(400).json({ message: "group or category does not exist" })
         }
         console.log(members.members)
-        members = members.members.map( item => item.username)
+        members = members.members.map(item => item.username)
 
 
         const query = await transactions.aggregate([
             {
                 $match: {
-                "username": {$in: members}
+                    "username": { $in: members }
                 }
             },
             {
@@ -744,16 +789,16 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
                     as: "categories_info"
                 }
             },
-            { $match: {type: categoryType}},
+            { $match: { type: categoryType } },
             { $unwind: "$categories_info" }
         ])
-        .then( result => {            
-            result = result.map( item => new Query(item.username, item.type, item.amount, item.date, item.categories_info.color))
-            res.status(200).json({data: result, refreshedTokenMessage: res.locals.refreshedTokenMessage})
-        })
-        .catch( err => {
-            throw err
-        })
+            .then(result => {
+                result = result.map(item => new Query(item.username, item.type, item.amount, item.date, item.categories_info.color))
+                res.status(200).json({ data: result, refreshedTokenMessage: res.locals.refreshedTokenMessage })
+            })
+            .catch(err => {
+                throw err
+            })
 
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -774,9 +819,9 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
 - Returns a 401 error if called by an authenticated user who is not the same user as the one in the route (authType = User)
 */
 export const deleteTransaction = async (req, res) => {
-    try {            
+    try {
         const id = req.body.id
-        const username = req.params.username        
+        const username = req.params.username
 
         const userAuthInfo = verifyAuthUser(req, res, username)
 
@@ -786,23 +831,23 @@ export const deleteTransaction = async (req, res) => {
 
         // body is not complete
         if (!id) return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
-        
+
         // user not found
-        let found = await User.findOne({username: username})
-        if(!found)
+        let found = await User.findOne({ username: username })
+        if (!found)
             return res.status(400).json({ error: 'user not found' })
 
         // transaction not found
-        found = await transactions.findOne( {_id: id} )
-        if(!found)
+        found = await transactions.findOne({ _id: id })
+        if (!found)
             return res.status(400).json({ error: 'transaction not found' })
 
         const query = { _id: mongoose.Types.ObjectId(req.body.id), username: username }
         const data = await transactions.deleteOne(query);
-        if ( data.deletedCount === 0 )
+        if (data.deletedCount === 0)
             return res.status(400).json({ error: "transaction does not exist" })
 
-        res.status(200).json({data: {message: "Transaction deleted"}, refreshedTokenMessage: res.locals.refreshedTokenMessage})
+        res.status(200).json({ data: { message: "Transaction deleted" }, refreshedTokenMessage: res.locals.refreshedTokenMessage })
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
@@ -818,35 +863,35 @@ export const deleteTransaction = async (req, res) => {
 export const deleteTransactions = async (req, res) => {
     try {
         const adminAuthInfo = verifyAuthAdmin(req, res)
-        if(!adminAuthInfo.authorized) {
+        if (!adminAuthInfo.authorized) {
             return res.status(401).json({ error: adminAuthInfo.cause })
         }
 
         const _ids = req.body._ids
-        if(!_ids)
+        if (!_ids)
             return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
 
         if (_ids.includes(""))
             return res.status(400).json({ error: "input _ids are not valid" });
-             
+
         let result = await transactions.find({
-                _id : {
-                    $in : _ids
-                }
-            },
-            {_id : 1}
+            _id: {
+                $in: _ids
+            }
+        },
+            { _id: 1 }
         );
 
         result = result.map(obj => obj._id.toString());
         let notFound = _ids.filter(id => !result.includes(id));
 
-        if(notFound.length !== 0){
+        if (notFound.length !== 0) {
             return res.status(400).json({ error: `the following transactions don't exist : ${notFound.join(",")}` });
         }
-        
-        result = await transactions.deleteMany( {_id: {$in: _ids} } )        
-        
-        res.status(200).json({data: {message: "Transactions deleted"}, refreshedTokenMessage: res.locals.refreshedTokenMessage})
+
+        result = await transactions.deleteMany({ _id: { $in: _ids } })
+
+        res.status(200).json({ data: { message: "Transactions deleted" }, refreshedTokenMessage: res.locals.refreshedTokenMessage })
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
