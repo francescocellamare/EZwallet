@@ -5,11 +5,13 @@
 | login | I/I |✓ | ✓|
 | logout | I/I |✓ | ✓|
 | createCategory | V/V |✓ | ✓| |  | 
+<<<<<<< progress.md
 | updateCategory | V/V|✓ |✓ | |  |
 | deleteCategory | V/V|✓ | ✓| |  |
 | getCategories | V/V|✓ | ✓| | |
 | createTransaction | V/V|✓ | | | first test is failing|
-| getAllTransactions | F/F|✓ | | | need to add auth mocks | 
+| getAllTransactions | F/F|✓ |✓  | ✓ | | 
+>>>>>>> progress.md
 | getTransactionsByUser | K/K|✓ | ✓ | ✓ | |
 | getTransactionsByUserByCategory | K/K|✓ | ✓ | ✓ |
 | getTransactionsByGroup | K/K|✓ | ✓ |  |
@@ -26,7 +28,7 @@
 | deleteUser | I/I  | ✓ ||||
 | deleteGroup  | I/I | ✓ | ✓ |||
 | handleDateFilterParams | F/F| ✓ |✓ ||
-| verifyAuth| F/F |✓ |✓ ||
+| verifyAuth| F/F |✓ |✓ |✓ |
 | handleAmountFilterParams| F/F |✓ |✓ ||
 | verifyAuthAdmin| F/F |✓ |✓ ||
 | verifyAuthUser| F/F |✓ |✓ ||

@@ -55,8 +55,81 @@ describe("createTransaction", () => {
 })
 
 describe("getAllTransactions", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+    const admin = {
+        username : 'admin',
+        email: 'admin@example.com',
+        password: '123',
+        role: 'Admin'
+    };
+
+    let refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU2MTQ0NTYsImV4cCI6MTcxNzE1MDQ1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpZCI6IjEyMyIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQWRtaW4ifQ.klwHb1h3VKeSDk6QtF8eJX6OWf6qvpa-zvZ4iy8W6aM'
+    let accessToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU2MTQ0NTYsImV4cCI6MTcxNzE1MDQ1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpZCI6IjEyMyIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQWRtaW4ifQ.klwHb1h3VKeSDk6QtF8eJX6OWf6qvpa-zvZ4iy8W6aM'
+
+    beforeEach( async () => {
+        const transactionsList = [
+            {
+                username: 'user1',
+                type: 'investment',
+                amount: 200,
+                date: 1685701080286
+            },
+            {
+                username: 'user2',
+                type: 'investment',
+                amount: 500,
+                date: 1685701080226
+            },
+            {
+                username: 'user3',
+                type: 'bills',
+                amount: 1000,
+                date: 1685701020226
+            }
+        ]
+
+        await transactions.create(transactionsList)
+    })
+
+    afterEach( async () => {
+        await transactions.deleteMany({})
+    })
+
+    test('T1: admin is correctly authenticated and obtains the transactions', () => {
+        request(app)
+        .get("/api/transactions")
+        .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
+        .then((response) => {
+            expect(response.status).toBe(200)
+            expect(response.body.data).toHaveLength(3)
+        })
+        .catch((err) => err)
+    });
+
+    test('T2: admin is correctly authenticated and obtains empty list of transactions', async () => {
+        await transactions.deleteMany({})
+        request(app)
+        .get("/api/transactions")
+        .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
+        .then((response) => {
+            expect(response.status).toBe(200)
+            expect(response.body.data).toHaveLength(0)
+        })
+        .catch((err) => err)
+    });
+
+    test('T3: admin is not correctly authenticated', () => {
+        refreshToken = 'thisIsAFakeRefreshToken'
+        request(app)
+        .get("/api/transactions")
+        .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
+        .then((response) => {
+            expect(response.status).toBe(200)
+            expect(response.body.data).toHaveLength(3)
+        })
+        .catch((err) => {
+            expect(err.status).toBe(401)
+            expect(err.body.error).toBeDefined()
+        })
     });
 })
 

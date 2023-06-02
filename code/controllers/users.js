@@ -37,18 +37,26 @@ export const getUsers = async (req, res) => {
  */
 export const getUser = async (req, res) => {
     try {
-      const cookie  = req.cookies;
+    
+       const cookie  = req.cookies;
       const username = req.params.username
-
       const userAuthInfo = verifyAuthUser(req, res, username)
       const adminAuthInfo = verifyAuthAdmin(req, res)
-      if((!userAuthInfo.authorized)||(!adminAuthInfo.authorized)){
-        return res.status(401)
-      }
 
+      const userFound = await User.findOne({username: username});
+      console.log(userFound);
+      if(!userFound) {return res.status(400).json({error: "user not found"})};
+
+      if((!userAuthInfo.authorized)&&(!adminAuthInfo.authorized)){
+        console.log(userAuthInfo.authorized);
+        console.log(adminAuthInfo.authorized);
+        return res.status(401).json({error: 'not authorized'})
+      }
+//Note is this code necessary ? 
         const user = await User.findOne({ refreshToken: cookie.refreshToken })
-        if (!user) return res.status(401).json({ error: "User not found" })
-        if (user.username !== username) return res.status(401).json({error: "Unauthorized" })
+        if(!adminAuthInfo){
+        if(!user) return res.status(401).json({error: "Unauthorized"})
+        if (user.username !== username) return res.status(401).json({error: "Unauthorized" })}
         res.status(200).json({data:user, refreshTokenMessage:res.locals.refreshTokenMessage})
     } catch (error) {
         res.status(500).json({error: error.message})
@@ -69,40 +77,18 @@ export const getUser = async (req, res) => {
     */
 export const createGroup = async (req, res) => {
   
-
-  // null for user not found
-  async function getUserId(email){
-    const id = await User.findOne( {email: email}, {_id: 1} )
-    return id
-  }
-
-  async  function isPartOfOtherGroups(email) {
-    const inAnyGroup = await Group.find({}, {_id: 0, members: 1})
-    let emails= []
-    
-    for(let group of inAnyGroup) {
-      for(let email of group.members)
-      emails.push(email)
-    }
-
-    emails = emails.map( item => item.email)
-    if(emails.includes(email))
-      return true
-
-    return false
-  }
-
   try {
-    const {authorized, cause} = verifyAuthSimple(req, res);
-    if(!authorized) return res.status(401).json({error: cause})
-    
-    const emailMatch = new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
-    const currentUserEmail = await User.findOne( {refreshToken: cookie.refreshToken}, {_id: 0, email: 1} ).email
-
     const cookie = req.cookies
     let name = req.body.name
     let memberEmails = req.body.memberEmails
 
+    const {authorized, cause} = verifyAuthSimple(req, res);
+    if(!authorized) return res.status(401).json({error: cause})
+    
+    const emailMatch = new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
+    let currentUserEmail = await User.findOne( {refreshToken: cookie.refreshToken}, {_id: 0, email: 1} )
+    currentUserEmail = currentUserEmail.email
+    
     // wrong body
     if (!name || !memberEmails || name === '' )
       return res.status(400).json({error: "body does not contain all the necessary attributes"})
@@ -139,19 +125,18 @@ export const createGroup = async (req, res) => {
 
     
     for(let email of memberEmails) {
-      let id = await getUserId(email)
-      if(!id) {
+      let currentUser = await User.findOne( {email: email} )
+      if(!currentUser) {
         membersNotFound.push(email)
       }
       else {
-        if(await isPartOfOtherGroups(email)) 
+        let found = await Group.findOne( {members: { $elemMatch: {email: email} }} )
+        if(found) 
           alreadyInGroup.push(email)
         else{
-          const currentUser = await User.findById({_id: mongoose.Types.ObjectId(id)})
-          
           newGroup.members.push( {
             email: email,
-            user: currentUser
+            user: currentUser._id // TOBE checked id
           })
         }
       }
