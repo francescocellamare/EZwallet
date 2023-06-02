@@ -326,7 +326,7 @@ describe("deleteCategory", () => {
             { type: 'bills' }
         ]
         // all the types we have in the database
-        jest.spyOn(categories, 'find').mockReturnValueOnce({
+        jest.spyOn(categories, 'find').mockReturnValueOnceOnce({
             sort: jest.fn().mockResolvedValue(mockFindResult1)
         });
 
@@ -336,6 +336,7 @@ describe("deleteCategory", () => {
 
         const mockFindResult2 = [
             { type: 'health' }
+            {type: 'health'}
         ]
         // the oldest one
         jest.spyOn(categories, 'find').mockReturnValueOnce({
@@ -1376,9 +1377,9 @@ describe("getTransactionsByUserByCategory", () => {
         expect(User.countDocuments).toHaveBeenCalled();
         expect(categories.countDocuments).toHaveBeenCalled();
         expect(transactions.aggregate).toHaveBeenCalledWith([
-            { $match: { type: "testCategory" } },
-            { $lookup: { from: "categories", localField: "type", foreignField: "type", as: "category" } },
-            { $project: { _id: 0, username: 1, type: 1, amount: 1, date: 1, color: 1, category: 1 } }
+            {$match : {type : "testCategory", username : "dummy_user_1"}},
+            {$lookup : {from: "categories", localField: "type", foreignField: "type", as: "category"}},
+            {$project : {_id: 0, username : 1, type : 1, amount : 1, date : 1, color : 1, category : 1}}
         ]);
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith({
@@ -1410,9 +1411,9 @@ describe("getTransactionsByUserByCategory", () => {
         expect(User.countDocuments).toHaveBeenCalled();
         expect(categories.countDocuments).toHaveBeenCalled();
         expect(transactions.aggregate).toHaveBeenCalledWith([
-            { $match: { type: "testCategory" } },
-            { $lookup: { from: "categories", localField: "type", foreignField: "type", as: "category" } },
-            { $project: { _id: 0, username: 1, type: 1, amount: 1, date: 1, color: 1, category: 1 } }
+            {$match : {type : "testCategory", username : "dummy_user_1"}},
+            {$lookup : {from: "categories", localField: "type", foreignField: "type", as: "category"}},
+            {$project : {_id: 0, username : 1, type : 1, amount : 1, date : 1, color : 1, category : 1}}
         ]);
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith({

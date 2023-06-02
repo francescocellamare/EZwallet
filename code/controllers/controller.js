@@ -461,11 +461,11 @@ export const getTransactionsByUser = async (req, res) => {
             if (!authorized) return res.status(401).json({ error: cause })
 
 
-            filters = {};
+            filters = {username : req.params.username};                        
         } else {
-            // regular user authentication            
-            const { authorized, cause } = verifyAuthUser(req, res, req.params.user);
-            if (!authorized) return res.status(401).json({ error: cause })
+            // regular user authentication                        
+            const {authorized, cause} = verifyAuthUser(req, res, req.params.username);            
+            if(!authorized) return res.status(401).json({error: cause})
 
             const amountFilter = handleAmountFilterParams(req);
             const dateFilter = handleDateFilterParams(req);
@@ -474,7 +474,8 @@ export const getTransactionsByUser = async (req, res) => {
 
             filters["$and"].push(amountFilter);
             filters["$and"].push(dateFilter);
-        }
+            filters["$and"].push({username : req.params.username});
+        }                  
 
         const { username } = req.params;
 
@@ -572,9 +573,10 @@ export const getTransactionsByUserByCategory = async (req, res) => {
         result = await transactions.aggregate(
             [
                 {
-                    $match: {
-                        type
-                    }
+                    $match : {
+                        type,
+                        username
+                    }    
                 },
                 {
                     $lookup: {
@@ -830,8 +832,8 @@ export const deleteTransaction = async (req, res) => {
         }
 
         // body is not complete
-        if (!id) return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
-
+        if (!id || id === '') return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
+        
         // user not found
         let found = await User.findOne({ username: username })
         if (!found)
@@ -841,6 +843,9 @@ export const deleteTransaction = async (req, res) => {
         found = await transactions.findOne({ _id: id })
         if (!found)
             return res.status(400).json({ error: 'transaction not found' })
+
+        if(found.username != username)
+            return res.status(400).json({ error: 'transaction not found for the user' })
 
         const query = { _id: mongoose.Types.ObjectId(req.body.id), username: username }
         const data = await transactions.deleteOne(query);

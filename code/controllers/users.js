@@ -66,13 +66,9 @@ export const getUser = async (req, res) => {
     - error 401 is returned if there is already an existing group with the same name
     - error 401 is returned if all the `memberEmails` either do not exist or are already in a group
     
-    TODO:
-      - user email not in list ==> add it ( at admin side ) 
     */
 export const createGroup = async (req, res) => {
   
-  const {authorized, cause} = verifyAuthSimple(req, res);
-  if(!authorized) return res.status(401).json({error: cause})
 
   // null for user not found
   async function getUserId(email){
@@ -97,6 +93,9 @@ export const createGroup = async (req, res) => {
   }
 
   try {
+    const {authorized, cause} = verifyAuthSimple(req, res);
+    if(!authorized) return res.status(401).json({error: cause})
+    
     const emailMatch = new RegExp(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
     const currentUserEmail = await User.findOne( {refreshToken: cookie.refreshToken}, {_id: 0, email: 1} ).email
 
@@ -126,18 +125,10 @@ export const createGroup = async (req, res) => {
       return res.status(400).json({ error: "user is already in group" });
     }  
 
-    
-
-    const userAuthInfo = await verifyAuthUser(req, res)
-    const adminAuthInfo = verifyAuthAdmin(req, res)
-
-    if (!userAuthInfo.authorized)
-      return res.status(401).json({ error: userAuthInfo.cause })
-    // if it's not an admin I need to be part of the group otherwise it does not (TO BE verified with new requirements)
-    if (!adminAuthInfo.authorized) {
-      if (!memberEmails.includes(currentUserEmail)) 
+    // adding to the list if his own email is not provided
+    if (!memberEmails.includes(currentUserEmail)) 
         memberEmails.push(currentUserEmail)
-    }
+
 
     const newGroup = {
       name: name,
@@ -186,7 +177,10 @@ export const createGroup = async (req, res) => {
     .then( res.status(200)
               .json({
                 data: {
-                  group: returnedObj.group, 
+                  group: { 
+                    name: returnedObj.group.name,
+                    members: returnedObj.group.members.map( member => member.email )
+                  }, 
                   membersNotFound: returnedObj.membersNotFound,
                   alreadyInGroup: returnedObj.alreadyInGroup
                 }, 
