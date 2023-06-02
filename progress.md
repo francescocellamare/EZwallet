@@ -5,11 +5,13 @@
 | login | I/I |✓ | ✓|
 | logout | I/I |✓ | ✓|
 | createCategory | V/V |✓ | ✓| |  | 
-| updateCategory | V/V|✓ | | | the last test is failing |
-| deleteCategory | V/V|✓ | | | fix to auth mocks |
-| getCategories | V/V|✓ | |
-| createTransaction | V/V|✓ | |
+<<<<<<< progress.md
+| updateCategory | V/V|✓ |✓ | |  |
+| deleteCategory | V/V|✓ | ✓| |  |
+| getCategories | V/V|✓ | ✓| | |
+| createTransaction | V/V|✓ | | | first test is failing|
 | getAllTransactions | F/F|✓ |✓  | ✓ | | 
+>>>>>>> progress.md
 | getTransactionsByUser | K/K|✓ | ✓ | ✓ | |
 | getTransactionsByUserByCategory | K/K|✓ | ✓ | ✓ |
 | getTransactionsByGroup | K/K|✓ | ✓ |  |
