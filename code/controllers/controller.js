@@ -418,10 +418,10 @@ export const getTransactionsByUser = async (req, res) => {
             if(!authorized) return res.status(401).json({error: cause})
             
 
-            filters = {};                        
+            filters = {username : req.params.username};                        
         } else {
-            // regular user authentication            
-            const {authorized, cause} = verifyAuthUser(req, res, req.params.user);            
+            // regular user authentication                        
+            const {authorized, cause} = verifyAuthUser(req, res, req.params.username);            
             if(!authorized) return res.status(401).json({error: cause})
 
             const amountFilter = handleAmountFilterParams(req);
@@ -431,6 +431,7 @@ export const getTransactionsByUser = async (req, res) => {
 
             filters["$and"].push(amountFilter);
             filters["$and"].push(dateFilter);
+            filters["$and"].push({username : req.params.username});
         }                  
 
         const {username} = req.params;
@@ -529,7 +530,8 @@ export const getTransactionsByUserByCategory = async (req, res) => {
             [
                 {
                     $match : {
-                        type
+                        type,
+                        username
                     }    
                 },
                 {

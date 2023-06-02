@@ -815,7 +815,7 @@ describe("getTransactionsByUserByCategory", () => {
         expect(User.countDocuments).toHaveBeenCalled();
         expect(categories.countDocuments).toHaveBeenCalled();
         expect(transactions.aggregate).toHaveBeenCalledWith([
-            {$match : {type : "testCategory"}},
+            {$match : {type : "testCategory", username : "dummy_user_1"}},
             {$lookup : {from: "categories", localField: "type", foreignField: "type", as: "category"}},
             {$project : {_id: 0, username : 1, type : 1, amount : 1, date : 1, color : 1, category : 1}}
         ]);
@@ -849,7 +849,7 @@ describe("getTransactionsByUserByCategory", () => {
         expect(User.countDocuments).toHaveBeenCalled();
         expect(categories.countDocuments).toHaveBeenCalled();
         expect(transactions.aggregate).toHaveBeenCalledWith([
-            {$match : {type : "testCategory"}},
+            {$match : {type : "testCategory", username : "dummy_user_1"}},
             {$lookup : {from: "categories", localField: "type", foreignField: "type", as: "category"}},
             {$project : {_id: 0, username : 1, type : 1, amount : 1, date : 1, color : 1, category : 1}}
         ]);
