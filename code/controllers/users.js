@@ -37,18 +37,26 @@ export const getUsers = async (req, res) => {
  */
 export const getUser = async (req, res) => {
     try {
-      const cookie  = req.cookies;
+    
+       const cookie  = req.cookies;
       const username = req.params.username
-
       const userAuthInfo = verifyAuthUser(req, res, username)
       const adminAuthInfo = verifyAuthAdmin(req, res)
-      if((!userAuthInfo.authorized)||(!adminAuthInfo.authorized)){
-        return res.status(401)
-      }
 
+      const userFound = await User.findOne({username: username});
+      console.log(userFound);
+      if(!userFound) {return res.status(400).json({error: "user not found"})};
+
+      if((!userAuthInfo.authorized)&&(!adminAuthInfo.authorized)){
+        console.log(userAuthInfo.authorized);
+        console.log(adminAuthInfo.authorized);
+        return res.status(401).json({error: 'not authorized'})
+      }
+//Note is this code necessary ? 
         const user = await User.findOne({ refreshToken: cookie.refreshToken })
-        if (!user) return res.status(401).json({ error: "User not found" })
-        if (user.username !== username) return res.status(401).json({error: "Unauthorized" })
+        if(!adminAuthInfo){
+        if(!user) return res.status(401).json({error: "Unauthorized"})
+        if (user.username !== username) return res.status(401).json({error: "Unauthorized" })}
         res.status(200).json({data:user, refreshTokenMessage:res.locals.refreshTokenMessage})
     } catch (error) {
         res.status(500).json({error: error.message})
