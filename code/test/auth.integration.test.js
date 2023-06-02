@@ -454,9 +454,9 @@ describe('login', () => {
   })
   test('T6: wrong password-> return 400 and error message', async()=>{
     const user = {
-      username : 'user',
-      email: 'test@example.com',
-      password: '123'
+      username : "user",
+      email: "test@example.com",
+      password: "123"
     };
 
     let hashedPassowrd = await bcrypt.hash(user.password, 12);
@@ -468,7 +468,7 @@ describe('login', () => {
     })
 
     const userLogIn = {
-      email: "test@exapmle.com",
+      email: "test@example.com",
       password: '123456'
       
     }

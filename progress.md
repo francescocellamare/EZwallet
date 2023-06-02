@@ -10,9 +10,9 @@
 | getCategories | V/V|✓ | |
 | createTransaction | V/V|✓ | |
 | getAllTransactions | F/F|✓ | | | need to add auth mocks | 
-| getTransactionsByUser | K/K|✓ | |  | one of the tests is failing |
-| getTransactionsByUserByCategory | K/K|✓ | ✓ | |
-| getTransactionsByGroup | K/K|✓ | ✓ | |
+| getTransactionsByUser | K/K|✓ | ✓ | ✓ | |
+| getTransactionsByUserByCategory | K/K|✓ | ✓ | ✓ |
+| getTransactionsByGroup | K/K|✓ | ✓ |  |
 | getTransactionsByGroupByCategory | K/K|✓ | | |
 | deleteTransactions | K/K|✓ | ✓ | | 
 | deleteTransaction | K/K|✓ | ✓ | |
