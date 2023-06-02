@@ -266,7 +266,7 @@ describe("deleteCategory", () => {
             {type: 'bills'}
         ]
         // all the types we have in the database
-        jest.spyOn(categories, 'find').mockReturnValue({
+        jest.spyOn(categories, 'find').mockReturnValueOnce({
             sort: jest.fn().mockResolvedValue(mockFindResult1)
         });
 
@@ -275,10 +275,10 @@ describe("deleteCategory", () => {
         // now T = 4 and N = 2 so N != T ==> else side
 
         const mockFindResult2 = [
-            {type: 'bills'}
+            {type: 'health'}
         ]
         // the oldest one
-        jest.spyOn(categories, 'findOne').mockReturnValue({
+        jest.spyOn(categories, 'find').mockReturnValueOnce({
             sort: jest.fn().mockResolvedValue(mockFindResult2)
         });
 
