@@ -9,7 +9,7 @@
 | deleteCategory | V/V|✓ | | | fix to auth mocks |
 | getCategories | V/V|✓ | |
 | createTransaction | V/V|✓ | |
-| getAllTransactions | F/F|✓ | | | need to add auth mocks | 
+| getAllTransactions | F/F|✓ |✓  | ✓ | | 
 | getTransactionsByUser | K/K|✓ | ✓ | ✓ | |
 | getTransactionsByUserByCategory | K/K|✓ | ✓ | ✓ |
 | getTransactionsByGroup | K/K|✓ | ✓ |  |
@@ -26,7 +26,7 @@
 | deleteUser | I/I  | ✓ ||||
 | deleteGroup  | I/I | ✓ | ✓ |||
 | handleDateFilterParams | F/F| ✓ |✓ ||
-| verifyAuth| F/F |✓ |✓ ||
+| verifyAuth| F/F |✓ |✓ |✓ |
 | handleAmountFilterParams| F/F |✓ |✓ ||
 | verifyAuthAdmin| F/F |✓ |✓ ||
 | verifyAuthUser| F/F |✓ |✓ ||
