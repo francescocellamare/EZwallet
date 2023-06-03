@@ -638,13 +638,32 @@ export const getTransactionsByGroup = async (req, res) => {
             if (!authorized) return res.status(401).json({ error: cause })
         }
 
-        // check if group exists
-        let result = await Group.findOne({ name });
-        if (!result) {
-            return res.status(400).json({ error: "Group does not exist" })
-        }
+        // get group members
+        let result = await Group.aggregate([
+            {
+                $match: {
+                    name
+                }
+            },         
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "members.email",
+                    foreignField: "email",
+                    as: "members_info"
+                }
+            },{
+                $project : {
+                    "members_info.username" : 1
+                }
+            }                       
+        ])
 
-        const { members } = result;
+        if(result.length === 0){
+            return res.status(400).json({ error : "Group does not exist" })
+        }        
+        
+        let members = result[0].members_info.map(m => m.username)            
 
         // get transactions
         const projection = {
