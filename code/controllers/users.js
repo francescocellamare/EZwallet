@@ -152,30 +152,26 @@ export const createGroup = async (req, res) => {
       membersNotFound: membersNotFound
     }
     
-    Group.create( {
+    await Group.create( {
       name: newGroup.name, 
       members: newGroup.members.map( elem => { 
         return {"email": elem.email, "user": elem.user._id} 
       })
     })
-    .then( res.status(200)
-              .json({
-                data: {
-                  group: { 
-                    name: returnedObj.group.name,
-                    members: returnedObj.group.members.map( member => member.email )
-                  }, 
-                  membersNotFound: returnedObj.membersNotFound,
-                  alreadyInGroup: returnedObj.alreadyInGroup
-                }, 
-                refreshedTokenMessage: res.locals.refreshedTokenMessage
-              })
-    ) 
-    .catch(err => {
-      throw (err)
+    return res.status(200).json({ 
+      data: { 
+        group: {
+          name: returnedObj.group.name,
+          members: returnedObj.group.members.map( member => member.email )
+        }, 
+        membersNotFound: returnedObj.membersNotFound,
+        alreadyInGroup: returnedObj.alreadyInGroup
+      }, 
+      refreshedTokenMessage: res.locals.refreshedTokenMessage
     })
   } catch (err) {
-      res.status(500).json({error: err.message})
+    console.log(err)
+      return res.status(500).json({error: err.message})
   }
 }
 
@@ -265,7 +261,6 @@ export const getGroup = async (req, res) => {
         return res.status(400).json({ error: "One or more emails are empty strings" });
       }
   
-  
       if (!req.body.emails) {
         return res.status(400).json({ error: "The request body does not contain all the necessary attributes" });
       }
@@ -280,7 +275,6 @@ export const getGroup = async (req, res) => {
       if (!group) {
         return res.status(400).json({ error: "Group name passed as a route parameter does not represent a group in the database" })
       }
-  
       const inputEmail = req.body.emails;
   
       let membersNotFound = [];
@@ -336,7 +330,7 @@ export const getGroup = async (req, res) => {
       return res.status(200).json({ data, refreshedTokenMessage: res.locals.refreshedTokenMessage });
   
     } catch (err) {
-      res.status(500).json(err.message)
+      return res.status(500).json(err.message)
     }
   }
   

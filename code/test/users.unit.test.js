@@ -5,7 +5,7 @@ import { transactions } from '../models/model.js';
 import * as utils from '../controllers/utils';
 import * as users from '../controllers/users';
 import jwt from 'jsonwebtoken';
-import  {getGroups, getUser, getUsers, createGroup, getGroup, deleteUser, deleteGroup} from '../controllers/users';
+import  {getGroups, getUser, getUsers, createGroup, getGroup, deleteUser, deleteGroup, addToGroup} from '../controllers/users';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { createCategory } from '../controllers/controller';
 
@@ -260,115 +260,853 @@ test("T4: Network error -> return 500", async () =>{
 
 
 })
-/*
+
 describe("createGroup", () => {
 
-   let mockReq, mockResp;
-  
- beforeEach(
-     ()=>{
-        mockReq = {
-        body:{   
-       name: "test_group", 
-       memberEmails: ["mario.red@email.com", "luigi.red@email.com"]
-              },
-       cookies: {
-           refreshToken: 'refresh_token'
-         }      };
-
-     
-
-
-        mockResp ={
-        status: jest.fn(()=>mockResp),
-         json: jest.fn()
-       };
-
-       jest.clearAllMocks();
-      
-     }
-   )
-
-   afterEach(()=>{
-     jest.clearAllMocks();
- })
+  afterEach(()=>{
+    jest.clearAllMocks();
+  })
 
 
   test('T1: not authentified -> return 401' , async () =>{
-   jest.spyOn(utils, "verifyAuthSimple").mockImplementation(()=>(
-     {authorized: false,
-       cause:"Unauthorized"
-     }));
-     await createGroup(mockReq, mockResp);
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'groupTest',
+        memberEmails: [
+          'mail1',
+          'mail2',
+          'mail3'
+        ]
+      }
+    }
+    const mockRes = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedRespone = {authorized: false, cause: 'Unauthorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedRespone )
 
-     expect(mockResp.status).toHaveBeenCalledWith(401);
-     expect(mockResp.json).toHaveBeenCalledWith({error: 'Unauthorized'});
+    await createGroup(mockReq, mockRes);
 
+    expect(mockRes.status).toHaveBeenCalledWith(401);
   });
 
   test('T2: create group -> retun 200', async() => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'groupTest',
+        memberEmails: [
+          'tester@mail.com',
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'mail3@mail.com'
+        ]
+      }
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    // authorized
+    const expectedResponeAuth = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedResponeAuth );
 
-   jest.spyOn(utils, "verifyAuthSimple").mockImplementation(()=>(
-     {authorized: true,
-       cause:"Authorized"
-     }));
-     jest.spyOn(User, "findOne").mockReturnValueOnce({ email: 'test@mail.com' });
-     jest.spyOn(Group, "findOne").mockReturnValueOnce(null);
-     jest.spyOn(Group, "findOne").mockReturnValueOnce(null);
-     jest.spyOn(User, "findOne").mockImplementationOnce({_id: 'id'});
-     jest.spyOn(Group, "findOne").mockImplementationOnce(()=> null);
-     Group.create.mockReturnValueOnce({});
-     await createGroup(mockReq, mockResp);
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
 
-     expect(mockResp.status).toHaveBeenCalledWith(200);
-     expect(mockResp.json).toHaveBeenCalledWith({
-       data: {
-         group: {
-           name: 'Test Group',
-          members: [
-             { email: 'member1@example.com', user: { _id: 'user-id' } },
-             { email: 'member2@example.com', user: { _id: 'user-id' } }
-           ]
-         },
-         alreadyInGroup: [],
-         membersNotFound: []
-       },
-       refreshedTokenMessage: expect.anything() 
-     })
-   });
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
 
+    // group name does not exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
 
-     test('T3: One of the entered users is an empty string', async()=>{
-       mockReq={
-         body:{   
-           name: "test_group", 
-           memberEmails: [" ", "luigi.red@email.com"]
-            },
+    // user is not already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    const fakeData = [
+      myUserInfo,
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },{
+        username: 'mail2',
+        email: 'mail2@mail.com',
+        role: 'Regular',
+        _id: 789
+      },{
+        username: 'mail3',
+        email: 'mail3@mail.com',
+        role: 'Regular',
+        _id: 100
+      }
+    ]
     
-             cookies: {
-               refreshToken: 'refresh_token'
-             }
+    // user is found by email and then we look for a group he is part of
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[0])  //found
+      
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[1])  //found
+      
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[2])  //found
+
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+      
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[3])  //found
+
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+
+    //  each email is registered ==> memberNotFound array is empty
+    //  each member is free to join a new group ==> alreadyInGroup array is empty
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json.mock.calls[0][0].data.membersNotFound).toEqual([])
+    expect(mockRes.json.mock.calls[0][0].data.alreadyInGroup).toEqual([])
+    expect(mockRes.json.mock.calls[0][0].data.group.name).toBe('groupTest')
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(mockReq.body.memberEmails)
+  });
+
+  test('T3: group name is not defined in the body', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        memberEmails: [
+          'mail1',
+          'mail2',
+          'mail3'
+        ]
+      }
+    }
+    const mockRes = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedRespone = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedRespone )
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // group name does not exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is not already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is found by email
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo)
     
-       }
-       jest.spyOn(utils, "verifyAuthSimple").mockImplementation(()=>(
-         {authorized: true,
-           cause:"Authorized"
-         }));
-         jest.spyOn(User, "findOne").mockImplementation(()=> {email :'test@MediaList.com'})
-       await createGroup(mockReq, mockResp);
-       expect(mockResp.status).toHaveBeenCalledWith(400)
-       expect(mockResp.json).toHaveBeenCalledWith({error: 'email is not valid'});
-  
-     })
-   
+    // entered user already in a group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toBeDefined()
+  });
+
+  test('T4: email list is not defined in the body', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'testGroup'
+      }
+    }
+    const mockRes = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedRespone = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedRespone )
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // group name does not exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is not already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is found by email
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo)
+    
+    // entered user already in a group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toBeDefined()
+  });
+
+  test('T5: group name is empty', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: '',
+        memberEmails: [
+          'mail1',
+          'mail2',
+          'mail3'
+        ]
+      }
+    }
+    const mockRes = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedRespone = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedRespone )
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // group name does not exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is not already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is found by email
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo)
+    
+    // entered user already in a group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toBeDefined()
+  });
+
+  test('T6: email is not valid according to pattern', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'testGroup',
+        memberEmails: [
+          'mail1',
+          'mail2',
+          'mail3'
+        ]
+      }
+    }
+    const mockRes = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedRespone = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedRespone )
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // group name does not exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is not already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is found by email
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo)
+    
+    // entered user already in a group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    console.log(mockRes.json.mock.calls[0])
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toBeDefined()
+  });
+
+  test('T7: email is empty', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'testGroup',
+        memberEmails: [
+          ''
+        ]
+      }
+    }
+    const mockRes = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedRespone = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedRespone )
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // group name does not exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is not already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is found by email
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo)
+    
+    // entered user already in a group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toBeDefined()
+  });
+
+  test('T8: group name is not unique', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'testGroup',
+        memberEmails: [
+          ''
+        ]
+      }
+    }
+    const mockRes = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedRespone = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedRespone )
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // group name does exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce({ name: 'groupFound', members: [{email: 'user1', id: 123}]});
+
+    // user is not already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is found by email
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo)
+    
+    // entered user already in a group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toBeDefined()
+  });
+
+  test('T9: user is registered into another group', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'testGroup',
+        memberEmails: [
+          ''
+        ]
+      }
+    }
+    const mockRes = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedRespone = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedRespone )
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // group name does exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // user is found by email
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo)
+    
+    // entered user already in a group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toBeDefined()
+  });
+
+  test('T10: create group but an email is not registered -> retun 200', async() => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'groupTest',
+        memberEmails: [
+          'tester@mail.com',
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'mailIsNotRegistered@mail.com'
+        ]
+      }
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    // authorized
+    const expectedResponeAuth = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedResponeAuth );
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // group name does not exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is not already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    const fakeData = [
+      myUserInfo,
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },{
+        username: 'mail2',
+        email: 'mail2@mail.com',
+        role: 'Regular',
+        _id: 789
+      }
+    ]
+    
+    // user is found by email and then we look for a group he is part of
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[0])  // found
+      
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[1])  // found
+      
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[2])  // found
+
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+      
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
+
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+
+    //  each email is registered ==> memberNotFound array is empty
+    //  each member is free to join a new group ==> alreadyInGroup array is empty
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json.mock.calls[0][0].data.membersNotFound).toEqual(['mailIsNotRegistered@mail.com'])
+    expect(mockRes.json.mock.calls[0][0].data.alreadyInGroup).toEqual([])
+    expect(mockRes.json.mock.calls[0][0].data.group.name).toBe('groupTest')
+
+    mockReq.body.memberEmails.pop()
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(mockReq.body.memberEmails)
+  });
+
+  test('T11: create group but an email is already in group -> retun 200', async() => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'groupTest',
+        memberEmails: [
+          'tester@mail.com',
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'alreadyInGroup@mail.com'
+        ]
+      }
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    // authorized
+    const expectedResponeAuth = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedResponeAuth );
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // group name does not exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is not already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    const fakeData = [
+      myUserInfo,
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },{
+        username: 'mail2',
+        email: 'mail2@mail.com',
+        role: 'Regular',
+        _id: 789
+      },{
+        username: 'alreadyInGroup',
+        email: 'alreadyInGroup@mail.com',
+        role: 'Regular',
+        _id: 789
+      }
+    ]
+    
+    // user is found by email and then we look for a group he is part of
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[0])  // found
+      
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[1])  // found
+      
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[2])  // found
+
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+      
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[3])  // NOT found
+
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(true)        // no group
+
+    //  each email is registered ==> memberNotFound array is empty
+    //  each member is free to join a new group ==> alreadyInGroup array is empty
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json.mock.calls[0][0].data.membersNotFound).toEqual([])
+    expect(mockRes.json.mock.calls[0][0].data.alreadyInGroup).toEqual(['alreadyInGroup@mail.com'])
+    expect(mockRes.json.mock.calls[0][0].data.group.name).toBe('groupTest')
+
+    mockReq.body.memberEmails.pop()
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(mockReq.body.memberEmails)
+  });
+
+  test('T12: create group but caller email is not provided (it should be added) -> retun 200', async() => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'groupTest',
+        memberEmails: [
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'alreadyInGroup@mail.com'
+        ]
+      }
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    // authorized
+    const expectedResponeAuth = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedResponeAuth );
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // group name does not exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is not already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    const fakeData = [
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },{
+        username: 'mail2',
+        email: 'mail2@mail.com',
+        role: 'Regular',
+        _id: 789
+      },{
+        username: 'alreadyInGroup',
+        email: 'alreadyInGroup@mail.com',
+        role: 'Regular',
+        _id: 789
+      },
+      myUserInfo
+    ]
+    
+    // user is found by email and then we look for a group he is part of
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[0])  // found
+      
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[1])  // found
+      
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[2])  // found
+
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(true)        // no group
+      
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[3])  // found
+
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null)        // no group
+
+    //  each email is registered ==> memberNotFound array is empty
+    //  each member is free to join a new group ==> alreadyInGroup array is empty
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json.mock.calls[0][0].data.membersNotFound).toEqual([])
+    expect(mockRes.json.mock.calls[0][0].data.alreadyInGroup).toEqual(['alreadyInGroup@mail.com'])
+    expect(mockRes.json.mock.calls[0][0].data.group.name).toBe('groupTest')
+
+    const expectedMembersList = [
+        'mail1@mail.com',
+        'mail2@mail.com',
+        'tester@mail.com'
+    ]
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedMembersList)
+  });
+
+  test('T13: create group but all emails do not exist -> retun 400', async() => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'groupTest',
+        memberEmails: [
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'alreadyInGroup@mail.com'
+        ]
+      }
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    // authorized
+    const expectedResponeAuth = {authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation( () => expectedResponeAuth );
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(myUserInfo);
+
+    // group name does not exist
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    // user is not already in group
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+
+    const fakeData = [
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },{
+        username: 'mail2',
+        email: 'mail2@mail.com',
+        role: 'Regular',
+        _id: 789
+      },{
+        username: 'alreadyInGroup',
+        email: 'alreadyInGroup@mail.com',
+        role: 'Regular',
+        _id: 789
+      },
+      myUserInfo
+    ]
+    
+    // user is found by email and then we look for a group he is part of
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
+      
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
+
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
+      
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
+
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
+
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
+      
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
+
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
+
+    //  each email is registered ==> memberNotFound array is empty
+    //  each member is free to join a new group ==> alreadyInGroup array is empty
+
+    jest.spyOn(Group, 'create').mockImplementation( () => {} )
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+  });
+})
 
 
-
- 
-
-
-  })
-  */
 
 describe("getGroups", () => { 
 
@@ -584,7 +1322,499 @@ describe("getGroup", () => {
 
  })
 
-describe("addToGroup", () => { })
+describe.only("addToGroup", () => {
+  test('T1: authentication as admin but the user is regular', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'mail3@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: false, cause: 'unauthorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(401)
+  })
+
+  test('T2: authentication as group but the user is not part of the group', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'mail3@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/add'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: false, cause: 'unauthorized'}
+    jest.spyOn(utils, 'verifyAuthGroup').mockImplementation( () => expectedResponeAuth)
+
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(401)
+  })
+
+  test('T3: authentication as admin but there is a not valid email', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com',
+          ''
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+  })
+
+  test('T4: authentication as admin but there is ONLY a not valid email', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: ''
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+  })
+
+  test('T5: authentication as admin but there are no emails', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'notValidFormatMail'
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+  })
+
+  test('T6: authentication as admin but the group does not exist', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'notValidFormatMail'
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    jest.spyOn(Group, 'findOne').mockResolvedValue(null)
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+  })
+
+  test('T7: authentication as admin and users are added', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    const fakeGroup = {
+      name: 'testGroup',
+      members: [
+        {
+          email: 'oldMember@mail.com',
+          _id: 123
+        },
+        {
+          email: 'anotherOldMember@mail.com',
+          _id: 321
+        }
+      ]
+    }
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(fakeGroup)
+
+    const fakeData = [
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },{
+        username: 'mail2',
+        email: 'mail2@mail.com',
+        role: 'Regular',
+        _id: 789
+      }
+    ]
+
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[0])  // found
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(null)        // not already registered
+
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[1])  // found
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(null)        // not already registered
+
+
+    jest.spyOn(Group, 'updateOne').mockImplementation( () => {} )
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(200)
+    expect(mockRes.json.mock.calls[0][0].data.group.name).toBe(fakeGroup.name)
+    expect(mockRes.json.mock.calls[0][0].data.membersNotFound).toEqual([])
+    expect(mockRes.json.mock.calls[0][0].data.alreadyInGroup).toEqual([])
+
+    const expectedDataRespone = [
+      { email: 'oldMember@mail.com' },
+      { email: 'anotherOldMember@mail.com' },
+      { email: 'mail1@mail.com' },
+      { email: 'mail2@mail.com' }
+    ]
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedDataRespone)
+  })
+
+  test('T8: authentication as admin and one email is not registered', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'notRegistered@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    const fakeGroup = {
+      name: 'testGroup',
+      members: [
+        {
+          email: 'oldMember@mail.com',
+          _id: 123
+        },
+        {
+          email: 'anotherOldMember@mail.com',
+          _id: 321
+        }
+      ]
+    }
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(fakeGroup)
+
+    const fakeData = [
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      }
+    ]
+
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[0])  // found
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(null)        // not already registered
+
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(null)         // not found
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(null)        // not already registered
+
+
+    jest.spyOn(Group, 'updateOne').mockImplementation( () => {} )
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(200)
+    expect(mockRes.json.mock.calls[0][0].data.group.name).toBe(fakeGroup.name)
+    expect(mockRes.json.mock.calls[0][0].data.membersNotFound).toEqual([{email: 'notRegistered@mail.com'}])
+    expect(mockRes.json.mock.calls[0][0].data.alreadyInGroup).toEqual([])
+
+    const expectedDataRespone = [
+      { email: 'oldMember@mail.com' },
+      { email: 'anotherOldMember@mail.com' },
+      { email: 'mail1@mail.com' }
+    ]
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedDataRespone)
+  })
+
+  test('T9: authentication as admin and all emails are not registered', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'notRegistered@mail.com',
+          'notRegisteredToo@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    const fakeGroup = {
+      name: 'testGroup',
+      members: [
+        {
+          email: 'oldMember@mail.com',
+          _id: 123
+        },
+        {
+          email: 'anotherOldMember@mail.com',
+          _id: 321
+        }
+      ]
+    }
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(fakeGroup)
+
+    const fakeData = [
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      }
+    ]
+
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(null)  // not found
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(null) // not already registered
+
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(null)  // not found
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(null) // not already registered
+
+    jest.spyOn(Group, 'updateOne').mockImplementation( () => {} )
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+  })
+
+  // TOBE fixed
+  test('T10: authentication as admin and one email is already registered to other group', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'alreadyRegistered@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    const fakeGroup = {
+      name: 'testGroup',
+      members: [
+        {
+          email: 'oldMember@mail.com',
+          _id: 123
+        },
+        {
+          email: 'anotherOldMember@mail.com',
+          _id: 321
+        }
+      ]
+    }
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(fakeGroup)
+
+    const fakeData = [
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },
+      {
+        username: 'alreadyRegisterd',
+        email: 'alreadyRegistered@mail.com',
+        role: 'Regular',
+        _id: 123
+      }
+    ]
+
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[1])  // found
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(true)        // not already registered
+
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[0])  // found
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(null)        // already registered
+
+    jest.spyOn(Group, 'updateOne').mockImplementation( () => {} )
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(200)
+    expect(mockRes.json.mock.calls[0][0].data.group.name).toBe(fakeGroup.name)
+    expect(mockRes.json.mock.calls[0][0].data.membersNotFound).toEqual([])
+    expect(mockRes.json.mock.calls[0][0].data.alreadyInGroup).toEqual([{email: 'alreadyRegistered@mail.com'}])
+
+    const expectedDataRespone = [
+      { email: 'oldMember@mail.com' },
+      { email: 'anotherOldMember@mail.com' },
+      { email: 'mail1@mail.com' }
+    ]
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedDataRespone)
+  })
+})
 
 describe("removeFromGroup", () => { })
 
