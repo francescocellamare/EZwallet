@@ -879,11 +879,17 @@ export const deleteTransaction = async (req, res) => {
 
 /**
  * Delete multiple transactions identified by their ids
-  - Request Body Content: An array of strings that lists the `_ids` of the transactions to be deleted
-  - Response `data` Content: A message confirming successful deletion
-  - Optional behavior:
-    - error 401 is returned if at least one of the `_ids` does not have a corresponding transaction. Transactions that have an id are not deleted in this case
- */
+ - Request Parameters: None
+- Request Body Content: An array of strings that lists the `_ids` of the transactions to be deleted
+  - Example: `{_ids: ["6hjkohgfc8nvu786"]}`
+- Response `data` Content: A message confirming successful deletion
+  - Example: `res.status(200).json({data: {message: "Transactions deleted"}, refreshedTokenMessage: res.locals.refreshedTokenMessage})`
+- In case any of the following errors apply then no transaction is deleted
+- Returns a 400 error if the request body does not contain all the necessary attributes
+- Returns a 400 error if at least one of the ids in the array is an empty string
+- Returns a 400 error if at least one of the ids in the array does not represent a transaction in the database
+- Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin)
+*/
 export const deleteTransactions = async (req, res) => {
     try {
         const adminAuthInfo = verifyAuthAdmin(req, res)

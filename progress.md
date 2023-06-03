@@ -5,19 +5,17 @@
 | login | I/I |✓ | ✓|
 | logout | I/I |✓ | ✓|
 | createCategory | V/V |✓ | ✓| |  | 
-<<<<<<< progress.md
 | updateCategory | V/V|✓ |✓ | |  |
 | deleteCategory | V/V|✓ | ✓| |  |
 | getCategories | V/V|✓ | ✓| | |
 | createTransaction | V/V|✓ | | | first test is failing|
 | getAllTransactions | F/F|✓ |✓  | ✓ | | 
->>>>>>> progress.md
 | getTransactionsByUser | K/K|✓ | ✓ | ✓ | |
 | getTransactionsByUserByCategory | K/K|✓ | ✓ | ✓ |
-| getTransactionsByGroup | K/K|✓ | ✓ |  |
+| getTransactionsByGroup | K/K|✓ | ✓ | ✓  |
 | getTransactionsByGroupByCategory | K/K|✓ | | |
-| deleteTransactions | K/K|✓ | ✓ | | 
-| deleteTransaction | K/K|✓ | ✓ | |
+| deleteTransactions | K/K|✓ | ✓ | ✓ | 
+| deleteTransaction | K/K|✓ | ✓ | ✓ |
 | getUsers | I/I |✓ | ✓ | |
 | getUser | I/I |✓ | ✓ | |
 | createGroup | I/K |✓ |  | |
