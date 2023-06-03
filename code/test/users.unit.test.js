@@ -606,6 +606,9 @@ describe("deleteUser", () => {
             refreshedTokenMessage: "dummy message"
           }
         };
+
+      
+
         jest.clearAllMocks();
       }
       )
@@ -619,8 +622,7 @@ describe("deleteUser", () => {
         let mockReq = {
           body:{
             email: 'test@example.com'
-          },
-          cookies: {}
+          }
         };
       jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
                 {authorized: true,
@@ -628,8 +630,8 @@ describe("deleteUser", () => {
                 }
               ))
             const user = { email: 'user@example.com' };
-            jest.spyOn(User, "findOne").mockImplementation(()=>user);
-            jest.spyOn(User, "deleteOne").mockImplementation(()=>{deletedCount: 1});
+            jest.spyOn(User, "findOne").mockImplementationOnce(()=>user);
+            jest.spyOn(User, "deleteOne").mockImplementationOnce(()=>{deletedCount: 1});
             jest.spyOn(transactions, "deleteMany").mockImplementation(()=>{deletedCount: 2});
             const group = { _id: 'group-id', members: [{ email: 'user@example.com' }] };
             jest.spyOn(Group, "findOne").mockImplementation(()=>group);
@@ -717,7 +719,7 @@ describe("deleteUser", () => {
       jest.spyOn(User,"findOne").mockImplementation(()=> null);
 
       await deleteUser(mockReq, mockResp)
-      expect(mockResp.status).toHaveBeenCalledWith(401);
+      expect(mockResp.status).toHaveBeenCalledWith(400);
       expect(mockResp.json).toHaveBeenCalledWith({ error: "The email does not represent a user in the database"  });
     })
 
