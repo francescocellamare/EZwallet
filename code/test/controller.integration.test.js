@@ -289,8 +289,7 @@ describe("getTransactionsByUser", () => {
             .get("/api/users/user2/transactions?max=300")                        
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
                         
-        expect(response.status).toBe(200);
-        // console.log(response.body.refreshedTokenMessage)
+        expect(response.status).toBe(200);        
         expect(response.body.data).toStrictEqual([              
             {username : "user2", amount :  124, color : "red", type : "cat2", date : (new Date(2023, 1,  5)).toISOString()},            
             {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(2023, 2, 20)).toISOString()},          

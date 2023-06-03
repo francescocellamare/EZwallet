@@ -235,24 +235,24 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
     const adminAuthInfo = verifyAuthAdmin(req, res)
 
     if ( userAuthInfo.authorized) {
-        console.log('I am a user')
+
         const groupAuthInfo = await verifyAuthGroup(req, res, groupName)
         if ( groupAuthInfo.authorized) {
-            console.log('I can work with this group')
+
             // work
         }
         else {
-            console.log('I can not work with this group')
+
             return res.status(401).json({ message: groupAuthInfo.cause })
         }
     } 
     else if (req.path.match(regexp) && adminAuthInfo.authorized){
-        console.log('I am an admin')
-        console.log('I can work with whichever group')
+
+
         // work
     }
     else {
-        console.log('I am nobody')
+
         return res.status(401).json({ message: adminAuthInfo.cause }) // unauthorized
     }
     ...

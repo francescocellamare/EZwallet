@@ -396,7 +396,7 @@ export const createTransaction = async (req, res) => {
             }))
             .catch(err => { throw err })
     } catch (error) {
-        console.log(error);
+        
         res.status(500).json({ error: error.message })
     }
 }
@@ -792,7 +792,7 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         if (!members) {
             return res.status(400).json({ message: "group or category does not exist" })
         }
-        console.log(members.members)
+        
         members = members.members.map(item => item.username)
 
 

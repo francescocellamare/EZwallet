@@ -370,7 +370,7 @@ describe("deleteCategory", () => {
         expect(mockRes.status).toHaveBeenCalledWith(200)
 
         // responseObj     mockobj, first call(only one) first argument
-        // console.log(mockRes.json.mock.calls[0][0])
+
         expect(mockRes.json.mock.calls[0][0].data.message).toBeDefined()
         expect(mockRes.json.mock.calls[0][0].data.count).toBe(3)
         expect(mockRes.json.mock.calls[0][0].refreshedTokenMessage).toBeDefined()

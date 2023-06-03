@@ -44,12 +44,12 @@ export const getUsers = async (req, res) => {
         const adminAuthInfo = verifyAuthAdmin(req, res)
   
         const userFound = await User.findOne({username: username});
-        console.log(userFound);
+        
         if(!userFound) {return res.status(400).json({error: "user not found"})};
   
         if((!userAuthInfo.authorized)&&(!adminAuthInfo.authorized)){
-          console.log(userAuthInfo.authorized);
-          console.log(adminAuthInfo.authorized);
+          
+          
           return res.status(401).json({error: 'not authorized'})
         }
   //Note is this code necessary ? 
@@ -170,7 +170,7 @@ export const createGroup = async (req, res) => {
       refreshedTokenMessage: res.locals.refreshedTokenMessage
     })
   } catch (err) {
-    console.log(err)
+    
       return res.status(500).json({error: err.message})
   }
 }
@@ -423,7 +423,7 @@ export const getGroup = async (req, res) => {
         memberToRemove.splice(0, 1);
       }
   
-      console.log(memberToRemove);
+      
   
       remainingMembers = group.members.filter(
         (member) => !memberToRemove.find((m) => m.email === member.email)
@@ -503,7 +503,7 @@ export const getGroup = async (req, res) => {
   
       let deletedFromGroup = false;
       const group = await Group.findOne({ "members.email": req.body.email });
-      console.log("group", group);
+      
       if (group) {
         group.members = group.members.filter(member => member.email !== req.body.email);
   

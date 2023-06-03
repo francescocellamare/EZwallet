@@ -582,7 +582,7 @@ describe("createGroup", () => {
     jest.spyOn(Group, 'create').mockImplementation( () => {} )
     await createGroup(mockReq, mockRes);
 
-    console.log(mockRes.json.mock.calls[0])
+    
     expect(mockRes.status).toHaveBeenCalledWith(400);
     expect(mockRes.json).toBeDefined()
   });
@@ -1322,7 +1322,7 @@ describe("getGroup", () => {
 
  })
 
-describe.only("addToGroup", () => {
+describe("addToGroup", () => {
   test('T1: authentication as admin but the user is regular', async () => {
     const mockReq = {
       cookies: {

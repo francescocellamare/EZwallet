@@ -295,9 +295,6 @@ describe('login', () => {
     const DecodedAccessToken = jwt.verify(accessToken, process.env.ACCESS_KEY);
     const DecodedRefreshToken = jwt.verify(refreshToken, process.env.ACCESS_KEY);
 
-    console.log(DecodedAccessToken);
-    console.log(DecodedRefreshToken);
-
      const accessEmail = DecodedAccessToken.email;
      const accessUsername = DecodedAccessToken.username;
      const accessRole = DecodedAccessToken.role;
