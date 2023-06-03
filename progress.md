@@ -13,7 +13,7 @@
 | getTransactionsByUser | K/K|✓ | ✓ | ✓ | |
 | getTransactionsByUserByCategory | K/K|✓ | ✓ | ✓ |
 | getTransactionsByGroup | K/K|✓ | ✓ | ✓  |
-| getTransactionsByGroupByCategory | K/K|✓ | | |
+| getTransactionsByGroupByCategory | K/K|✓ | ✓ | ✓ |
 | deleteTransactions | K/K|✓ | ✓ | ✓ | 
 | deleteTransaction | K/K|✓ | ✓ | ✓ |
 | getUsers | I/I |✓ | ✓ | |
