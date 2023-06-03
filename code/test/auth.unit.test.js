@@ -510,7 +510,7 @@ describe('logout', () => {
         expect(mockResp.status).toHaveBeenCalledWith(400);
 
         const jsonResponse = mockResp.json.mock.calls[0][0];
-        expect((jsonResponse.error)).toBe("user not found")
+        expect((jsonResponse.error)).toBe("no refresh token")
         
 
     });

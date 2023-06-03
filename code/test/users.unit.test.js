@@ -122,7 +122,6 @@ describe("getUsers", () => {
 
 
 })
-
 describe("getUser", () => {
   let mockReq, mockResp;
   
@@ -179,26 +178,29 @@ test('T1: user exists -> return 200 and user info', async ()=>{
 
 })
 
-test('T2: user not found -> return 401 and message: user not found', async()=>{
-  jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
-    {authorized: true,
-      cause:"Authorized"
-    }
-  ))
-  jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
-    {authorized: true,
-      cause:"Authorized"
-    }
-  ))
-  jest.spyOn(User, "findOne").mockImplementation(()=> null);
+test('T2: user not found -> return 400 and message: user not found', async()=>{
+  jest.spyOn(User, "findOne").mockImplementation(()=>null);
+  // jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+  //   {authorized: true,
+  //     cause:"Authorized"
+  //   }
+  // ))
+  // jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
+  //   {authorized: true,
+  //     cause:"Authorized"
+  //   }
+  // ))
+  // jest.spyOn(User, "findOne").mockImplementation(()=> null);
 
   await getUser(mockReq, mockResp);
-  expect(mockResp.status).toHaveBeenCalledWith(401);
-  expect(mockResp.json.mock.calls[0][0].error).toBe('User not found')
+  expect(mockResp.status).toHaveBeenCalledWith(400);
+  expect(mockResp.json.mock.calls[0][0].error).toBe('user not found')
 })
 
-test('T3: different username -> return 401 and message: unauthorized', async ()=>
-{ const user ={
+test('T3: not authorized -> return 401 and message: unauthorized', async ()=>
+{jest.spyOn(User, "findOne").mockImplementation(()=>user);
+
+const user ={
   username: 'differentUser',
   email: 'test@example.com',
   role: 'role',
@@ -206,75 +208,48 @@ test('T3: different username -> return 401 and message: unauthorized', async ()=
   
 }
 jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
-  {authorized: true,
-    cause:"Authorized"
+  {authorized: false,
+    cause:"Unauthorized"
   }
 ))
 jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
-  {authorized: true,
-    cause:"Authorized"
+  {authorized: false,
+    cause:"Unauthorized"
   }
 ))
-jest.spyOn(User, "findOne").mockImplementation(()=> user);
 await getUser(mockReq, mockResp);
 expect(mockResp.status).toHaveBeenCalledWith(401);
-expect(mockResp.json.mock.calls[0][0].error).toBe('Unauthorized');
+expect(mockResp.json.mock.calls[0][0].error).toBe('not authorized');
 
 })
 
-test('T4: different username -> return 401 and message: unauthorized', async ()=>
-{ const user ={
-  username: 'differentUser',
-  email: 'test@example.com',
-  role: 'role',
-  refreshToken: 'refreshToken'
-  
-}
 
+// test("T4:not authentified -> return 401", async () => {
+//   //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
+//   jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+//     {authorized: false,
+//       cause:"Unauthorized"
+//     }
+//   ))  
+//   await getUser(mockReq, mockResp);
 
-jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
-  {authorized: true,
-    cause:"Authorized"
-  }
-))
-jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
-  {authorized: true,
-    cause:"Authorized"
-  }
-))
-jest.spyOn(User, "findOne").mockImplementation(()=> user);
-await getUser(mockReq, mockResp);
-expect(mockResp.status).toHaveBeenCalledWith(401);
-expect(mockResp.json.mock.calls[0][0].error).toBe('Unauthorized');
-
-})
-
-test("T5:not authentified -> return 401", async () => {
-  //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
-  jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
-    {authorized: false,
-      cause:"Unauthorized"
-    }
-  ))  
-  await getUser(mockReq, mockResp);
-
-  expect(mockResp.status).toHaveBeenCalledWith(401);
-})
+//   expect(mockResp.status).toHaveBeenCalledWith(401);
+// })
 
 
 
-test("T6: Network error -> return 500", async () =>{
-  jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
-    {authorized: true,
-      cause:"Authorized"
-    }
-  ))
-  jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
-    {authorized: true,
-      cause:"Authorized"
-    }
-  ))
+test("T4: Network error -> return 500", async () =>{
   jest.spyOn(User, "findOne").mockImplementation(()=> {throw new Error('server crash')});
+  jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+    {authorized: true,
+      cause:"Authorized"
+    }
+  ))
+  jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
+    {authorized: true,
+      cause:"Authorized"
+    }
+  ))
 
   await getUser(mockReq, mockResp);
 
@@ -641,6 +616,12 @@ describe("deleteUser", () => {
       )
       
       test('T1: delete the user -> return 200' , async()=>{
+        let mockReq = {
+          body:{
+            email: 'test@example.com'
+          },
+          cookies: {}
+        };
       jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
                 {authorized: true,
                   cause:"Authorized"

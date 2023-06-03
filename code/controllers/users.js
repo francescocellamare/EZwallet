@@ -35,34 +35,33 @@ export const getUsers = async (req, res) => {
   - Optional behavior:
     - error 401 is returned if the user is not found in the system
  */
-export const getUser = async (req, res) => {
-    try {
-    
-       const cookie  = req.cookies;
-      const username = req.params.username
-      const userAuthInfo = verifyAuthUser(req, res, username)
-      const adminAuthInfo = verifyAuthAdmin(req, res)
-
-      const userFound = await User.findOne({username: username});
-      console.log(userFound);
-      if(!userFound) {return res.status(400).json({error: "user not found"})};
-
-      if((!userAuthInfo.authorized)&&(!adminAuthInfo.authorized)){
-        console.log(userAuthInfo.authorized);
-        console.log(adminAuthInfo.authorized);
-        return res.status(401).json({error: 'not authorized'})
+    export const getUser = async (req, res) => {
+      try {
+      
+         const cookie  = req.cookies;
+        const username = req.params.username
+        const userAuthInfo = verifyAuthUser(req, res, username)
+        const adminAuthInfo = verifyAuthAdmin(req, res)
+  
+        const userFound = await User.findOne({username: username});
+        console.log(userFound);
+        if(!userFound) {return res.status(400).json({error: "user not found"})};
+  
+        if((!userAuthInfo.authorized)&&(!adminAuthInfo.authorized)){
+          console.log(userAuthInfo.authorized);
+          console.log(adminAuthInfo.authorized);
+          return res.status(401).json({error: 'not authorized'})
+        }
+  //Note is this code necessary ? 
+          // const user = await User.findOne({ refreshToken: cookie.refreshToken })
+          //
+          // if(!user) return res.status(401).json({error: "Unauthorized"})
+          // if (user.username !== username) return res.status(401).json({error: "Unauthorized" })}
+          res.status(200).json({data:userFound, refreshTokenMessage:res.locals.refreshTokenMessage})
+      } catch (error) {
+          res.status(500).json({error: error.message})
       }
-//Note is this code necessary ? 
-        const user = await User.findOne({ refreshToken: cookie.refreshToken })
-        if(!adminAuthInfo){
-        if(!user) return res.status(401).json({error: "Unauthorized"})
-        if (user.username !== username) return res.status(401).json({error: "Unauthorized" })}
-        res.status(200).json({data:user, refreshTokenMessage:res.locals.refreshTokenMessage})
-    } catch (error) {
-        res.status(500).json({error: error.message})
-    }
-}
-
+  }
 /**
  * Create a new group
   - Request Body Content: An object having a string attribute for the `name` of the group and an array that lists all the `memberEmails`
@@ -217,7 +216,7 @@ export const getGroup = async (req, res) => {
     const groupAuthInfo = await verifyAuthGroup(req, res, name)
 
     // checking authentication
-    if ( !groupAuthInfo.authorized || !adminAuthInfo.authorized )
+    if ( !groupAuthInfo.authorized &&  !adminAuthInfo.authorized )
       return res.status(401).json({ error: 'authenticated user who is neither part of the group nor an admin' })
 
     // checking group in db
@@ -498,7 +497,7 @@ export const getGroup = async (req, res) => {
   
       const user = await User.findOne({ email: req.body.email })
       if (!user) {
-        return res.status(401).json({ error: "The email does not represent a user in the database" })
+        return res.status(400).json({ error: "The email does not represent a user in the database" })
       }
 
       if (user.role === 'Admin'){

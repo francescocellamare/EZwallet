@@ -4,6 +4,7 @@ import { User, Group } from '../models/User.js';
 import { transactions, categories } from '../models/model';
 import mongoose, { Model } from 'mongoose';
 import dotenv from 'dotenv';
+import { response } from 'express';
 const bcrypt = require("bcryptjs");
 
 /**
@@ -226,16 +227,534 @@ describe("getUser", () => {
     })
 
 
-describe("createGroup", () => { })
+describe("createGroup", () => { 
 
-describe("getGroups", () => { })
+   
+  beforeEach(async () => {
+    await User.deleteMany({})
+  })
 
-describe("getGroup", () => { })
+  test("T1: create group -> return 200", async () => {
+    
+    const user = {
+      username : 'user',
+      email: 'test@example.com',
+      password: '123'
+    };
 
-describe("addToGroup", () => { })
+    let hashedPassowrd = await bcrypt.hash(user.password, 12);
+    const newUser = await User.create({
+      username : user.username,
+      email :user.email,
+      password: hashedPassowrd,
+      refreshToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU1MjAxNTQsImV4cCI6MTcxNzA1NjE1NCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlkIjoiMSIsInVzZXJuYW1lIjoidXNlciIsInJvbGUiOiJSZWd1bGFyIn0.J5FWQPm8QihGHKu6AON-TJkCFgNPSO9Tv6l5wYEunpo"
 
-describe("removeFromGroup", () => { })
+    })
+    const resp = await request(app)
+    .get(`/api/users/${newUser.username}`)
+    .set("Cookie", `refreshToken=${newUser.refreshToken}; accessToken=${newUser.refreshToken}`);
 
-describe("deleteUser", () => { })
+         
+    expect(resp.status).toBe(200);
+
+
+})
+})
+
+
+describe("getGroups", () => {
+
+  beforeEach(async () => {
+    await Group.deleteMany({})
+  })
+
+  test("T1: at least one group exists -> return 200 and list of groups", async () => {
+    
+    const newGroup =  await Group.create({
+      name: 'My Group',
+      members: [
+        {
+          email: 'example1@example.com'
+        },
+        {
+          email: 'example2@example.com'
+        }
+      ]
+    });
+  
+    //This token is generatd with role = admin
+     const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU2MTQ0NTYsImV4cCI6MTcxNzE1MDQ1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpZCI6IjEyMyIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQWRtaW4ifQ.klwHb1h3VKeSDk6QtF8eJX6OWf6qvpa-zvZ4iy8W6aM'
+   await request(app)
+      .get("/api/groups")
+      .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+      .then((response) => {
+        expect(response.status).toBe(200)
+        expect(response.body.data).toHaveLength(1)
+      })
+      
+  })
+  test("T2: unauthorized user -> return 401 and error message", async () => {
+    //This token is generatd with role = Regular
+    const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU2NTIwMzEsImV4cCI6MTcxNzE4ODAzMSwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlkIjoiMTIzIiwidXNlcm5hbWUiOiJ1c2VyIiwicm9sZSI6IlJlZ3VsYXIifQ.7H1LKiSf56TPwJ6b5lCFb0uwafvAVRrqW6SUy7_xB5k'
+   await request(app)
+      .get("/api/groups")
+      .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+      .then((response) => {
+        expect(response.status).toBe(401)
+        expect(response.body.error).toEqual('User does not have admin role')
+      })
+      
+  })
+
+
+
+
+ })
+
+describe("getGroup", () => { 
+  beforeEach(async () => {
+    await Group.deleteMany({})
+  })
+
+  test("T1: admin requesting to get group that exists -> return 200 and group", async () => {
+    
+    const newGroup =  await Group.create({
+      name: 'My Group',
+      members: [
+        {
+          email: 'example1@example.com'
+        },
+        {
+          email: 'example2@example.com'
+        }
+      ]
+    });
+  
+    //This token is generatd with role = admin
+     const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlkIjoiMTIzIiwidXNlcm5hbWUiOiJ0ZXN0Iiwicm9sZSI6IkFkbWluIn0.bRz8FJBF5x8z7djJdoqWS0TeoGmagOrNPqbYNRsA9so'
+   await request(app)
+      .get(`/api/groups/${newGroup.name}`)
+      .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+      .then((response) => {
+        expect(response.status).toBe(200)
+
+      })
+      
+  })
+
+  test("T2: user in the group requesting to get group that exists -> return 200 and group", async () => {
+    
+    const newGroup =  await Group.create({
+      name: 'My Group',
+      members: [
+        {
+          email: 'example1@example.com'
+        },
+        {
+          email: 'example2@example.com'
+        }
+      ]
+    });
+  
+    //This token is generatd with role = admin
+     const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTFAZXhhbXBsZS5jb20iLCJpZCI6IjEyMyIsInVzZXJuYW1lIjoidGVzdCIsInJvbGUiOiJSZWd1bGFyIn0.8tD3AaXtaMfsLJN6EJdC3tsCLqP3daKw6M3nwqmGaAw'
+   await request(app)
+      .get(`/api/groups/${newGroup.name}`)
+      .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+      .then((response) => {
+        expect(response.status).toBe(200)
+
+      })
+      
+  })
+
+  test("T3: unautharized user requesting to get group that exists -> return 401 and error message", async () => {
+    
+    const newGroup =  await Group.create({
+      name: 'My Group',
+      members: [
+        {
+          email: 'example1@example.com'
+        },
+        {
+          email: 'example2@example.com'
+        }
+      ]
+    });
+  
+    //This token is generatd with role = Regular and user not in the group
+     const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiUmVndWxhciJ9.wFR8XRAaD9_eijI2IxmTEMs6qHQmpCQTmFvlp9PrSRI'
+   await request(app)
+      .get(`/api/groups/${newGroup.name}`)
+      .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+      .then((response) => {
+        expect(response.status).toBe(401)
+        expect(response.body.error).toBe('authenticated user who is neither part of the group nor an admin')
+
+      })
+    })
+  
+
+
+  test("T4: group does not exist -> return 400 and error message", async () => {    
+       //This token is generatd with role = admin
+     const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4ifQ.9wJED0kKWyCEUKcZzeCzWNBAgachnMVFrR4cvshwzpo'
+       await request(app)
+          .get(`/api/groups/Family`)
+          .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+          .then((response) => {
+            expect(response.status).toBe(400)
+            expect(response.body.error).toBe("group does not exist")
+    
+          })
+
+
+
+      
+  })
+
+
+
+})
+
+describe("addToGroup", () => {
+
+ })
+
+describe("removeFromGroup", () => { 
+})
+
+describe("deleteUser", () => {
+
+  //create a group with only one user
+  //check if group is deleted after the user was deleted
+  beforeEach(async () => {
+    await User.deleteMany({})
+    await Group.deleteMany({})
+  })
+
+  test("T1: user belong to a group and he is the only user in the group -> return 200", async () => {
+   
+
+    const user = {
+      username : 'user1',
+      email: 'test1@example.com',
+      password: '123' 
+    }
+
+    let hashedPassowrd = await bcrypt.hash(user.password, 12);
+    const newUser = await User.create({
+      username : user.username,
+      email :user.email,
+      password: hashedPassowrd
+    })
+    
+    const newGroup =  await Group.create({
+      name: 'My Group',
+      members: [
+        {
+          email: 'test1@example.com'
+        }
+        
+      ]
+    });
+
+    const requestBody ={
+      email: newUser.email
+    }
+  
+    //This token is generatd with role = admin
+     const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4ifQ.9wJED0kKWyCEUKcZzeCzWNBAgachnMVFrR4cvshwzpo'
+   
+      const response = await request(app)
+      .delete("/api/users")
+      .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+      .send(requestBody)
+      await expect(response.status).toBe(200)
+      const group = await Group.find({name: newGroup.name});
+      expect(group.length).toBe(0);
+      })
+      
+
+      test("T1: user belong to a group and he is not the only user in the group -> return 200", async () => {
+   
+        const user = {
+          username : 'user1',
+          email: 'test1@example.com',
+          password: '123' 
+        }
+    
+        let hashedPassowrd = await bcrypt.hash(user.password, 12);
+        const newUser = await User.create({
+          username : user.username,
+          email :user.email,
+          password: hashedPassowrd
+        })
+        
+        const newGroup =  await Group.create({
+          name: 'My Group',
+          members: [
+            {
+              email: 'test1@example.com'
+            },
+            {
+              email: 'test2@example.com'
+            }
+            
+          ]
+        });
+    
+        const requestBody ={
+          email: newUser.email
+        }
+      
+        //This token is generatd with role = admin
+         const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4ifQ.9wJED0kKWyCEUKcZzeCzWNBAgachnMVFrR4cvshwzpo'
+       
+          const response = await request(app)
+          .delete("/api/users")
+          .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+          .send(requestBody)
+          await expect(response.status).toBe(200)
+          const group = await Group.find({name: newGroup.name});
+          expect(group.length).toBe(1);
+          })
+          
+    
+          test("T2: does not pass an email -> return 400 and error message", async () => {
+   
+            const user = {
+              username : 'user1',
+              email: 'test1@example.com',
+              password: '123' 
+            }
+        
+            let hashedPassowrd = await bcrypt.hash(user.password, 12);
+            const newUser = await User.create({
+              username : user.username,
+              email :user.email,
+              password: hashedPassowrd
+            })
+            
+            const newGroup =  await Group.create({
+              name: 'My Group',
+              members: [
+                {
+                  email: 'test1@example.com'
+                },
+                {
+                  email: 'test2@example.com'
+                }
+                
+              ]
+            });
+        
+            const requestBody ={
+             
+            }
+          
+            //This token is generatd with role = admin
+             const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4ifQ.9wJED0kKWyCEUKcZzeCzWNBAgachnMVFrR4cvshwzpo'
+           
+              const response = await request(app)
+              .delete("/api/users")
+              .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+              .send(requestBody)
+              await expect(response.status).toBe(400)
+              await expect(response.body.error).toBe("The request body does not contain all the necessary attributes")
+              })
+             
+              
+
+
+
+  
+test("T3: email is an empty string -> return 400 and error message", async () => {
+   
+                const user = {
+                  username : 'user2',
+                  email: 'test2@example.com',
+                  password: '123' 
+                }
+            
+                let hashedPassowrd = await bcrypt.hash(user.password, 12);
+                const newUser = await User.create({
+                  username : user.username,
+                  email :user.email,
+                  password: hashedPassowrd
+                })
+                
+                const newGroup =  await Group.create({
+                  name: 'My Group',
+                  members: [
+                    {
+                      email: 'test1@example.com'
+                    },
+                    {
+                      email: 'test2@example.com'
+                    }
+                    
+                  ]
+                });
+            
+                const requestBody ={
+                 email: ''
+                }
+              
+                //This token is generatd with role = admin
+                 const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4ifQ.9wJED0kKWyCEUKcZzeCzWNBAgachnMVFrR4cvshwzpo'
+               
+                  const response = await request(app)
+                  .delete("/api/users")
+                  .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+                  .send(requestBody)
+                  await expect(response.status).toBe(400)
+                  await expect(response.body.error).toBe("The email passed is an empty string")
+                  })
+
+test("T4: requested email is not in the db -> return 400 and error message", async () => {
+   
+                    const user = {
+                      username : 'user1',
+                      email: 'test1@example.com',
+                      password: '123' 
+                    }
+                
+                    let hashedPassowrd = await bcrypt.hash(user.password, 12);
+                    const newUser = await User.create({
+                      username : user.username,
+                      email :user.email,
+                      password: hashedPassowrd
+                    })
+                    
+                    const newGroup =  await Group.create({
+                      name: 'My Group',
+                      members: [
+                        {
+                          email: 'test1@example.com'
+                        },
+                        {
+                          email: 'test2@example.com'
+                        }
+                        
+                      ]
+                    });
+                
+                    const requestBody ={
+                     email: 'notauser@example.com'
+                    }
+                  
+                    //This token is generatd with role = admin
+                     const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4ifQ.9wJED0kKWyCEUKcZzeCzWNBAgachnMVFrR4cvshwzpo'
+                   
+                      const response = await request(app)
+                      .delete("/api/users")
+                      .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+                      .send(requestBody)
+                      await expect(response.status).toBe(400)
+                      await expect(response.body.error).toBe("The email does not represent a user in the database")
+                      })
+                     
+ test("T5: not email format -> return 400 and error message", async () => {
+   
+                        const user = {
+                          username : 'user1',
+                          email: 'test1@example.com',
+                          password: '123' 
+                        }
+                    
+                        let hashedPassowrd = await bcrypt.hash(user.password, 12);
+                        const newUser = await User.create({
+                          username : user.username,
+                          email :user.email,
+                          password: hashedPassowrd
+                        })
+                        
+                        const newGroup =  await Group.create({
+                          name: 'My Group',
+                          members: [
+                            {
+                              email: 'test1@example.com'
+                            },
+                            {
+                              email: 'test2@example.com'
+                            }
+                            
+                          ]
+                        });
+                    
+                        const requestBody ={
+                         email: 'examplecom'
+                        }
+                      
+                        //This token is generatd with role = admin
+                         const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4ifQ.9wJED0kKWyCEUKcZzeCzWNBAgachnMVFrR4cvshwzpo'
+                       
+                          const response = await request(app)
+                          .delete("/api/users")
+                          .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+                          .send(requestBody)
+                          await expect(response.status).toBe(400)
+                          await expect(response.body.error).toBe("The email is not in a valid format")
+                          })
+                                              
+        
+                          
+                          
+                          test("T6: unauthorized user -> return 401 and error message", async () => {
+                            
+                            
+                            const user = {
+                              username : 'user1',
+                              email: 'test1@example.com',
+                              password: '123' 
+                            }
+                            
+                            let hashedPassowrd = await bcrypt.hash(user.password, 12);
+                            const newUser = await User.create({
+    username : user.username,
+    email :user.email,
+    password: hashedPassowrd
+  })
+  
+  const newGroup =  await Group.create({
+    name: 'My Group',
+    members: [
+      {
+        email: 'test1@example.com'
+      },
+      {
+        email: 'test2@example.com'
+      }
+      
+    ]
+  });
+  
+  const requestBody ={
+    email: 'test1@example.com'
+  }
+  
+  //This token is generatd with role = admin
+  const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlkIjoiMTIzIiwidXNlcm5hbWUiOiJ1c2VyIiwicm9sZSI6IlJlZ3VsYXIifQ.5iKurIZWuOdCE6pFn6-Yf2BL3apLRdqImbpEAaD72Ok'
+  
+  const response = await request(app)
+  .delete("/api/users")
+  .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+  .send(requestBody)
+  await expect(response.status).toBe(401)
+  await expect(response.body.error).toBe("User does not have admin role")
+})
+
+
+})  
+
+
+
+
+
+
+
+
+ 
 
 describe("deleteGroup", () => { })
