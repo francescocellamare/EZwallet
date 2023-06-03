@@ -848,7 +848,7 @@ export const deleteTransaction = async (req, res) => {
 
         if (!userAuthInfo.authorized) {
             return res.status(401).json({ error: userAuthInfo.cause })
-        }
+        }        
 
         // body is not complete
         if (!id || id === '') return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
@@ -869,7 +869,7 @@ export const deleteTransaction = async (req, res) => {
         const query = { _id: mongoose.Types.ObjectId(req.body.id), username: username }
         const data = await transactions.deleteOne(query);
         if (data.deletedCount === 0)
-            return res.status(400).json({ error: "transaction does not exist" })
+            return res.status(400).json({ error: "transaction not found" })
 
         res.status(200).json({ data: { message: "Transaction deleted" }, refreshedTokenMessage: res.locals.refreshedTokenMessage })
     } catch (error) {

@@ -678,8 +678,122 @@ describe("getTransactionsByGroupByCategory", () => {
 })
 
 describe("deleteTransaction", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+
+    let test_tokens = [
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho",   // user 1 (regular)
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMiIsImVtYWlsIjoidXNlcjJAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.vcyvbioE0-iiQxVasIGSAhJwRdwgT6wxYQvoe4eMAqQ",   // user 2 (regular)
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU",      // user 3 (admin)
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyNCIsImVtYWlsIjoidXNlcjRAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.C40TvT7lc_ufN8xwz5HKZ1XcT2DcwAtrOoZ4t-K19Pc",   // user 4 (regular), not added to the database
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyNSIsImVtYWlsIjoidXNlcjVAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.U4oQH-vpYdwHqQEJxSOJR1ycSmTcA9reP6Lpfpwynw4"       // user 5 (admin), not added to the database
+    ]
+
+    let test_users = [
+        {username : "user1", email : "user1@test.com", password : "dummyPassword", refreshToken : test_tokens[0], role : "Regular"},
+        {username : "user2", email : "user2@test.com", password : "dummyPassword", refreshToken : test_tokens[1], role : "Regular"},
+        {username : "user3", email : "user3@test.com", password : "dummyPassword", refreshToken : test_tokens[2], role : "Admin" }
+    ]
+
+    let test_categories = [
+        {type : "cat1", color : "blue"},
+        {type : "cat2", color : "red"},
+        {type : "cat3", color : "green"},
+    ]
+
+    let test_transactions = [
+        {_id : "647bada0e696a4c148e708c9", username : "user1", amount : 1131, type : "cat1", date : new Date(2023, 2, 14)},
+        {_id : "647bada4ff983865521ec405", username : "user1", amount :  100, type : "cat1", date : new Date(2023, 3, 23)},
+        {_id : "647bada9bc8db6f9ed1d49dc", username : "user1", amount :  402, type : "cat2", date : new Date(2023, 2, 27)},
+        {_id : "647badad3a1b2f05cf27fe11", username : "user1", amount :  933, type : "cat3", date : new Date(2023, 2, 12)},
+        {_id : "647badb472204a6f710da3c4", username : "user2", amount :  643, type : "cat2", date : new Date(2023, 2,  8, 10)},
+        {_id : "647badb9b75b309606c2c183", username : "user2", amount :  124, type : "cat2", date : new Date(2023, 1,  5)},
+        {_id : "647badbe2cf71b0fe569d7cb", username : "user2", amount :  632, type : "cat3", date : new Date(2023, 5, 14)},
+        {_id : "647badc28c9ee03c0afd8eeb", username : "user2", amount :  123, type : "cat3", date : new Date(2023, 2, 20)},
+        {_id : "647badc7d7adf5276bc97e82", username : "user3", amount :  552, type : "cat1", date : new Date(2023, 3, 18)},
+        {_id : "647badcb3b639a04b00e68ea", username : "user3", amount :  612, type : "cat1", date : new Date(2023, 3,  1)},
+        {_id : "647badd0e3883628397a6c13", username : "user3", amount :  231, type : "cat2", date : new Date(2023, 3,  6)},
+        {_id : "647badd6b1388a89c128e1a1", username : "user3", amount :   12, type : "cat3", date : new Date(2023, 2, 26)},
+        {_id : "647baddd6b672748b202408d", username : "user3", amount :   53, type : "cat3", date : new Date(2023, 2, 26)},
+    ]
+
+    beforeEach(async() => {
+        jest.clearAllMocks();        
+        // insert test data
+        await User.insertMany(test_users)
+        await categories.insertMany(test_categories)
+        await transactions.insertMany(test_transactions)
+    })    
+
+    afterEach(async() => {
+        // clear all users, categories, and transactions
+        await User.deleteMany();
+        await categories.deleteMany();
+        await transactions.deleteMany();
+    })
+
+    test("Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
+        const response = await request(app)
+            .delete("/api/users/user1/transactions")                        
+                        
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBe("Unauthorized");
+    });
+
+    test("Should return an error indicating that not all body fields are present", async () => {      
+        const response = await request(app)
+            .delete("/api/users/user1/transactions")  
+            .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
+            .send({})                      
+                        
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("body does not contain all the necessary attributes");
+    });
+
+    test("Should return an error indicating that the user sending the request does not exist", async () => {      
+        const response = await request(app)
+            .delete("/api/users/user4/transactions")  
+            .set("Cookie", `accessToken=${test_tokens[3]};refreshToken=${test_tokens[3]}`)
+            .send({
+                id : "dummy_id"
+            })                      
+                        
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("user not found");
+    });
+
+    test("Should return an error indicating that the transaction does not exist", async () => {      
+        const response = await request(app)
+            .delete("/api/users/user1/transactions")  
+            .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
+            .send({
+                id : "647bad3077bbc2edc8fd4110" // transaction id that does not exist
+            })                                             
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("transaction not found");
+    });
+
+    test("Should return an error indicating that the transaction does not belong to the user sending the request", async () => {      
+        const response = await request(app)
+            .delete("/api/users/user1/transactions")  
+            .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
+            .send({
+                id : "647badcb3b639a04b00e68ea" // transaction id that does not exist
+            })                                             
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("transaction not found for the user");
+    });
+
+    test("Should return a message indicating that the transaction was deleted", async () => {      
+        const response = await request(app)
+            .delete("/api/users/user1/transactions")  
+            .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
+            .send({
+                id : "647bada0e696a4c148e708c9" // transaction id that does not exist
+            })                                             
+        
+        expect(response.status).toBe(200);
+        expect(response.body.data.message).toBe("Transaction deleted");
     });
 })
 
