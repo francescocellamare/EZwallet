@@ -266,6 +266,7 @@ describe("createGroup", () => {
   afterEach(()=>{
     jest.clearAllMocks();
   })
+  beforeEach(() => jest.resetAllMocks())
 
 
   test('T1: not authentified -> return 401' , async () =>{
@@ -1107,7 +1108,6 @@ describe("createGroup", () => {
 })
 
 
-
 describe("getGroups", () => { 
 
   let mockReq, mockResp;
@@ -1323,6 +1323,11 @@ describe("getGroup", () => {
  })
 
 describe("addToGroup", () => {
+  afterEach(()=>{
+    jest.clearAllMocks();
+  })
+  beforeEach(() => jest.resetAllMocks())
+
   test('T1: authentication as admin but the user is regular', async () => {
     const mockReq = {
       cookies: {
@@ -1735,7 +1740,6 @@ describe("addToGroup", () => {
     expect(mockRes.status).toHaveBeenCalledWith(400)
   })
 
-  // TOBE fixed
   test('T10: authentication as admin and one email is already registered to other group', async () => {
     const mockReq = {
       cookies: {
@@ -1786,18 +1790,18 @@ describe("addToGroup", () => {
         _id: 456
       },
       {
-        username: 'alreadyRegisterd',
+        username: 'alreadyRegistered',
         email: 'alreadyRegistered@mail.com',
         role: 'Regular',
         _id: 123
       }
     ]
 
-    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[1])  // found
-    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(true)        // not already registered
-
     jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[0])  // found
-    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(null)        // already registered
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(null)        // not already registered
+
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[1])  // found
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(true)        // already registered
 
     jest.spyOn(Group, 'updateOne').mockImplementation( () => {} )
     await addToGroup(mockReq, mockRes)
