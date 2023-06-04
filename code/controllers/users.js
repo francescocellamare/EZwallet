@@ -354,7 +354,7 @@ export const getGroup = async (req, res) => {
     - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin) if the route is `api/groups/:name/pull`
    */
   export const removeFromGroup = async (req, res) => {
-    ù
+    
     try {
   
       const regexpAdmin = new RegExp('\/groups\/(.*)\/pull')  // admin route
@@ -494,9 +494,9 @@ export const getGroup = async (req, res) => {
         return res.status(400).json({ error: "The email does not represent a user in the database" })
       }
 //I GUESS WE SHOULD REMOVE THIS CODE
-      if (user.role === 'Admin'){
-        return res.status(401).json({ error: "The email represents an admin" })
-      }
+      // if (user.role === 'Admin'){
+      //   return res.status(401).json({ error: "The email represents an admin" })
+      // }
       let userDeleted = await User.deleteOne({ email: req.body.email });
   
       const { deletedCount } = await transactions.deleteMany({ username: user.username });
