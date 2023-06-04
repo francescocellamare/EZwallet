@@ -6,7 +6,7 @@
 | logout | I/I |✓ | ✓|✓|
 | createCategory | V/V |✓ | ✓| | last integration test is failing | 
 | updateCategory | V/V|✓ |✓ | ✓|  |
-| deleteCategory | V/V|✓ | ✓| | second and sixth integration tests are failing |
+| deleteCategory | V/V|✓ | ✓| | second unit test and second and sixth integration tests are failing |
 | getCategories | V/V|✓ | ✓| | last integration test is failing |
 | createTransaction | V/V|✓ | | | first unit test is failing and problems with integration|
 | getAllTransactions | F/F|✓ |✓  | ✓ | |
@@ -22,7 +22,7 @@
 | getGroups | I/I |✓ | ✓ | |
 | getGroup | I/I |✓ | ✓ | |
 | addToGroup | I/F | ✓ | ✓| ✓| |
-| removeFromGroup | I/V | ✓ | | ✓ |  |
+| removeFromGroup | I/V | ✓ | |  |  first integration test is failing |
 | deleteUser | I/I  | ✓ |✓|✓|one test still giving network error|
 | deleteGroup  | I/I | ✓ | ✓ |✓||
 | handleDateFilterParams | F/F| ✓ |✓ ||
