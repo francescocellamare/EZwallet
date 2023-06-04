@@ -1,5 +1,8 @@
-import { handleDateFilterParams, verifyAuth, handleAmountFilterParams } from '../controllers/utils';
+import { handleDateFilterParams, verifyAuth, handleAmountFilterParams, verifyAuthSimple, verifyAuthAdmin, verifyAuthUser, verifyAuthGroup } from '../controllers/utils';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import mongoose, { Model } from 'mongoose';
+import { User, Group } from '../models/User.js';
 
 describe("verifyAuth", () => { 
     const adminAccessTokenValid = jwt.sign({
@@ -441,4 +444,307 @@ describe("verifyAuth", () => {
         const response = verifyAuth(req, res, info)
         expect(Object.values(response).includes(false)).toBe(true)
     }) 
+})
+
+describe('verifyAuthSimple', () => {
+    const testerAccessTokenValid = jwt.sign({
+        email: "tester@test.com",
+        username: "tester",
+        role: "Regular",
+        id: 123
+    }, process.env.ACCESS_KEY, { expiresIn: '1y' })
+
+    const testerRefreshTokenValid = testerAccessTokenValid
+
+    test('T1: accessToken and/or refreshToken are not defined', () => {
+        const req = {
+            cookies: {
+
+            }
+        }
+        const cookieMock = (name, value, options) => {
+            res.cookieArgs = { name, value, options };
+        }
+        const res = {
+            cookie: cookieMock,
+            locals: {},
+        }
+        const response = verifyAuthSimple(req, res)
+        expect(Object.values(response).includes(false)).toBe(true)
+    })
+
+    test('T2: accessToken and refreshToken are both defined', () => {
+        
+        const req = {
+            cookies: {
+                accessToken: testerAccessTokenValid,
+                refreshToken: testerRefreshTokenValid
+            }
+        }
+        const cookieMock = (name, value, options) => {
+            res.cookieArgs = { name, value, options };
+        }
+        const res = {
+            cookie: cookieMock,
+            locals: {},
+        }
+        const response = verifyAuthSimple(req, res)
+        expect(Object.values(response).includes(true)).toBe(true)
+    })
+})
+
+describe('verifyAuthUser', () => {
+    const testerAccessTokenValid = jwt.sign({
+        email: "tester@test.com",
+        username: "tester",
+        role: "Regular",
+        id: 123
+    }, process.env.ACCESS_KEY, { expiresIn: '1y' })
+
+    const testerRefreshTokenValid = testerAccessTokenValid
+
+    test('T1: accessToken and/or refreshToken are not defined', () => {
+        const req = {
+            cookies: {
+
+            }
+        }
+        const cookieMock = (name, value, options) => {
+            res.cookieArgs = { name, value, options };
+        }
+        const res = {
+            cookie: cookieMock,
+            locals: {},
+        }
+        const response = verifyAuthUser(req, res, 'tester')
+        expect(Object.values(response).includes(false)).toBe(true)
+    })
+
+    test('T2: username is not defined', () => {
+        const req = {
+            cookies: {
+
+            }
+        }
+        const cookieMock = (name, value, options) => {
+            res.cookieArgs = { name, value, options };
+        }
+        const res = {
+            cookie: cookieMock,
+            locals: {},
+        }
+        const response = verifyAuthUser(req, res)
+        expect(Object.values(response).includes(false)).toBe(true)
+    })
+
+    test('T3: accessToken and refreshToken are both defined as well the username', () => {
+        
+        const req = {
+            cookies: {
+                accessToken: testerAccessTokenValid,
+                refreshToken: testerRefreshTokenValid
+            }
+        }
+        const cookieMock = (name, value, options) => {
+            res.cookieArgs = { name, value, options };
+        }
+        const res = {
+            cookie: cookieMock,
+            locals: {},
+        }
+        const response = verifyAuthUser(req, res, 'tester')
+        expect(Object.values(response).includes(true)).toBe(true)
+    })
+})
+
+describe('verifyAuthAdmin', () => {
+    const adminAccessTokenValid = jwt.sign({
+        email: "admin@email.com",
+        username: "admin",
+        role: "Admin",
+        id: 123
+    }, process.env.ACCESS_KEY, { expiresIn: '1y' })
+
+    const adminRefreshTokenValid = adminAccessTokenValid
+
+    test('T1: accessToken and/or refreshToken are not defined', () => {
+        const req = {
+            cookies: {
+
+            }
+        }
+        const cookieMock = (name, value, options) => {
+            res.cookieArgs = { name, value, options };
+        }
+        const res = {
+            cookie: cookieMock,
+            locals: {},
+        }
+        const response = verifyAuthAdmin(req, res)
+        expect(Object.values(response).includes(false)).toBe(true)
+    })
+
+    test('T2: accessToken and refreshToken are both defined', () => {
+        const req = {
+            cookies: {
+                accessToken: adminAccessTokenValid,
+                refreshToken: adminRefreshTokenValid
+            }
+        }
+        const cookieMock = (name, value, options) => {
+            res.cookieArgs = { name, value, options };
+        }
+        const res = {
+            cookie: cookieMock,
+            locals: {},
+        }
+        const response = verifyAuthSimple(req, res)
+        expect(Object.values(response).includes(true)).toBe(true)
+    })
+})
+
+describe('verifyAuthGroup', () => {
+
+    const testerAccessTokenValid = jwt.sign({
+        email: "tester@test.com",
+        username: "tester",
+        role: "Regular",
+        id: 123
+    }, process.env.ACCESS_KEY, { expiresIn: '1y' })
+
+    const testerRefreshTokenValid = testerAccessTokenValid
+
+    const adminAccessTokenValid = jwt.sign({
+        email: "admin@email.com",
+        username: "admin",
+        role: "Admin",
+        id: 123
+    }, process.env.ACCESS_KEY, { expiresIn: '1y' })
+
+    const adminRefreshTokenValid = adminAccessTokenValid
+
+    dotenv.config();
+    beforeAll(async () => {
+    const dbName = "testingDatabaseUtils";
+    const url = `${process.env.MONGO_URI}/${dbName}`;
+
+    await mongoose.connect(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+    });
+
+    beforeEach(async () => {
+        const usersList = [
+            {
+                _id: new mongoose.Types.ObjectId(123456),
+                email: "admin@email.com",
+                username: "admin",
+                role: "Admin",
+                password: 'admin',
+                refreshToken: adminRefreshTokenValid,
+            },
+            {
+                _id: new mongoose.Types.ObjectId(23),
+                email: "tester@test.com",
+                username: "tester",
+                password: 'tester',
+                refreshToken: testerRefreshTokenValid,
+                role: "Regular",
+            }
+            ]
+        
+        const fakeGroup = {
+        name: 'fakeGroup',
+        members: [
+            {
+            email: 'admin@email.com',
+            user: mongoose.Types.ObjectId(123456)
+            }
+        ]
+        }
+    
+        await User.deleteMany({})
+        await Group.deleteMany({})
+        await User.create(usersList)
+        await Group.create(fakeGroup)
+    })
+
+    afterAll(async () => {
+        await mongoose.connection.db.dropDatabase();
+        await mongoose.connection.close();
+    });
+
+
+
+    test('T1: accessToken and/or refreshToken are not defined', async () => {
+        const req = {
+            cookies: {
+
+            }
+        }
+        const cookieMock = (name, value, options) => {
+            res.cookieArgs = { name, value, options };
+        }
+        const res = {
+            cookie: cookieMock,
+            locals: {},
+        }
+        const response = await verifyAuthGroup(req, res, 'fakeGroup')
+        expect(Object.values(response).includes(false)).toBe(true)
+    })
+
+    test('T2: group name is not defined', async () => {
+        const req = {
+            cookies: {
+                accessToken: adminAccessTokenValid,
+                refreshToken: adminRefreshTokenValid
+            }
+        }
+        const cookieMock = (name, value, options) => {
+            res.cookieArgs = { name, value, options };
+        }
+        const res = {
+            cookie: cookieMock,
+            locals: {},
+        }
+        const response = await verifyAuthGroup(req, res)
+        expect(Object.values(response).includes(false)).toBe(true)
+    })
+
+    test('T3: group does not exist', async () => {
+        const req = {
+            cookies: {
+                accessToken: adminAccessTokenValid,
+                refreshToken: adminRefreshTokenValid
+            }
+        }
+        const cookieMock = (name, value, options) => {
+            res.cookieArgs = { name, value, options };
+        }
+        const res = {
+            cookie: cookieMock,
+            locals: {},
+        }
+        const response = await verifyAuthGroup(req, res, 'thisGroupDoesNotExist')
+        expect(Object.values(response).includes(false)).toBe(true)
+    })
+
+    test('T4: group does exist', async () => {
+        const req = {
+            cookies: {
+                accessToken: adminAccessTokenValid,
+                refreshToken: adminRefreshTokenValid
+            }
+        }
+        const cookieMock = (name, value, options) => {
+            res.cookieArgs = { name, value, options };
+        }
+        const res = {
+            cookie: cookieMock,
+            locals: {},
+        }
+        const response = await verifyAuthGroup(req, res, 'fakeGroup')
+        expect(Object.values(response).includes(true)).toBe(true)
+    })
 })

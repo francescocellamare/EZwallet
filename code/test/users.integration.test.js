@@ -418,7 +418,7 @@ describe("getGroup", () => {
 
 })
 
-describe.only("addToGroup", () => {
+describe("addToGroup", () => {
   const adminAccessTokenValid = jwt.sign({
     email: "admin@email.com",
     username: "admin",
