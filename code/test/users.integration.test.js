@@ -4,6 +4,7 @@ import { User, Group } from '../models/User.js';
 import { transactions, categories } from '../models/model';
 import mongoose, { Model } from 'mongoose';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 import { response } from 'express';
 const bcrypt = require("bcryptjs");
 
@@ -418,7 +419,275 @@ describe("getGroup", () => {
 })
 
 describe("addToGroup", () => {
+  const adminAccessTokenValid = jwt.sign({
+    email: "admin@email.com",
+    username: "admin",
+    role: "Admin",
+    id: 123
+  }, process.env.ACCESS_KEY, { expiresIn: '1y' })
 
+  const testerAccessTokenValid = jwt.sign({
+      email: "tester@test.com",
+      username: "tester",
+      role: "Regular",
+      id: 123
+  }, process.env.ACCESS_KEY, { expiresIn: '1y' })
+
+  const testerRefreshTokenValid = testerAccessTokenValid
+  const adminRefreshTokenValid = adminAccessTokenValid
+
+  const adminAccessTokenExpired = jwt.sign({
+      email: "tester@test.com",
+      username: "tester",
+      role: "Admin",
+      id: 123
+  }, process.env.ACCESS_KEY, { expiresIn: '0s' })
+
+  let testerAccessTokenExpired = jwt.sign({
+      email: "tester@test.com",
+      username: "tester",
+      role: "Regular",
+      id: 123
+  }, process.env.ACCESS_KEY, { expiresIn: '0s' })
+
+  const testerRefreshTokenExpired = testerAccessTokenExpired
+  const adminRefreshTokenExpired = adminAccessTokenExpired
+
+  beforeEach( async () => {
+    const usersList = [
+      {
+        _id: new mongoose.Types.ObjectId(123456),
+        email: "admin@email.com",
+        username: "admin",
+        role: "Admin",
+        password: 'admin',
+        refreshToken: adminRefreshTokenValid,
+      },
+      {
+        _id: new mongoose.Types.ObjectId(23),
+        email: "tester@test.com",
+        username: "tester",
+        password: 'tester',
+        refreshToken: testerRefreshTokenValid,
+        role: "Regular",
+      },
+      {
+        _id: new mongoose.Types.ObjectId(456),
+        email: 'user1@email.com',
+        username: 'user1',
+        password: 'user1',
+        refreshToken: 'validAccessToken',
+        role: 'Regular'
+      },
+      {
+        _id: new mongoose.Types.ObjectId(789),
+        email: 'user2@email.com',
+        username: 'user2',
+        password: 'user2',
+        refreshToken: 'validAccessToken',
+        role: 'Regular'
+      },
+      {
+        _id: new mongoose.Types.ObjectId(987),
+        email: 'user3@email.com',
+        username: 'user3',
+        password: 'user3',
+        refreshToken: 'validAccessToken',
+        role: 'Regular'
+      }
+    ]
+
+    const fakeGroup = {
+      name: 'fakeGroup',
+      members: [
+        {
+          email: 'admin@email.com',
+          user: mongoose.Types.ObjectId(123456)
+        }
+      ]
+    }
+
+    await User.deleteMany({})
+    await Group.deleteMany({})
+    await User.create(usersList)
+    await Group.create(fakeGroup)
+  })
+
+
+  test('T1: authentication as admin but the user is regular', async () => {
+    const response = await request(app)
+    .patch("/api/groups/fakeGroup/insert")
+    .set("Cookie", `refreshToken=${testerRefreshTokenValid};  accessToken=${testerAccessTokenValid}`)
+
+    expect(response.status).toBe(401)
+  })
+
+  test('T2: authentication as group but the user is not part of the group', async () => {
+    const tmpGroup = {
+      name: 'tmpGroup',
+      members: [
+        {
+          email: 'user1@email.com',
+          user: mongoose.Types.ObjectId(456)
+        }
+      ]
+    }
+
+    await Group.create(tmpGroup)
+
+    const response = await request(app)
+    .patch("/api/groups/tmpGroup/add")
+    .set("Cookie", `refreshToken=${testerRefreshTokenValid};  accessToken=${testerAccessTokenValid}`)
+
+    expect(response.status).toBe(401)
+  })
+
+  test('T3: authentication as admin but there is a not valid email', async () => {
+    const response = await request(app)
+    .patch("/api/groups/fakeGroup/insert")
+    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+    .send( {
+      emails: [
+        'user2@email.com',
+        'emailNotValid'
+      ]
+    })
+
+    expect(response.status).toBe(400)
+  })
+
+  test('T4: authentication as admin but there is ONLY a not valid email', async () => {
+    const response = await request(app)
+    .patch("/api/groups/fakeGroup/insert")
+    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+    .send( {
+      emails: [
+        ''
+      ]
+    })
+
+    expect(response.status).toBe(400)
+  })
+
+
+  test('T5: authentication as admin but there are no emails', async () => {
+    const response = await request(app)
+    .patch("/api/groups/fakeGroup/insert")
+    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+
+    expect(response.status).toBe(400)
+  })
+
+  test('T6: authentication as admin but there is ONLY a not valid email', async () => {
+    const response = await request(app)
+    .patch("/api/groups/thisGroupDoesNotExist/insert")
+    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+    .send( {
+      emails: [
+        'user2@email.com'
+      ]
+    })
+
+    expect(response.status).toBe(400)
+  })
+
+  test('T7: authentication as admin and users are added', async () => {
+    const response = await request(app)
+    .patch("/api/groups/fakeGroup/insert")
+    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+    .send( {
+      emails: [
+        'user1@email.com',
+        'user2@email.com'
+      ]
+    })
+
+    expect(response.status).toBe(200)
+    expect(response.body.data.group.name).toBe('fakeGroup')
+    expect(response.body.data.membersNotFound).toEqual([])
+    expect(response.body.data.alreadyInGroup).toEqual([])
+
+    const expectedResponse = [
+      {email: 'admin@email.com'},
+      {email: 'user1@email.com'},
+      {email: 'user2@email.com'}
+    ]
+    expect(response.body.data.group.members).toEqual(expectedResponse)
+  })
+
+
+  test('T8: authentication as admin but there is an email not found in the system', async () => {
+    const response = await request(app)
+    .patch("/api/groups/fakeGroup/insert")
+    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+    .send( {
+      emails: [
+        'user1@email.com',
+        'user2@email.com',
+        'emailIsNotFound@email.com'
+      ]
+    })
+
+    expect(response.status).toBe(200)
+    expect(response.body.data.group.name).toBe('fakeGroup')
+    expect(response.body.data.membersNotFound).toEqual([{email: 'emailIsNotFound@email.com'}])
+    expect(response.body.data.alreadyInGroup).toEqual([])
+
+    const expectedResponse = [
+      {email: 'admin@email.com'},
+      {email: 'user1@email.com'},
+      {email: 'user2@email.com'}
+    ]
+    expect(response.body.data.group.members).toEqual(expectedResponse)
+  })
+
+  test('T9: authentication as admin and all emails are not found in the system', async () => {
+    const response = await request(app)
+    .patch("/api/groups/fakeGroup/insert")
+    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+    .send( {
+      emails: [
+        'emailIsNotFound@email.com',
+        'emailIsNotFoundAgain@email.com'
+      ]
+    })
+    expect(response.status).toBe(400)
+  })
+
+  test('T10: authentication as admin and one email is already registered to other group', async () => {
+    const tmpGroup = {
+      name: 'tmpGroup',
+      members: [
+        {
+          email: 'user2@email.com',
+          user: mongoose.Types.ObjectId(789)
+        }
+      ]
+    }
+
+    await Group.create(tmpGroup)
+    
+    const response = await request(app)
+    .patch("/api/groups/fakeGroup/insert")
+    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+    .send( {
+      emails: [
+        'user1@email.com',
+        'user2@email.com'
+      ]
+    })
+
+    expect(response.status).toBe(200)
+    expect(response.body.data.group.name).toBe('fakeGroup')
+    expect(response.body.data.membersNotFound).toEqual([])
+    expect(response.body.data.alreadyInGroup).toEqual([{email: 'user2@email.com'}])
+
+    const expectedResponse = [
+      {email: 'admin@email.com'},
+      {email: 'user1@email.com'}
+    ]
+    expect(response.body.data.group.members).toEqual(expectedResponse)
+  })
 })
 
 describe("removeFromGroup", () => {

@@ -5,7 +5,7 @@ import { transactions } from '../models/model.js';
 import * as utils from '../controllers/utils';
 import * as users from '../controllers/users';
 import jwt from 'jsonwebtoken';
-import  {getGroups, getUser, getUsers, createGroup, getGroup, deleteUser, deleteGroup, addToGroup} from '../controllers/users';
+import  {getGroups, getUser, getUsers, createGroup, getGroup, deleteUser, deleteGroup, addToGroup, removeFromGroup} from '../controllers/users';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { createCategory } from '../controllers/controller';
 
@@ -1124,8 +1124,13 @@ describe("getGroups", () => {
           refreshedTokenMessage : "dummy message"
         }
       }
+
+
     }
-  );
+    );
+    afterEach(()=>{
+      jest.clearAllMocks();
+   })
 
 
   test("T1:no groups -> return 200 and empty list", async () => {
@@ -1221,6 +1226,7 @@ describe("getGroup", () => {
   let mockReq, mockResp;
   beforeEach(
       ()=>{
+        jest.resetAllMocks();
          mockReq = {
           params: {
             name: 'group',
@@ -1258,7 +1264,7 @@ describe("getGroup", () => {
     ))
    
     
-    jest.spyOn(Group, "findOne").mockImplementation(()=>group_r);
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(group_r);
     await getGroup(mockReq, mockResp);
     expect(mockResp.status).toHaveBeenCalledWith(200);
     expect(mockResp.json).toHaveBeenCalledWith({data: {group:group_r, refreshedTokenMessage: mockResp.locals.refreshedTokenMessage}})
@@ -1277,7 +1283,7 @@ describe("getGroup", () => {
         cause:"Authorized"
       }
     ))
-   jest.spyOn(Group, "findOne").mockImplementation(()=> null);
+   jest.spyOn(Group, "findOne").mockImplementationOnce(()=> null);
    await getGroup(mockReq, mockResp);
    expect(mockResp.status).toHaveBeenCalledWith(400);
    expect(mockResp.json).toHaveBeenCalledWith({ error: "group does not exist" });
@@ -1311,7 +1317,7 @@ describe("getGroup", () => {
         cause:"Authorized"
       }
     ))
-    jest.spyOn(Group, "findOne").mockImplementation(()=> {throw new Error('server crash')});
+    jest.spyOn(Group, "findOne").mockImplementationOnce(()=> {throw new Error('server crash')});
   
     await getGroup(mockReq, mockResp);
   
@@ -1820,14 +1826,220 @@ describe("addToGroup", () => {
   })
 })
 
-describe("removeFromGroup", () => { })
+describe("removeFromGroup", () => {
+  afterEach(()=>{
+    jest.clearAllMocks();
+  })
+  beforeEach(() => jest.resetAllMocks())
+
+  test('T1: authentication as admin but the user is regular', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'mail3@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: false, cause: 'unauthorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    await removeFromGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(401)
+  })
+
+  test('T2: authentication as group but the user is not part of the group', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'mail3@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/add'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: false, cause: 'unauthorized'}
+    jest.spyOn(utils, 'verifyAuthGroup').mockImplementation( () => expectedResponeAuth)
+
+    await removeFromGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(401)
+  })
+  test('T3: authorized as admin but some attribures are missing', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+    expect(mockRes.json).toHaveBeenCalledWith({ error: "The request body does not contain all the necessary attributes" });
+  })
+
+  
+  test('T4: authentication as admin but the group does not exist', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'notValidFormatMail'
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    jest.spyOn(Group, 'findOne').mockResolvedValue(null)
+    await addToGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+  })
+  test('T5: authentication as admin and users are all not valid', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation( () => expectedResponeAuth)
+
+    const fakeGroup = {
+      name: 'testGroup',
+      members: [
+        {
+          email: 'oldMember@mail.com',
+          _id: 123
+        },
+        {
+          email: 'anotherOldMember@mail.com',
+          _id: 321
+        }
+      ]
+    }
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(fakeGroup)
+
+    const fakeData = [
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },{
+        username: 'mail2',
+        email: 'mail2@mail.com',
+        role: 'Regular',
+        _id: 789
+      }
+    ]
+
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(null);
+
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[0]);
+    
+    await removeFromGroup(mockReq, mockRes);
+    // expect(mockRes.status).toHaveBeenCalledWith(401);
+    // expect(mockRes.json).toHaveBeenCalledWith({ error: "All the members' email either do not exist or are not in the group" });
+
+  });
+
+
+
+
+
+ })
 
 describe("deleteUser", () => {
 
   let mockReq, mockResp;
   beforeEach(
-      ()=>{
-         mockReq = {
+    ()=>{
+      jest.resetAllMocks();
+      mockReq = {
           body:{
             email: 'test@example.com'
           },
@@ -1843,7 +2055,6 @@ describe("deleteUser", () => {
 
       
 
-        jest.clearAllMocks();
       }
       )
       
@@ -1852,7 +2063,7 @@ describe("deleteUser", () => {
       }
       )
       
-      test('T1: delete the user -> return 200' , async()=>{
+      test('T1: delete the user that does not exist in a group -> return 200' , async()=>{
         let mockReq = {
           body:{
             email: 'test@example.com'
@@ -1863,23 +2074,61 @@ describe("deleteUser", () => {
                   cause:"Authorized"
                 }
               ))
-            const user = { email: 'user@example.com' };
+            const user = { email: 'test@example.com' };
             jest.spyOn(User, "findOne").mockImplementationOnce(()=>user);
-            jest.spyOn(User, "deleteOne").mockImplementationOnce(()=>{deletedCount: 1});
-            jest.spyOn(transactions, "deleteMany").mockImplementation(()=>{deletedCount: 2});
+            jest.spyOn(User, "deleteOne").mockResolvedValueOnce({deletedCount: 1});
+            jest.spyOn(transactions, "deleteMany").mockResolvedValueOnce({deletedCount: 2});
             const group = { _id: 'group-id', members: [{ email: 'user@example.com' }] };
-            jest.spyOn(Group, "findOne").mockImplementation(()=>group);
-            jest.spyOn(Group, "deleteOne").mockImplementation(()=>{});
+            jest.spyOn(Group, "findOne").mockResolvedValueOnce(null);
+          //  jest.spyOn(Group, "deleteOne").mockImplementation(()=>{});
       
             await deleteUser(mockReq, mockResp);
             expect(mockResp.status).toHaveBeenCalledWith(200);
             expect(mockResp.json).toHaveBeenCalledWith({
+              data:{
+              deletedFromGroup: false,
               deletedTransactions: 2,
-              deletedFromGroup: true,
-            });
+            },
+            refreshedTokenMessage: "dummy message"});
           });
-        
-    test('T2: missing field in body -> retunr 400', async()=>{
+  test('T2: delete the user beloging to a group -> return 200' , async()=>{
+            let mockReq = {
+              body:{
+                email: 'test@example.com'
+              }
+            };
+          jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
+                    {authorized: true,
+                      cause:"Authorized"
+                    }
+                  ))
+                const user = { email: 'test@example.com' };
+                jest.spyOn(User, "findOne").mockImplementationOnce(()=>user);
+                jest.spyOn(User, "deleteOne").mockResolvedValueOnce({deletedCount: 1});
+                jest.spyOn(transactions, "deleteMany").mockResolvedValueOnce({deletedCount: 2});
+                const group = { _id: 'group-id', members: [{ email: 'test@example.com' }] };
+                jest.spyOn(Group, "findOne").mockResolvedValueOnce(group);
+                jest.spyOn(Group, "deleteOne").mockImplementation(()=>{});
+          
+                await deleteUser(mockReq, mockResp);
+                expect(mockResp.status).toHaveBeenCalledWith(200);
+                expect(mockResp.json).toHaveBeenCalledWith({
+                  data:{
+                  deletedFromGroup: true,
+                  deletedTransactions: 2,
+                },
+                refreshedTokenMessage: "dummy message"});
+              });
+                  
+    
+    
+    
+    
+    
+    
+    
+    
+  test('T2: missing field in body -> retunr 400', async()=>{
       
       let mockReq_miss = {
         body: {
