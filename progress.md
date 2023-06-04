@@ -18,10 +18,10 @@
 | deleteTransaction | K/K|✓ | ✓ | ✓ |
 | getUsers | I/I |✓ | ✓ | |
 | getUser | I/I |✓ | ✓ | |
-| createGroup | I/K |✓ |  | |
+| createGroup | I/K |✓ | ✓  | |
 | getGroups | I/I |✓ | ✓ | |
 | getGroup | I/I |✓ | ✓ | |
-| addToGroup | I/F | ✓ | | | Some parts that depend on authentication are missing|
+| addToGroup | I/F | ✓ | ✓ | ||
 | removeFromGroup | I/V | ✓ | | |  Some parts that depend on authentication are missing|
 | deleteUser | I/I  | ✓ ||||
 | deleteGroup  | I/I | ✓ | ✓ |||
