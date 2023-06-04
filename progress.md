@@ -21,13 +21,13 @@
 | createGroup | I/K |✓ |  | |
 | getGroups | I/I |✓ | ✓ | |
 | getGroup | I/I |✓ | ✓ | |
-| addToGroup | I/F | ✓ | | | Some parts that depend on authentication are missing|
+| addToGroup | I/F | ✓ | ✓ | ✓||
 | removeFromGroup | I/V | ✓ | | |  Some parts that depend on authentication are missing|
 | deleteUser | I/I  | ✓ |✓|✓|one test still giving network error|
 | deleteGroup  | I/I | ✓ | ✓ |✓||
 | handleDateFilterParams | F/F| ✓ |✓ ||
 | verifyAuth| F/F |✓ |✓ |✓ |
 | handleAmountFilterParams| F/F |✓ |✓ ||
-| verifyAuthAdmin| F/F |✓ |✓ ||
-| verifyAuthUser| F/F |✓ |✓ ||
-| verifyAuthGroup | F/F|✓ |✓ ||
+| verifyAuthAdmin| F/F |✓ |✓ |✓|
+| verifyAuthUser| F/F |✓ |✓ |✓|
+| verifyAuthGroup | F/F|✓ |✓ |✓|
