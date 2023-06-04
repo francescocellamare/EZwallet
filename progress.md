@@ -21,7 +21,7 @@
 | createGroup | I/K |✓ |  | |
 | getGroups | I/I |✓ | ✓ | |
 | getGroup | I/I |✓ | ✓ | |
-| addToGroup | I/F | ✓ | ✓| | ✓|
+| addToGroup | I/F | ✓ | ✓| ✓| |
 | removeFromGroup | I/V | ✓ | | ✓ |  |
 | deleteUser | I/I  | ✓ |✓|✓|one test still giving network error|
 | deleteGroup  | I/I | ✓ | ✓ |✓||
