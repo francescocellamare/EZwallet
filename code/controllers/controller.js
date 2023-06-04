@@ -654,10 +654,13 @@ export const getTransactionsByGroup = async (req, res) => {
                 }
             },{
                 $project : {
+                    _id : 0,
                     "members_info.username" : 1
                 }
             }                       
-        ])
+        ])    
+        
+        
 
         if(result.length === 0){
             return res.status(400).json({ error : "Group does not exist" })
@@ -715,21 +718,18 @@ export const getTransactionsByGroup = async (req, res) => {
 
 /**
  * Return all transactions made by members of a specific group filtered by a specific category
-  - Request Body Content: None
-  - Response `data` Content: An array of objects, each one having attributes `username`, `type`, `amount`, `date` and `color`, filtered so that `type` is the same for all objects.
-  - Optional behavior:
-    - error 401 is returned if the group or the category does not exist
-    - empty array must be returned if there are no transactions made by the group with the specified category
+  - Request Parameters: A string equal to the `name` of the requested group, a string equal to the requested `category`
+  - Example: `/api/groups/Family/transactions/category/food` (user route)
+  - Example: `/api/transactions/groups/Family/category/food` (admin route)
+- Request Body Content: None
+- Response `data` Content: An array of objects, each one having attributes `username`, `type`, `amount`, `date` and `color`, filtered so that `type` is the same for all objects.
+  - Example: `res.status(200).json({data: [{username: "Mario", amount: 100, type: "food", date: "2023-05-19T00:00:00", color: "red"}, {username: "Luigi", amount: 20, type: "food", date: "2023-05-19T10:00:00", color: "red"} ] refreshedTokenMessage: res.locals.refreshedTokenMessage})`
+- Returns a 400 error if the group name passed as a route parameter does not represent a group in the database
+- Returns a 400 error if the category passed as a route parameter does not represent a category in the database
+- Returns a 401 error if called by an authenticated user who is not part of the group (authType = Group) if the route is `/api/groups/:name/transactions/category/:category`
+- Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin) if the route is `/api/transactions/groups/:name/category/:category`
  */
 export const getTransactionsByGroupByCategory = async (req, res) => {
-
-    function Query(username, type, amount, date, color) {
-        this.username = username
-        this.type = type
-        this.amount = amount
-        this.date = date
-        this.color = color
-    }
 
     try {
         const regexp = new RegExp('\/transactions\/groups\/(.*)\/category\/(.*)')
@@ -757,16 +757,17 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         else {
             // admin authentication                     
             const { authorized, cause } = verifyAuthAdmin(req, res);
+            
             if (!authorized) return res.status(401).json({ error: cause })
         }
 
         // group is not into the db
-        let found = await Group.findOne({ name: groupName })
+        let found = await Group.findOne({ name: groupName })        
         if (!found) {
             return res.status(400).json({ error: "group does not exist" })
-        }
+        }        
         // category is not into the db
-        found = await categories.find({ type: categoryType })
+        found = await categories.findOne({ type: categoryType })        
         if (!found)
             return res.status(400).json({ error: "category does not exist" })
 
@@ -774,27 +775,25 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
             { $match: { name: groupName } },
             {
                 $lookup: {
-                    from: 'users',
-                    localField: 'members.user',
-                    foreignField: '_id',
-                    as: 'members'
+                    from: "users",
+                    localField: "members.email",
+                    foreignField: "email",
+                    as: "members_info"
                 }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    members: 1
+            },{
+                $project : {                    
+                    "members_info.username" : 1
                 }
             }
-        ]);
-
-        members = members[0]
-        if (!members) {
-            return res.status(400).json({ message: "group or category does not exist" })
-        }
+        ]);         
         
-        members = members.members.map(item => item.username)
+        
 
+        if (members.length === 0) {
+            return res.status(400).json({ error: "group or category does not exist" })
+        }   
+
+        members = members[0].members_info.map(m => m.username)                        
 
         const query = await transactions.aggregate([
             {
@@ -813,15 +812,11 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
             { $match: { type: categoryType } },
             { $unwind: "$categories_info" }
         ])
-            .then(result => {
-                result = result.map(item => new Query(item.username, item.type, item.amount, item.date, item.categories_info.color))
-                res.status(200).json({ data: result, refreshedTokenMessage: res.locals.refreshedTokenMessage })
-            })
-            .catch(err => {
-                throw err
-            })
+        
+        let result = query.map(item => {return {username : item.username, type : item.type, amount : item.amount, date : item.date, color : item.categories_info.color}})        
+        res.status(200).json({ data: result, refreshedTokenMessage: res.locals.refreshedTokenMessage })        
 
-    } catch (error) {
+    } catch (error) {        
         res.status(500).json({ error: error.message })
     }
 }
@@ -848,7 +843,7 @@ export const deleteTransaction = async (req, res) => {
 
         if (!userAuthInfo.authorized) {
             return res.status(401).json({ error: userAuthInfo.cause })
-        }
+        }        
 
         // body is not complete
         if (!id || id === '') return res.status(400).json({ error: 'body does not contain all the necessary attributes' })
@@ -869,21 +864,28 @@ export const deleteTransaction = async (req, res) => {
         const query = { _id: mongoose.Types.ObjectId(req.body.id), username: username }
         const data = await transactions.deleteOne(query);
         if (data.deletedCount === 0)
-            return res.status(400).json({ error: "transaction does not exist" })
+            return res.status(400).json({ error: "transaction not found" })
 
         res.status(200).json({ data: { message: "Transaction deleted" }, refreshedTokenMessage: res.locals.refreshedTokenMessage })
     } catch (error) {
+        
         res.status(500).json({ error: error.message })
     }
 }
 
 /**
  * Delete multiple transactions identified by their ids
-  - Request Body Content: An array of strings that lists the `_ids` of the transactions to be deleted
-  - Response `data` Content: A message confirming successful deletion
-  - Optional behavior:
-    - error 401 is returned if at least one of the `_ids` does not have a corresponding transaction. Transactions that have an id are not deleted in this case
- */
+ - Request Parameters: None
+- Request Body Content: An array of strings that lists the `_ids` of the transactions to be deleted
+  - Example: `{_ids: ["6hjkohgfc8nvu786"]}`
+- Response `data` Content: A message confirming successful deletion
+  - Example: `res.status(200).json({data: {message: "Transactions deleted"}, refreshedTokenMessage: res.locals.refreshedTokenMessage})`
+- In case any of the following errors apply then no transaction is deleted
+- Returns a 400 error if the request body does not contain all the necessary attributes
+- Returns a 400 error if at least one of the ids in the array is an empty string
+- Returns a 400 error if at least one of the ids in the array does not represent a transaction in the database
+- Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin)
+*/
 export const deleteTransactions = async (req, res) => {
     try {
         const adminAuthInfo = verifyAuthAdmin(req, res)

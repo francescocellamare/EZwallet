@@ -5,7 +5,6 @@
 | login | I/I |✓ | ✓|✓|
 | logout | I/I |✓ | ✓|✓|
 | createCategory | V/V |✓ | ✓| |  | 
-<<<<<<< progress.md
 | updateCategory | V/V|✓ |✓ | |  |
 | deleteCategory | V/V|✓ | ✓| |  |
 | getCategories | V/V|✓ | ✓| | |
@@ -17,11 +16,11 @@
 | getTransactionsByGroupByCategory | K/K|✓ | | |
 | deleteTransactions | K/K|✓ | ✓ | | 
 | deleteTransaction | K/K|✓ | ✓ | |
-| getUsers | I/I |✓ | ✓ |✓ |
-| getUser | I/I |✓ | ✓ | ✓|
+| getUsers | I/I |✓ | ✓ | |
+| getUser | I/I |✓ | ✓ | |
 | createGroup | I/K |✓ |  | |
-| getGroups | I/I |✓ | ✓ |✓ |
-| getGroup | I/I |✓ | ✓ | ✓|
+| getGroups | I/I |✓ | ✓ | |
+| getGroup | I/I |✓ | ✓ | |
 | addToGroup | I/F | ✓ | | | Some parts that depend on authentication are missing|
 | removeFromGroup | I/V | ✓ | | |  Some parts that depend on authentication are missing|
 | deleteUser | I/I  | ✓ |✓|✓|one test still giving network error|
