@@ -395,8 +395,6 @@ describe("getGroup", () => {
       })
   })
 
-
-
   test("T4: group does not exist -> return 400 and error message", async () => {
     //This token is generatd with role = admin
     const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4ifQ.9wJED0kKWyCEUKcZzeCzWNBAgachnMVFrR4cvshwzpo'
@@ -408,14 +406,7 @@ describe("getGroup", () => {
         expect(response.body.error).toBe("group does not exist")
 
       })
-
-
-
-
   })
-
-
-
 })
 
 describe("addToGroup", () => {
@@ -1383,8 +1374,6 @@ describe("deleteGroup", () => {//create a group with only one user
     await expect(response.status).toBe(401)
     await expect(response.body.error).toBe("User does not have admin role")
   })
-
-
 })
 
 
