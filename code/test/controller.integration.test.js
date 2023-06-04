@@ -7,56 +7,595 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-beforeAll(async () => {  
+beforeAll(async () => {
 
-  const dbName = "test";
-  const url = `${process.env.MONGO_URI}/${dbName}`;
+    const dbName = "test";
+    const url = `${process.env.MONGO_URI}/${dbName}`;
 
-  await mongoose.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+    await mongoose.connect(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+
+    await categories.deleteMany({})
+    await transactions.deleteMany({})
+    await User.deleteMany({})
+    await Group.deleteMany({})
 
 });
 
 afterAll(async () => {
-//   await mongoose.connection.db.dropDatabase();
-  await mongoose.connection.close();
+    //   await mongoose.connection.db.dropDatabase();
+    await mongoose.connection.close();
 });
 
-describe("createCategory", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+describe("createCategory", () => {
+    let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
+    let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
+    beforeEach(async () => {
+
+        await User.insertMany([{
+            username: "tester",
+            email: "tester@test.com",
+            password: "tester",
+            refreshToken: refreshTokenUser
+        }, {
+            username: "admin",
+            email: "admin@email.com",
+            password: "admin",
+            refreshToken: refreshTokenAdmin,
+            role: "Admin"
+        }])
+
+        await categories.create({
+            type: "food",
+            color: "red"
+        })
+    })
+
+    afterEach(async () => {
+        await categories.deleteMany({})
+        await transactions.deleteMany({})
+        await User.deleteMany({})
+        await Group.deleteMany({})
+    })
+
+    test('T1: create a new category -> return a 200 status and the saved category with refreshed token message', async () => {
+        const response = await request(app)
+            .post("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ type: "health", color: "red" })
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toHaveProperty("type", "health")
+        expect(response.body.data).toHaveProperty("color", "red")
+    });
+
+    test('T2: not an admin request -> return a 401 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ type: "health", color: "red" })
+
+        expect(response.status).toBe(401)
+        const errorMessage = response.body.error ? true : response.body.message ? true : false
+        expect(errorMessage).toBe(true)
+    });
+
+    test('T3: missing type -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ color: "red" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("type is not provided")
+    });
+
+    test('T4: missing color -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ type: "health" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("color is not provided")
+    });
+
+    test('T5: empty type -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ type: "", color: "red" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("type is empty")
+    });
+
+    test('T6: empty color -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ type: "health", color: "" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("color is empty")
+    });
+
+    test('T7: already existing category type -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ type: "food", color: "blue" })
+
+        console.log("error", response.body.error);
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("category type is already in use")
     });
 })
 
-describe("updateCategory", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+describe("updateCategory", () => {
+    let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
+    let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
+    beforeEach(async () => {
+        await categories.create([{
+            type: "food",
+            color: "red"
+        }, {
+            type: "entertainment",
+            color: "blue"
+        }])
+
+        await User.insertMany([{
+            username: "tester",
+            email: "tester@test.com",
+            password: "tester",
+            refreshToken: refreshTokenUser
+        }, {
+            username: "admin",
+            email: "admin@email.com",
+            password: "admin",
+            refreshToken: refreshTokenAdmin,
+            role: "Admin"
+        }])
+
+        await transactions.insertMany([{
+            username: "tester",
+            type: "food",
+            amount: 20
+        }, {
+            username: "tester",
+            type: "food",
+            amount: 100
+        }])
+    })
+
+    afterEach(async () => {
+        await categories.deleteMany({})
+        await transactions.deleteMany({})
+        await User.deleteMany({})
+        await Group.deleteMany({})
+    })
+
+
+    test("T1: update a category -> return a 200 status and the saved category with refreshed token message", async () => {
+        const response = await request(app)
+            .patch("/api/categories/food") //Route to call
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`) //Setting cookies in the request
+            .send({ type: "health", color: "blue" })
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toHaveProperty("message")
+        expect(response.body.data).toHaveProperty("count", 2)
+    })
+
+    test("T2: not an admin request -> return a 401 status with the error message", async () => {
+        const response = await request(app)
+            .patch("/api/categories/food")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ type: "food", color: "green" })
+
+        expect(response.status).toBe(401)
+        const errorMessage = response.body.error ? true : response.body.message ? true : false
+        expect(errorMessage).toBe(true)
+    })
+
+    test('T3: missing new type -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .patch("/api/categories/food")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ color: "red" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("New type is not provided")
+    })
+
+    test('T4: missing new color -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .patch("/api/categories/food")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ type: "health" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("New color is not provided")
+    })
+
+    test('T5: empty new type -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .patch("/api/categories/food")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ type: "", color: "green" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("New type is empty")
+    })
+
+    test('T6: empty new color -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .patch("/api/categories/food")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ type: "food", color: "" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("New color is empty")
+    })
+
+    test('T7: already in use type -> return a 400 status with the error message ', async () => {
+        const response = await request(app)
+            .patch("/api/categories/food")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ type: "entertainment", color: "blue" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("New type is already in use")
+    })
+
+    test('T8: not existing selected category -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .patch("/api/categories/investment")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ type: "sport", color: "red" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("Selected category does not exist")
+    })
+})
+
+describe("deleteCategory", () => {
+    let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
+    let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
+
+    beforeEach(async () => {
+
+        await categories.create({
+            type: "food",
+            color: "red"
+        }, {
+            type: "entertainment",
+            color: "blue"
+        })
+
+        await User.insertMany([{
+            username: "tester",
+            email: "tester@test.com",
+            password: "tester",
+            refreshToken: refreshTokenUser
+        }, {
+            username: "admin",
+            email: "admin@email.com",
+            password: "admin",
+            refreshToken: refreshTokenAdmin,
+            role: "Admin"
+        }])
+
+        await transactions.insertMany([{
+            username: "tester",
+            type: "food",
+            amount: 20
+        }, {
+            username: "tester",
+            type: "food",
+            amount: 100
+        }])
+    })
+
+    afterEach(async () => {
+        await categories.deleteMany({})
+        await transactions.deleteMany({})
+        await User.deleteMany({})
+        await Group.deleteMany({})
+    })
+
+    test("T1: delete a category -> return 200 status, a message, the attribute `count`, and the refreshed token", async () => {
+        const response = await request(app)
+            .delete("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ types: ["food"] })
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toHaveProperty("message")
+        expect(response.body.data).toHaveProperty("count", 2)
+
+    });
+
+    test('T2: not an admin request -> return a 401 status with the error message', async () => {
+        const response = await request(app)
+            .delete("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ types: ["food"] })
+
+        expect(response.status).toBe(401)
+        const errorMessage = response.body.error ? true : response.body.message ? true : false
+        expect(errorMessage).toBe(true)
+    });
+
+    test('T3: missing type -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .delete("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({})
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("List of categories' types to deleted was not provided")
+    });
+
+    test('T4: empty type -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .delete("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ types: [""] })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("The list of categories can't have empty entries")
+    });
+
+    test("T5: no categories in database  -> return 400 status with the error message", async () => {
+        await categories.deleteMany({})
+
+        const response = await request(app)
+            .delete("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ types: ['food'] })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("Cannot delete categories, there should be at least one category")
+    });
+
+    test("T6: not existing categories -> return 400 status with the error message", async () => {
+        const response = await request(app)
+            .delete("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+            .send({ types: ["sport"] })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("the following categories don't exist: sport")
     });
 })
 
-describe("deleteCategory", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+describe("getCategories", () => {
+    let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
+    let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
+    beforeEach(async () => {
+        await categories.create([{
+            type: "food",
+            color: "red"
+        }, {
+            type: "entertainment",
+            color: "blue"
+        }])
+
+        await User.insertMany([{
+            username: "tester",
+            email: "tester@test.com",
+            password: "tester",
+            refreshToken: refreshTokenUser
+        }, {
+            username: "admin",
+            email: "admin@email.com",
+            password: "admin",
+            refreshToken: refreshTokenAdmin,
+            role: "Admin"
+        }])
+    })
+
+    afterEach(async () => {
+        await categories.deleteMany({})
+        await transactions.deleteMany({})
+        await User.deleteMany({})
+        await Group.deleteMany({})
+    })
+
+    test('T1: get all categories -> return a 200 status and the array of categories with refreshed token message', async () => {
+        const response = await request(app)
+            .get("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`) //Setting cookies in the request
+            .send()
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toHaveLength(2)
+    });
+
+    test('T2: user not authorized -> return a 401 status with the error message', async () => {
+        const response = await request(app)
+            .get("/api/categories")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send()
+
+        expect(response.status).toBe(401)
+        const errorMessage = response.body.error ? true : response.body.message ? true : false
+        expect(errorMessage).toBe(true)
     });
 })
 
-describe("getCategories", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
+describe("createTransaction", () => {
+    let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
+    let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
+
+    beforeEach(async () => {
+        await categories.create({
+            type: "food",
+            color: "red"
+        }, {
+            type: "health",
+            color: "blue"
+        })
+
+        await User.insertMany([{
+            username: "tester",
+            email: "tester@test.com",
+            password: "tester",
+            refreshToken: refreshTokenUser
+        }, {
+            username: "admin",
+            email: "admin@email.com",
+            password: "admin",
+            refreshToken: refreshTokenAdmin,
+            role: "Admin"
+        }])
+
+        await transactions.insertMany({
+            username: "tester",
+            type: "food",
+            amount: 20
+        })
+    })
+
+    afterEach(async () => {
+        await categories.deleteMany({})
+        await transactions.deleteMany({})
+        await User.deleteMany({})
+        await Group.deleteMany({})
+    })
+
+    test('T1: create a new transaction -> return a 200 status and the saved transaction with refreshed token message', async () => {
+        const response = await request(app)
+            .post("/api/users/tester/transactions")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ username: "tester", amount: 100, type: "health" })
+
+        expect(response.status).toBe(200)
+        expect(response.body.data).toHaveProperty("username")
+        expect(response.body.data).toHaveProperty("amount")
+        expect(response.body.data).toHaveProperty("type")
+        expect(response.body.data).toHaveProperty("date")
+    });
+
+    test('T2: user not authorized -> return a 401 status with the error message', async () => {
+        const fakeToken = 'fakeToken';
+        const response = await request(app)
+            .post("/api/users/tester/transactions")
+            .set("Cookie", `accessToken=${fakeToken}; refreshToken=${fakeToken}`)
+            .send({ username: "tester", amount: 100, type: "health" })
+
+        expect(response.status).toBe(401)
+        const errorMessage = response.body.error ? true : response.body.message ? true : false
+        expect(errorMessage).toBe(true)
+    });
+
+    test('T3: missing username -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/users/tester/transactions")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ amount: 100, type: "health" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("Username is not provided")
+    });
+
+    test('T4: missing amount -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/users/tester/transactions")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ username: "tester", type: "health" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("Amount is not provided")
+    });
+
+    test('T5: missing category type -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/users/tester/transactions")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ username: "tester", amount: 100 })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("Category is not provided")
+    });
+
+    test('T6: empty username -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/users/tester/transactions")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ username: "", type: "health", amount: 100 })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("Username is empty")
+    });
+
+    test('T7: empty amount -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/users/tester/transactions")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ username: "tester", type: "health", amount: "" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("Amount is empty")
+    });
+
+    test('T8: empty category type -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/users/tester/transactions")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ username: "tester", amount: 100 })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("Category is empty")
+    });
+
+    test('T9: mismatch of usernames -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/users/tester/transactions")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ username: "admin", amount: 100, type: "health" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe("Username provided in the request body does not match the username provided in the request params")
+    });
+
+    test('T10: Not a number amount -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/users/tester/transactions")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ username: "tester", amount: 'a', type: "health" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe('Amount should be a number');
+    });
+
+    test('T11: Not existing category -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/users/tester/transactions")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ username: "tester", amount: 100, type: "sport" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe('Category does not exist');
+    });
+
+    test('T12: Not existing user -> return a 400 status with the error message', async () => {
+        const response = await request(app)
+            .post("/api/users/a/transactions")
+            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .send({ username: "a", amount: 100, type: "health" })
+
+        expect(response.status).toBe(400)
+        expect(response.body.error).toBe('User does not exist');
     });
 })
 
-describe("createTransaction", () => { 
-    test('Dummy test, change it', () => {
-        expect(true).toBe(true);
-    });
-})
-
-describe("getAllTransactions", () => { 
+describe("getAllTransactions", () => {
     const admin = {
-        username : 'admin',
+        username: 'admin',
         email: 'admin@example.com',
         password: '123',
         role: 'Admin'
@@ -65,7 +604,7 @@ describe("getAllTransactions", () => {
     let refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU2MTQ0NTYsImV4cCI6MTcxNzE1MDQ1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpZCI6IjEyMyIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQWRtaW4ifQ.klwHb1h3VKeSDk6QtF8eJX6OWf6qvpa-zvZ4iy8W6aM'
     let accessToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU2MTQ0NTYsImV4cCI6MTcxNzE1MDQ1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpZCI6IjEyMyIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQWRtaW4ifQ.klwHb1h3VKeSDk6QtF8eJX6OWf6qvpa-zvZ4iy8W6aM'
 
-    beforeEach( async () => {
+    beforeEach(async () => {
         const transactionsList = [
             {
                 username: 'user1',
@@ -90,50 +629,50 @@ describe("getAllTransactions", () => {
         await transactions.create(transactionsList)
     })
 
-    afterEach( async () => {
+    afterEach(async () => {
         await transactions.deleteMany({})
     })
 
     test('T1: admin is correctly authenticated and obtains the transactions', () => {
         request(app)
-        .get("/api/transactions")
-        .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
-        .then((response) => {
-            expect(response.status).toBe(200)
-            expect(response.body.data).toHaveLength(3)
-        })
-        .catch((err) => err)
+            .get("/api/transactions")
+            .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
+            .then((response) => {
+                expect(response.status).toBe(200)
+                expect(response.body.data).toHaveLength(3)
+            })
+            .catch((err) => err)
     });
 
     test('T2: admin is correctly authenticated and obtains empty list of transactions', async () => {
         await transactions.deleteMany({})
         request(app)
-        .get("/api/transactions")
-        .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
-        .then((response) => {
-            expect(response.status).toBe(200)
-            expect(response.body.data).toHaveLength(0)
-        })
-        .catch((err) => err)
+            .get("/api/transactions")
+            .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
+            .then((response) => {
+                expect(response.status).toBe(200)
+                expect(response.body.data).toHaveLength(0)
+            })
+            .catch((err) => err)
     });
 
     test('T3: admin is not correctly authenticated', () => {
         refreshToken = 'thisIsAFakeRefreshToken'
         request(app)
-        .get("/api/transactions")
-        .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
-        .then((response) => {
-            expect(response.status).toBe(200)
-            expect(response.body.data).toHaveLength(3)
-        })
-        .catch((err) => {
-            expect(err.status).toBe(401)
-            expect(err.body.error).toBeDefined()
-        })
+            .get("/api/transactions")
+            .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
+            .then((response) => {
+                expect(response.status).toBe(200)
+                expect(response.body.data).toHaveLength(3)
+            })
+            .catch((err) => {
+                expect(err.status).toBe(401)
+                expect(err.body.error).toBeDefined()
+            })
     });
 })
 
-describe("getTransactionsByUser", () => { 
+describe("getTransactionsByUser", () => {
 
     let test_tokens = [
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho",   // user 1 (regular)
@@ -144,206 +683,206 @@ describe("getTransactionsByUser", () => {
     ]
 
     let test_users = [
-        {username : "user1", email : "user1@test.com", password : "dummyPassword", refreshToken : test_tokens[0], role : "Regular"},
-        {username : "user2", email : "user2@test.com", password : "dummyPassword", refreshToken : test_tokens[1], role : "Regular"},
-        {username : "user3", email : "user3@test.com", password : "dummyPassword", refreshToken : test_tokens[2], role : "Admin" }
+        { username: "user1", email: "user1@test.com", password: "dummyPassword", refreshToken: test_tokens[0], role: "Regular" },
+        { username: "user2", email: "user2@test.com", password: "dummyPassword", refreshToken: test_tokens[1], role: "Regular" },
+        { username: "user3", email: "user3@test.com", password: "dummyPassword", refreshToken: test_tokens[2], role: "Admin" }
     ]
 
     let test_categories = [
-        {type : "cat1", color : "blue"},
-        {type : "cat2", color : "red"},
-        {type : "cat3", color : "green"},
+        { type: "cat1", color: "blue" },
+        { type: "cat2", color: "red" },
+        { type: "cat3", color: "green" },
     ]
 
     let test_transactions = [
-        {username : "user1", amount : 1131, type : "cat1", date : new Date(2023, 2, 14)},
-        {username : "user1", amount :  100, type : "cat1", date : new Date(2023, 3, 23)},
-        {username : "user1", amount :  402, type : "cat2", date : new Date(2023, 2, 27)},
-        {username : "user1", amount :  933, type : "cat3", date : new Date(2023, 2, 12)},
-        {username : "user2", amount :  643, type : "cat2", date : new Date(2023, 2,  8, 10)},
-        {username : "user2", amount :  124, type : "cat2", date : new Date(2023, 1,  5)},
-        {username : "user2", amount :  632, type : "cat3", date : new Date(2023, 5, 14)},
-        {username : "user2", amount :  123, type : "cat3", date : new Date(2023, 2, 20)},
-        {username : "user3", amount :  552, type : "cat1", date : new Date(2023, 3, 18)},
-        {username : "user3", amount :  612, type : "cat1", date : new Date(2023, 3,  1)},
-        {username : "user3", amount :  231, type : "cat2", date : new Date(2023, 3,  6)},
-        {username : "user3", amount :   12, type : "cat3", date : new Date(2023, 2, 26)},
-        {username : "user3", amount :   53, type : "cat3", date : new Date(2023, 2, 26)},
+        { username: "user1", amount: 1131, type: "cat1", date: new Date(2023, 2, 14) },
+        { username: "user1", amount: 100, type: "cat1", date: new Date(2023, 3, 23) },
+        { username: "user1", amount: 402, type: "cat2", date: new Date(2023, 2, 27) },
+        { username: "user1", amount: 933, type: "cat3", date: new Date(2023, 2, 12) },
+        { username: "user2", amount: 643, type: "cat2", date: new Date(2023, 2, 8, 10) },
+        { username: "user2", amount: 124, type: "cat2", date: new Date(2023, 1, 5) },
+        { username: "user2", amount: 632, type: "cat3", date: new Date(2023, 5, 14) },
+        { username: "user2", amount: 123, type: "cat3", date: new Date(2023, 2, 20) },
+        { username: "user3", amount: 552, type: "cat1", date: new Date(2023, 3, 18) },
+        { username: "user3", amount: 612, type: "cat1", date: new Date(2023, 3, 1) },
+        { username: "user3", amount: 231, type: "cat2", date: new Date(2023, 3, 6) },
+        { username: "user3", amount: 12, type: "cat3", date: new Date(2023, 2, 26) },
+        { username: "user3", amount: 53, type: "cat3", date: new Date(2023, 2, 26) },
     ]
 
-    beforeEach(async() => {
-        jest.clearAllMocks();        
+    beforeEach(async () => {
+        jest.clearAllMocks();
         // insert test data
         await User.insertMany(test_users)
         await categories.insertMany(test_categories)
         await transactions.insertMany(test_transactions)
-    })    
+    })
 
-    afterEach(async() => {
+    afterEach(async () => {
         // clear all users, categories, and transactions
         await User.deleteMany();
         await categories.deleteMany();
         await transactions.deleteMany();
     })
 
-    test("Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
+    test("Should return an error indicating that the User is not Authorized (not logged in, or the requested user doesn't match authorized user)", async () => {
         const response = await request(app)
-            .get("/api/users/user1/transactions")                        
-                        
-        expect(response.status).toBe(401);
-        expect(response.body.error).toBe("Unauthorized");
-    });
-    
-    test("Should return an error indicating that the user specified by params does not exist (authorized as a regular user)", async () => {      
-        const response = await request(app)
-            .get("/api/users/user4/transactions")                        
-            .set("Cookie", `accessToken=${test_tokens[3]};refreshToken=${test_tokens[3]}`)
-                        
-        expect(response.status).toBe(400);
-        expect(response.body.error).toBe("User does not exist");
-    });
-    
-    test("Should return an error indicating that the User is not Atuthorized (not logged in, or not an admin)", async () => {      
-        const response = await request(app)
-            .get("/api/transactions/users/user1")                        
-                        
+            .get("/api/users/user1/transactions")
+
         expect(response.status).toBe(401);
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that the user specified by params does not exist (authorized as an admin)", async () => {      
+    test("Should return an error indicating that the user specified by params does not exist (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/transactions/users/user5")   
+            .get("/api/users/user4/transactions")
+            .set("Cookie", `accessToken=${test_tokens[3]};refreshToken=${test_tokens[3]}`)
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("User does not exist");
+    });
+
+    test("Should return an error indicating that the User is not Atuthorized (not logged in, or not an admin)", async () => {
+        const response = await request(app)
+            .get("/api/transactions/users/user1")
+
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBe("Unauthorized");
+    });
+
+    test("Should return an error indicating that the user specified by params does not exist (authorized as an admin)", async () => {
+        const response = await request(app)
+            .get("/api/transactions/users/user5")
             .set("Cookie", `accessToken=${test_tokens[4]};refreshToken=${test_tokens[4]}`)
 
         expect(response.status).toBe(400);
         expect(response.body.error).toBe("User does not exist");
     });
 
-    test("Should return a list of transactions (authorized as an admin)", async () => {      
+    test("Should return a list of transactions (authorized as an admin)", async () => {
         const response = await request(app)
-            .get("/api/transactions/users/user2")   
+            .get("/api/transactions/users/user2")
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
 
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([
-            {username : "user2", color : "red", type : "cat2", amount :  643, date : (new Date(2023, 2,  8, 10)).toISOString()},
-            {username : "user2", color : "red", type : "cat2", amount :  124, date : (new Date(2023, 1,  5)).toISOString()},
-            {username : "user2", color : "green", type : "cat3", amount :  632, date : (new Date(2023, 5, 14)).toISOString()},
-            {username : "user2", color : "green", type : "cat3", amount :  123, date : (new Date(2023, 2, 20)).toISOString()},
+            { username: "user2", color: "red", type: "cat2", amount: 643, date: (new Date(2023, 2, 8, 10)).toISOString() },
+            { username: "user2", color: "red", type: "cat2", amount: 124, date: (new Date(2023, 1, 5)).toISOString() },
+            { username: "user2", color: "green", type: "cat3", amount: 632, date: (new Date(2023, 5, 14)).toISOString() },
+            { username: "user2", color: "green", type: "cat3", amount: 123, date: (new Date(2023, 2, 20)).toISOString() },
         ]);
     });
 
-    test("Should return a list of transactions of date after 2023-02-08 (authorized as a regular user)", async () => {      
+    test("Should return a list of transactions of date after 2023-02-08 (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user2/transactions?from=2023-02-08")                        
+            .get("/api/users/user2/transactions?from=2023-02-08")
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
-                        
+
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([
-            {username : "user2", amount :  643, color : "red", type : "cat2", date : (new Date(2023, 2,  8, 10)).toISOString()},            
-            {username : "user2", amount :  632, color : "green", type : "cat3", date : (new Date(2023, 5, 14)).toISOString()},
-            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(2023, 2, 20)).toISOString()}
+            { username: "user2", amount: 643, color: "red", type: "cat2", date: (new Date(2023, 2, 8, 10)).toISOString() },
+            { username: "user2", amount: 632, color: "green", type: "cat3", date: (new Date(2023, 5, 14)).toISOString() },
+            { username: "user2", amount: 123, color: "green", type: "cat3", date: (new Date(2023, 2, 20)).toISOString() }
         ])
     });
 
-    test("Should return a list of transactions of date before 2023-04-01 (authorized as a regular user)", async () => {      
+    test("Should return a list of transactions of date before 2023-04-01 (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user2/transactions?upTo=2023-04-01")                        
+            .get("/api/users/user2/transactions?upTo=2023-04-01")
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
-                        
-        expect(response.status).toBe(200);
-        expect(response.body.data).toStrictEqual([     
-            {username : "user2", amount :  643, color : "red", type : "cat2", date : (new Date(2023, 2,  8, 10)).toISOString()},
-            {username : "user2", amount :  124, color : "red", type : "cat2", date : (new Date(2023, 1,  5)).toISOString()},            
-            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(2023, 2, 20)).toISOString()}
-        ])
-    });
 
-    test("Should return a list of transactions of date between 2023-02-08 and 2023-04-01  (authorized as a regular user)", async () => {      
-        const response = await request(app)
-            .get("/api/users/user2/transactions?from=2023-02-08&upTo=2023-04-01")                        
-            .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
-                        
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([
-            {username : "user2", amount :  643, color : "red",   type : "cat2", date : (new Date(2023, 2,  8, 10)).toISOString()},            
-            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(2023, 2, 20)).toISOString()}
+            { username: "user2", amount: 643, color: "red", type: "cat2", date: (new Date(2023, 2, 8, 10)).toISOString() },
+            { username: "user2", amount: 124, color: "red", type: "cat2", date: (new Date(2023, 1, 5)).toISOString() },
+            { username: "user2", amount: 123, color: "green", type: "cat3", date: (new Date(2023, 2, 20)).toISOString() }
         ])
     });
 
-    test("Should return a list of transactions of amount more than 300  (authorized as a regular user)", async () => {      
+    test("Should return a list of transactions of date between 2023-02-08 and 2023-04-01  (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user2/transactions?min=300")                        
+            .get("/api/users/user2/transactions?from=2023-02-08&upTo=2023-04-01")
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
-                        
+
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([
-            {username : "user2", amount :  643, color : "red", type : "cat2", date : (new Date(2023, 2,  8, 10)).toISOString()},            
-            {username : "user2", amount :  632, color : "green",type : "cat3", date : (new Date(2023, 5, 14)).toISOString()},            
+            { username: "user2", amount: 643, color: "red", type: "cat2", date: (new Date(2023, 2, 8, 10)).toISOString() },
+            { username: "user2", amount: 123, color: "green", type: "cat3", date: (new Date(2023, 2, 20)).toISOString() }
         ])
     });
 
-    test("Should return a list of transactions of amount less than 300  (authorized as a regular user)", async () => {      
+    test("Should return a list of transactions of amount more than 300  (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user2/transactions?max=300")                        
+            .get("/api/users/user2/transactions?min=300")
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
-                        
-        expect(response.status).toBe(200);        
-        expect(response.body.data).toStrictEqual([              
-            {username : "user2", amount :  124, color : "red", type : "cat2", date : (new Date(2023, 1,  5)).toISOString()},            
-            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(2023, 2, 20)).toISOString()},          
+
+        expect(response.status).toBe(200);
+        expect(response.body.data).toStrictEqual([
+            { username: "user2", amount: 643, color: "red", type: "cat2", date: (new Date(2023, 2, 8, 10)).toISOString() },
+            { username: "user2", amount: 632, color: "green", type: "cat3", date: (new Date(2023, 5, 14)).toISOString() },
         ])
     });
 
-    test("Should return a list of transactions of amount between 100 and 500 (authorized as a regular user)", async () => {      
+    test("Should return a list of transactions of amount less than 300  (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user1/transactions?max=500&min=100")                        
+            .get("/api/users/user2/transactions?max=300")
+            .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
+
+        expect(response.status).toBe(200);
+        expect(response.body.data).toStrictEqual([
+            { username: "user2", amount: 124, color: "red", type: "cat2", date: (new Date(2023, 1, 5)).toISOString() },
+            { username: "user2", amount: 123, color: "green", type: "cat3", date: (new Date(2023, 2, 20)).toISOString() },
+        ])
+    });
+
+    test("Should return a list of transactions of amount between 100 and 500 (authorized as a regular user)", async () => {
+        const response = await request(app)
+            .get("/api/users/user1/transactions?max=500&min=100")
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
-                        
+
         expect(response.status).toBe(200);
-        expect(response.body.data).toStrictEqual([                          
-            {username : "user1", amount :  100, color : "blue", type : "cat1", date : (new Date(2023, 3, 23)).toISOString()},
-            {username : "user1", amount :  402, color : "red", type : "cat2", date : (new Date(2023, 2, 27)).toISOString()},            
+        expect(response.body.data).toStrictEqual([
+            { username: "user1", amount: 100, color: "blue", type: "cat1", date: (new Date(2023, 3, 23)).toISOString() },
+            { username: "user1", amount: 402, color: "red", type: "cat2", date: (new Date(2023, 2, 27)).toISOString() },
         ])
     });
 
-    test("Should return a list of transactions of amount between 100 and 500 and date between 2023-01-01 and 2023-03-01 (authorized as a regular user)", async () => {      
+    test("Should return a list of transactions of amount between 100 and 500 and date between 2023-01-01 and 2023-03-01 (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user1/transactions?max=500&min=100&upTo=2023-04-01&from=2023-01-01")                        
-            .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                           
+            .get("/api/users/user1/transactions?max=500&min=100&upTo=2023-04-01&from=2023-01-01")
+            .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
 
         expect(response.status).toBe(200);
-        expect(response.body.data).toStrictEqual([                                      
-            {username : "user1", amount :  402, color : "red", type : "cat2", date : (new Date(2023, 2, 27)).toISOString()},            
+        expect(response.body.data).toStrictEqual([
+            { username: "user1", amount: 402, color: "red", type: "cat2", date: (new Date(2023, 2, 27)).toISOString() },
         ])
     });
 
-    test("Should return a list of transactions of date = 2023-03-26 (authorized as a regular user)", async () => {      
+    test("Should return a list of transactions of date = 2023-03-26 (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user3/transactions?date=2023-03-26")                        
-            .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                           
+            .get("/api/users/user3/transactions?date=2023-03-26")
+            .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
 
         expect(response.status).toBe(200);
-        expect(response.body.data).toStrictEqual([                                                  
-            {username : "user3", amount :   12, color : "green", type : "cat3", date : (new Date(2023, 2, 26)).toISOString()},
-            {username : "user3", amount :   53, color : "green", type : "cat3", date : (new Date(2023, 2, 26)).toISOString()},
+        expect(response.body.data).toStrictEqual([
+            { username: "user3", amount: 12, color: "green", type: "cat3", date: (new Date(2023, 2, 26)).toISOString() },
+            { username: "user3", amount: 53, color: "green", type: "cat3", date: (new Date(2023, 2, 26)).toISOString() },
         ])
     });
 
-    test("Should return a list of transactions of date = 2023-03-26 and amount between 10 and 20 (authorized as a regular user)", async () => {      
+    test("Should return a list of transactions of date = 2023-03-26 and amount between 10 and 20 (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user3/transactions?date=2023-03-26&min=10&max=20")                        
-            .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                           
+            .get("/api/users/user3/transactions?date=2023-03-26&min=10&max=20")
+            .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
 
         expect(response.status).toBe(200);
-        expect(response.body.data).toStrictEqual([                                                  
-            {username : "user3", amount :   12, color : "green", type : "cat3", date : (new Date(2023, 2, 26)).toISOString()}            
+        expect(response.body.data).toStrictEqual([
+            { username: "user3", amount: 12, color: "green", type: "cat3", date: (new Date(2023, 2, 26)).toISOString() }
         ])
     });
 })
 
-describe("getTransactionsByUserByCategory", () => { 
+describe("getTransactionsByUserByCategory", () => {
 
     let test_tokens = [
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho",   // user 1 (regular)
@@ -354,184 +893,184 @@ describe("getTransactionsByUserByCategory", () => {
     ]
 
     let test_users = [
-        {username : "user1", email : "user1@test.com", password : "dummyPassword", refreshToken : test_tokens[0], role : "Regular"},
-        {username : "user2", email : "user2@test.com", password : "dummyPassword", refreshToken : test_tokens[1], role : "Regular"},
-        {username : "user3", email : "user3@test.com", password : "dummyPassword", refreshToken : test_tokens[2], role : "Admin" }
+        { username: "user1", email: "user1@test.com", password: "dummyPassword", refreshToken: test_tokens[0], role: "Regular" },
+        { username: "user2", email: "user2@test.com", password: "dummyPassword", refreshToken: test_tokens[1], role: "Regular" },
+        { username: "user3", email: "user3@test.com", password: "dummyPassword", refreshToken: test_tokens[2], role: "Admin" }
     ]
 
     let test_categories = [
-        {type : "cat1", color : "blue"},
-        {type : "cat2", color : "red"},
-        {type : "cat3", color : "green"},
+        { type: "cat1", color: "blue" },
+        { type: "cat2", color: "red" },
+        { type: "cat3", color: "green" },
     ]
 
     let test_transactions = [
-        {username : "user1", amount : 1131, type : "cat1", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user1", amount :  100, type : "cat1", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user1", amount :  402, type : "cat2", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user1", amount :  933, type : "cat3", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user2", amount :  643, type : "cat2", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user2", amount :  124, type : "cat2", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user2", amount :  632, type : "cat3", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user2", amount :  123, type : "cat3", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user3", amount :  552, type : "cat1", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user3", amount :  612, type : "cat1", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user3", amount :  231, type : "cat2", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user3", amount :   12, type : "cat3", date : new Date(2023, 2, 2, 10, 10)},
-        {username : "user3", amount :   53, type : "cat3", date : new Date(2023, 2, 2, 10, 10)},
+        { username: "user1", amount: 1131, type: "cat1", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user1", amount: 100, type: "cat1", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user1", amount: 402, type: "cat2", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user1", amount: 933, type: "cat3", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user2", amount: 643, type: "cat2", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user2", amount: 124, type: "cat2", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user2", amount: 632, type: "cat3", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user2", amount: 123, type: "cat3", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user3", amount: 552, type: "cat1", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user3", amount: 612, type: "cat1", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user3", amount: 231, type: "cat2", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user3", amount: 12, type: "cat3", date: new Date(2023, 2, 2, 10, 10) },
+        { username: "user3", amount: 53, type: "cat3", date: new Date(2023, 2, 2, 10, 10) },
     ]
 
-    beforeEach(async() => {
-        jest.clearAllMocks();        
+    beforeEach(async () => {
+        jest.clearAllMocks();
         // insert test data
         await User.insertMany(test_users)
         await categories.insertMany(test_categories)
         await transactions.insertMany(test_transactions)
-    })    
+    })
 
-    afterEach(async() => {
+    afterEach(async () => {
         // clear all users, categories, and transactions
         await User.deleteMany();
         await categories.deleteMany();
         await transactions.deleteMany();
     })
 
-    test("Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
+    test("Should return an error indicating that the User is not Authorized (not logged in, or the requested user doesn't match authorized user)", async () => {
         const response = await request(app)
-            .get("/api/users/user1/transactions/category/cat1")                        
+            .get("/api/users/user1/transactions/category/cat1")
             .send({
-                username : "user1",
-                type : "cat1"
-        })
-                        
+                username: "user1",
+                type: "cat1"
+            })
+
         expect(response.status).toBe(401);
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that the User is not Atuthorized (not logged in, or not an admin)", async () => {      
+    test("Should return an error indicating that the User is not Atuthorized (not logged in, or not an admin)", async () => {
         const response = await request(app)
-            .get("/api/transactions/users/user1/category/cat1")                        
+            .get("/api/transactions/users/user1/category/cat1")
             .send({
-                username : "user1",
-                type : "cat1"
-        })
-                        
+                username: "user1",
+                type: "cat1"
+            })
+
         expect(response.status).toBe(401);
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that the user specified by params does not exist (authorized as a regular user)", async () => {      
+    test("Should return an error indicating that the user specified by params does not exist (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user4/transactions/category/cat1")                        
+            .get("/api/users/user4/transactions/category/cat1")
             .set("Cookie", `accessToken=${test_tokens[3]};refreshToken=${test_tokens[3]}`)
             .send({
-                username : "user4",
-                type : "cat1"
-        })
-                        
+                username: "user4",
+                type: "cat1"
+            })
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe("User does not exist");
     });
 
-    test("Should return an error indicating that the user specified by params does not exist (authorized as an admin)", async () => {      
+    test("Should return an error indicating that the user specified by params does not exist (authorized as an admin)", async () => {
         const response = await request(app)
-            .get("/api/transactions/users/user5/category/cat1")                            
+            .get("/api/transactions/users/user5/category/cat1")
             .set("Cookie", `accessToken=${test_tokens[4]};refreshToken=${test_tokens[4]}`)
             .send({
-                username : "user5",
-                type : "cat1"
-        })
-                        
+                username: "user5",
+                type: "cat1"
+            })
+
         // expect(response.status).toBe(400);
         expect(response.body.error).toBe("User does not exist");
     });
 
-    test("Should return an error indicating that the category specified by params does not exist (authorized as a regular user)", async () => {      
+    test("Should return an error indicating that the category specified by params does not exist (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user1/transactions/category/catx")                        
+            .get("/api/users/user1/transactions/category/catx")
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
             .send({
-                username : "user1",
-                type : "cat1"
-        })
-                        
+                username: "user1",
+                type: "cat1"
+            })
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe("Category does not exist");
     });
 
-    test("Should return an error indicating that the category specified by params does not exist (authorized as an admin)", async () => {      
+    test("Should return an error indicating that the category specified by params does not exist (authorized as an admin)", async () => {
         const response = await request(app)
-            .get("/api/transactions/users/user1/category/catx")                             
+            .get("/api/transactions/users/user1/category/catx")
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
             .send({
-                username : "user1",
-                type : "cat1"
-        })
-                        
+                username: "user1",
+                type: "cat1"
+            })
+
         expect(response.status).toBe(400);
         expect(response.body.error).toBe("Category does not exist");
     });
 
-    test("Should return an empty list of transactions (authorized as a regular user)", async () => {      
+    test("Should return an empty list of transactions (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user2/transactions/category/cat1")                        
+            .get("/api/users/user2/transactions/category/cat1")
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
             .send({
-                username : "user2",
-                type : "cat1"
-        })        
-                        
+                username: "user2",
+                type: "cat1"
+            })
+
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([]);
     });
 
-    test("Should return an empty list of transactions (authorized as an admin)", async () => {      
+    test("Should return an empty list of transactions (authorized as an admin)", async () => {
         const response = await request(app)
-            .get("/api/transactions/users/user2/category/cat1")                                                        
+            .get("/api/transactions/users/user2/category/cat1")
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
             .send({
-                username : "user2",
-                type : "cat1"
-        })
-                        
+                username: "user2",
+                type: "cat1"
+            })
+
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([]);
     });
 
-    test("Should return a list of transactions (authorized as a regular user)", async () => {      
+    test("Should return a list of transactions (authorized as a regular user)", async () => {
         const response = await request(app)
-            .get("/api/users/user1/transactions/category/cat1")                        
+            .get("/api/users/user1/transactions/category/cat1")
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
             .send({
-                username : "user1",
-                type : "cat1"
-        })        
-                        
-        expect(response.status).toBe(200);        
+                username: "user1",
+                type: "cat1"
+            })
+
+        expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([
-            {username : "user1", amount : 1131, type : "cat1", color : "blue", date : (new Date(2023, 2, 2, 10, 10)).toISOString()},
-            {username : "user1", amount :  100, type : "cat1", color : "blue", date : (new Date(2023, 2, 2, 10, 10)).toISOString()}
+            { username: "user1", amount: 1131, type: "cat1", color: "blue", date: (new Date(2023, 2, 2, 10, 10)).toISOString() },
+            { username: "user1", amount: 100, type: "cat1", color: "blue", date: (new Date(2023, 2, 2, 10, 10)).toISOString() }
         ]);
     });
 
-    test("Should return a list of transactions (authorized as an admin)", async () => {      
+    test("Should return a list of transactions (authorized as an admin)", async () => {
         const response = await request(app)
-            .get("/api/transactions/users/user1/category/cat1")                                                        
+            .get("/api/transactions/users/user1/category/cat1")
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
             .send({
-                username : "user1",
-                type : "cat1"
-        })
-                
-        expect(response.status).toBe(200);        
+                username: "user1",
+                type: "cat1"
+            })
+
+        expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([
-            {username : "user1", amount : 1131, type : "cat1", color : "blue", date : (new Date(2023, 2, 2, 10, 10)).toISOString()},
-            {username : "user1", amount :  100, type : "cat1", color : "blue", date : (new Date(2023, 2, 2, 10, 10)).toISOString()}
+            { username: "user1", amount: 1131, type: "cat1", color: "blue", date: (new Date(2023, 2, 2, 10, 10)).toISOString() },
+            { username: "user1", amount: 100, type: "cat1", color: "blue", date: (new Date(2023, 2, 2, 10, 10)).toISOString() }
         ]);
     });
 })
 
-describe("getTransactionsByGroup", () => {     
+describe("getTransactionsByGroup", () => {
     let test_tokens = [
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho",   // user 1 (regular)
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMiIsImVtYWlsIjoidXNlcjJAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.vcyvbioE0-iiQxVasIGSAhJwRdwgT6wxYQvoe4eMAqQ",   // user 2 (regular)
@@ -541,50 +1080,52 @@ describe("getTransactionsByGroup", () => {
     ]
 
     let test_users = [
-        {username : "user1", email : "user1@test.com", password : "dummyPassword", refreshToken : test_tokens[0], role : "Regular"},
-        {username : "user2", email : "user2@test.com", password : "dummyPassword", refreshToken : test_tokens[1], role : "Regular"},
-        {username : "user3", email : "user3@test.com", password : "dummyPassword", refreshToken : test_tokens[2], role : "Admin" }
+        { username: "user1", email: "user1@test.com", password: "dummyPassword", refreshToken: test_tokens[0], role: "Regular" },
+        { username: "user2", email: "user2@test.com", password: "dummyPassword", refreshToken: test_tokens[1], role: "Regular" },
+        { username: "user3", email: "user3@test.com", password: "dummyPassword", refreshToken: test_tokens[2], role: "Admin" }
     ]
 
     let test_groups = [
-        {name : "group1", members : [
-            {username : "user1", email : "user1@test.com"},
-            {username : "user2", email : "user2@test.com"}
-        ]}
+        {
+            name: "group1", members: [
+                { username: "user1", email: "user1@test.com" },
+                { username: "user2", email: "user2@test.com" }
+            ]
+        }
     ]
 
     let test_categories = [
-        {type : "cat1", color : "blue"},
-        {type : "cat2", color : "red"},
-        {type : "cat3", color : "green"},
+        { type: "cat1", color: "blue" },
+        { type: "cat2", color: "red" },
+        { type: "cat3", color: "green" },
     ]
 
     let test_transactions = [
-        {username : "user1", amount : 1131, type : "cat1", date : new Date(2023, 2, 14)},
-        {username : "user1", amount :  100, type : "cat1", date : new Date(2023, 3, 23)},
-        {username : "user1", amount :  402, type : "cat2", date : new Date(2023, 2, 27)},
-        {username : "user1", amount :  933, type : "cat3", date : new Date(2023, 2, 12)},
-        {username : "user2", amount :  643, type : "cat2", date : new Date(2023, 2,  8)},
-        {username : "user2", amount :  124, type : "cat2", date : new Date(2023, 1,  5)},
-        {username : "user2", amount :  632, type : "cat3", date : new Date(2023, 5, 14)},
-        {username : "user2", amount :  123, type : "cat3", date : new Date(2023, 2, 20)},
-        {username : "user3", amount :  552, type : "cat1", date : new Date(2023, 3, 18)},
-        {username : "user3", amount :  612, type : "cat1", date : new Date(2023, 3,  1)},
-        {username : "user3", amount :  231, type : "cat2", date : new Date(2023, 3,  6)},
-        {username : "user3", amount :   12, type : "cat3", date : new Date(2023, 2, 26)},
-        {username : "user3", amount :   53, type : "cat3", date : new Date(2023, 2, 26)},
+        { username: "user1", amount: 1131, type: "cat1", date: new Date(2023, 2, 14) },
+        { username: "user1", amount: 100, type: "cat1", date: new Date(2023, 3, 23) },
+        { username: "user1", amount: 402, type: "cat2", date: new Date(2023, 2, 27) },
+        { username: "user1", amount: 933, type: "cat3", date: new Date(2023, 2, 12) },
+        { username: "user2", amount: 643, type: "cat2", date: new Date(2023, 2, 8) },
+        { username: "user2", amount: 124, type: "cat2", date: new Date(2023, 1, 5) },
+        { username: "user2", amount: 632, type: "cat3", date: new Date(2023, 5, 14) },
+        { username: "user2", amount: 123, type: "cat3", date: new Date(2023, 2, 20) },
+        { username: "user3", amount: 552, type: "cat1", date: new Date(2023, 3, 18) },
+        { username: "user3", amount: 612, type: "cat1", date: new Date(2023, 3, 1) },
+        { username: "user3", amount: 231, type: "cat2", date: new Date(2023, 3, 6) },
+        { username: "user3", amount: 12, type: "cat3", date: new Date(2023, 2, 26) },
+        { username: "user3", amount: 53, type: "cat3", date: new Date(2023, 2, 26) },
     ]
 
-    beforeEach(async() => {
-        jest.clearAllMocks();        
+    beforeEach(async () => {
+        jest.clearAllMocks();
         // insert test data
         await User.insertMany(test_users)
         await Group.insertMany(test_groups)
         await categories.insertMany(test_categories)
         await transactions.insertMany(test_transactions)
-    })    
+    })
 
-    afterEach(async() => {
+    afterEach(async () => {
         // clear all users, categories, and transactions
         await User.deleteMany();
         await Group.deleteMany();
@@ -592,72 +1133,72 @@ describe("getTransactionsByGroup", () => {
         await transactions.deleteMany();
     })
 
-    test("Should return an error indicating that the User is not Atuthorized (not logged in)", async () => {      
+    test("Should return an error indicating that the User is not Atuthorized (not logged in)", async () => {
         const response = await request(app)
-            .get("/api/groups/group1/transactions")                                    
-                        
+            .get("/api/groups/group1/transactions")
+
         expect(response.status).toBe(401);
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that the User is not Atuthorized (not member of the group specified in params)", async () => {      
+    test("Should return an error indicating that the User is not Atuthorized (not member of the group specified in params)", async () => {
         const response = await request(app)
-        .get("/api/groups/group1/transactions")                                    
-        .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
-                        
+            .get("/api/groups/group1/transactions")
+            .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
+
         expect(response.status).toBe(401);
         expect(response.body.error).toBe("User is not part of the group");
     });
 
-    test("Should return an error indicating that the User is not Atuthorized (not an admin)", async () => {      
+    test("Should return an error indicating that the User is not Atuthorized (not an admin)", async () => {
         const response = await request(app)
-            .get("/api/transactions/groups/group1")                                    
-                        
+            .get("/api/transactions/groups/group1")
+
         expect(response.status).toBe(401);
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return am error indicating that group does not exist (authorized as an admin)", async () => {      
+    test("Should return am error indicating that group does not exist (authorized as an admin)", async () => {
         const response = await request(app)
-        .get("/api/transactions/groups/group2")                                        
-        .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                                            
+            .get("/api/transactions/groups/group2")
+            .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
 
         expect(response.status).toBe(400);
         expect(response.body.error).toStrictEqual("Group does not exist")
-    });    
+    });
 
-    test("Should return a list of transactions (auth type doesn't matter)", async () => {      
+    test("Should return a list of transactions (auth type doesn't matter)", async () => {
         const response = await request(app)
-        .get("/api/groups/group1/transactions")                                    
-        .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                                    
+            .get("/api/groups/group1/transactions")
+            .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
 
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([
-            {username : "user1", amount : 1131, color : "blue", type : "cat1", date : (new Date(2023, 2, 14)).toISOString()},
-            {username : "user1", amount :  100, color : "blue", type : "cat1", date : (new Date(2023, 3, 23)).toISOString()},
-            {username : "user1", amount :  402, color : "red", type : "cat2", date : (new Date(2023, 2, 27)).toISOString()},
-            {username : "user1", amount :  933, color : "green", type : "cat3", date : (new Date(2023, 2, 12)).toISOString()},
-            {username : "user2", amount :  643, color : "red", type : "cat2", date : (new Date(2023, 2,  8)).toISOString()},
-            {username : "user2", amount :  124, color : "red", type : "cat2", date : (new Date(2023, 1,  5)).toISOString()},
-            {username : "user2", amount :  632, color : "green", type : "cat3", date : (new Date(2023, 5, 14)).toISOString()},
-            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(2023, 2, 20)).toISOString()}
+            { username: "user1", amount: 1131, color: "blue", type: "cat1", date: (new Date(2023, 2, 14)).toISOString() },
+            { username: "user1", amount: 100, color: "blue", type: "cat1", date: (new Date(2023, 3, 23)).toISOString() },
+            { username: "user1", amount: 402, color: "red", type: "cat2", date: (new Date(2023, 2, 27)).toISOString() },
+            { username: "user1", amount: 933, color: "green", type: "cat3", date: (new Date(2023, 2, 12)).toISOString() },
+            { username: "user2", amount: 643, color: "red", type: "cat2", date: (new Date(2023, 2, 8)).toISOString() },
+            { username: "user2", amount: 124, color: "red", type: "cat2", date: (new Date(2023, 1, 5)).toISOString() },
+            { username: "user2", amount: 632, color: "green", type: "cat3", date: (new Date(2023, 5, 14)).toISOString() },
+            { username: "user2", amount: 123, color: "green", type: "cat3", date: (new Date(2023, 2, 20)).toISOString() }
         ])
-    });    
+    });
 })
 
-describe("getTransactionsByGroupByCategory", () => { 
+describe("getTransactionsByGroupByCategory", () => {
     test('Dummy test, change it', () => {
         expect(true).toBe(true);
     });
 })
 
-describe("deleteTransaction", () => { 
+describe("deleteTransaction", () => {
     test('Dummy test, change it', () => {
         expect(true).toBe(true);
     });
 })
 
-describe("deleteTransactions", () => { 
+describe("deleteTransactions", () => {
     test('Dummy test, change it', () => {
         expect(true).toBe(true);
     });

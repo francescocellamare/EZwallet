@@ -354,7 +354,7 @@ export const getGroup = async (req, res) => {
     - Returns a 401 error if called by an authenticated user who is not an admin (authType = Admin) if the route is `api/groups/:name/pull`
    */
   export const removeFromGroup = async (req, res) => {
-    ù
+    
     try {
   
       const regexpAdmin = new RegExp('\/groups\/(.*)\/pull')  // admin route

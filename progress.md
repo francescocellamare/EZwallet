@@ -4,14 +4,12 @@
 | registerAdmin | I/I | ✓ | ✓|
 | login | I/I |✓ | ✓|
 | logout | I/I |✓ | ✓|
-| createCategory | V/V |✓ | ✓| |  | 
-<<<<<<< progress.md
-| updateCategory | V/V|✓ |✓ | |  |
-| deleteCategory | V/V|✓ | ✓| |  |
-| getCategories | V/V|✓ | ✓| | |
-| createTransaction | V/V|✓ | | | first test is failing|
-| getAllTransactions | F/F|✓ |✓  | ✓ | | 
->>>>>>> progress.md
+| createCategory | V/V |✓ | ✓| | last integration test is failing | 
+| updateCategory | V/V|✓ |✓ | ✓|  |
+| deleteCategory | V/V|✓ | ✓| | second and sixth integration tests are failing |
+| getCategories | V/V|✓ | ✓| | last integration test is failing |
+| createTransaction | V/V|✓ | | | first unit test is failing and problems with integration|
+| getAllTransactions | F/F|✓ |✓  | ✓ | |
 | getTransactionsByUser | K/K|✓ | ✓ | ✓ | |
 | getTransactionsByUserByCategory | K/K|✓ | ✓ | ✓ |
 | getTransactionsByGroup | K/K|✓ | ✓ |  |
@@ -23,8 +21,8 @@
 | createGroup | I/K |✓ |  | |
 | getGroups | I/I |✓ | ✓ | |
 | getGroup | I/I |✓ | ✓ | |
-| addToGroup | I/F | ✓ | | | Some parts that depend on authentication are missing|
-| removeFromGroup | I/V | ✓ | | |  Some parts that depend on authentication are missing|
+| addToGroup | I/F | ✓ | | | |
+| removeFromGroup | I/V | ✓ | | ✓ |  |
 | deleteUser | I/I  | ✓ ||||
 | deleteGroup  | I/I | ✓ | ✓ |||
 | handleDateFilterParams | F/F| ✓ |✓ ||

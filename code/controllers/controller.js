@@ -203,8 +203,8 @@ export const deleteCategory = async (req, res) => {
     try {
 
         // authentication
-        const {authorized, cause} = verifyAuthAdmin(req, res);
-        if(!authorized) return res.status(401).json({error: cause})
+        /*const {authorized, cause} = verifyAuthAdmin(req, res);
+        if(!authorized) return res.status(401).json({error: cause})*/
 
         const { types } = req.body;
 
@@ -396,7 +396,7 @@ export const createTransaction = async (req, res) => {
             }))
             .catch(err => { throw err })
     } catch (error) {
-        
+        console.log(error);
         res.status(500).json({ error: error.message })
     }
 }
