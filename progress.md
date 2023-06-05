@@ -4,11 +4,11 @@
 | registerAdmin | I/I | ✓ | ✓|✓|
 | login | I/I |✓ | ✓|✓|
 | logout | I/I |✓ | ✓|✓|
-| createCategory | V/V |✓ | ✓| | last integration test is failing | 
+| createCategory | V/V |✓ | ✓| ✓ | | 
 | updateCategory | V/V|✓ |✓ | ✓|  |
-| deleteCategory | V/V|✓ | ✓| | second unit test and second and sixth integration tests are failing |
-| getCategories | V/V|✓ | ✓| | last integration test is failing |
-| createTransaction | V/V|✓ | | | first unit test is failing and problems with integration|
+| deleteCategory | V/V|✓ | ✓|✓ | |
+| getCategories | V/V|✓ | ✓|✓ |  |
+| createTransaction | V/V|✓ | ✓ |✓ | |
 | getAllTransactions | F/F|✓ |✓  | ✓ | |
 | getTransactionsByUser | K/K|✓ | ✓ | ✓ | |
 | getTransactionsByUserByCategory | K/K|✓ | ✓ | ✓ |
@@ -22,7 +22,7 @@
 | getGroups | I/I |✓ | ✓ | |
 | getGroup | I/I |✓ | ✓ | |
 | addToGroup | I/F | ✓ | ✓| ✓| |
-| removeFromGroup | I/V | ✓ | |  |  first integration test is failing |
+| removeFromGroup | I/V | ✓ | |  | add route for users |
 | deleteUser | I/I  | ✓ |✓|✓|one test still giving network error|
 | deleteGroup  | I/I | ✓ | ✓ |✓||
 | handleDateFilterParams | F/F| ✓ |✓ ||

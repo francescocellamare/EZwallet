@@ -43,7 +43,7 @@ export const createCategory = async (req, res) => {
 
         let result = await categories.countDocuments({ type });
         if (result === 1) {
-            res.status(400).json({ error: "category type is already in use" });
+            return res.status(400).json({ error: "category type is already in use" });
         }
 
         const new_categories = new categories({ type, color });
@@ -178,7 +178,7 @@ export const updateCategory = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        return res.status(500).json({ error: error.message })
     }
 }
 
@@ -203,8 +203,8 @@ export const deleteCategory = async (req, res) => {
     try {
 
         // authentication
-        /*const {authorized, cause} = verifyAuthAdmin(req, res);
-        if(!authorized) return res.status(401).json({error: cause})*/
+        const {authorized, cause} = verifyAuthAdmin(req, res);
+        if(!authorized) return res.status(401).json({error: cause})
 
         const { types } = req.body;
 
@@ -236,7 +236,7 @@ export const deleteCategory = async (req, res) => {
         const notFound = types.filter(type => !toBeDeleted.includes(type));
 
         if (notFound.length !== 0) {
-            res.status(400).json({ error: `the following categories don't exist: ${notFound.join(', ')}` });
+            return res.status(400).json({ error: `the following categories don't exist: ${notFound.join(', ')}` });
         }
 
         // number of categories to be deleted
@@ -293,7 +293,7 @@ export const deleteCategory = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        return res.status(500).json({ error: error.message })
     }
 }
 
@@ -321,7 +321,7 @@ export const getCategories = async (req, res) => {
             refreshedTokenMessage: res.locals.refreshedTokenMessage
         })
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        return res.status(500).json({ error: error.message })
     }
 }
 
@@ -348,7 +348,7 @@ export const createTransaction = async (req, res) => {
         let { authorized, cause } = verifyAuthUser(req, res, req.params.username);
         if (!authorized) return res.status(401).json({ error: cause });
 
-        const { username_param } = req.params;
+        const username_param = req.params.username;
         const username_body = req.body.username;
         const amount = req.body.amount;
         const type = req.body.type;
@@ -375,29 +375,33 @@ export const createTransaction = async (req, res) => {
         }
 
         // check if username in request body and parameters are the same
-        if (username_body !== username_param) res.status(400).json({ error: "Username provided in the request body does not match the username provided in the request params" });
+        if (username_body !== username_param) {
+            return res.status(400).json({ error: "Username provided in the request body does not match the username provided in the request params" })
+        };
 
         // check if amount string passed in body contains a float
-        if (!/^[-+]?[0-9]*\.?[0-9]+$/.test(amount)) res.status(400).json({ error: "Amount should be a number" });
+        if (!/^[-+]?[0-9]*\.?[0-9]+$/.test(amount)) return res.status(400).json({ error: "Amount should be a number" });
 
         // check if the category type in the body represents a category in the database
         let result = await categories.countDocuments({ type })
-        if (result !== 1) res.status(400).json({ error: "Category does not exist" });
+        if (result !== 1) return res.status(400).json({ error: "Category does not exist" });
 
         // check if the username provided in the request reperesents a user in the database
-        result = await User.countDocuments({ username_param })
-        if (result !== 1) res.status(400).json({ error: "User does not exist" });
+        result = await User.countDocuments({ username: username_param })
+        console.log("result", result)
+
+        if (result !== 1) return res.status(400).json({ error: "User does not exist" });
 
         const new_transactions = new transactions({ username: username_body, amount, type });
         new_transactions.save()
             .then(data => res.json({
                 data,
                 refreshedTokenMessage: res.locals.refreshedTokenMessage
-            }))
+            }).send())
             .catch(err => { throw err })
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error: error.message })
+        return res.status(500).json({ error: error.message })
     }
 }
 

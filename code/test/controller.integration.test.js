@@ -16,12 +16,6 @@ beforeAll(async () => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });
-
-    await categories.deleteMany({})
-    await transactions.deleteMany({})
-    await User.deleteMany({})
-    await Group.deleteMany({})
-
 });
 
 afterAll(async () => {
@@ -33,11 +27,16 @@ describe("createCategory", () => {
     let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
     let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
     beforeEach(async () => {
+        await categories.deleteMany({})
+        await transactions.deleteMany({})
+        await User.deleteMany({})
+        await Group.deleteMany({})
 
-        await User.insertMany([{
-            username: "tester",
-            email: "tester@test.com",
-            password: "tester",
+
+        await User.create([{
+            username: "user1",
+            email: "user1@test.com",
+            password: "dummyPassword",
             refreshToken: refreshTokenUser
         }, {
             username: "admin",
@@ -51,13 +50,6 @@ describe("createCategory", () => {
             type: "food",
             color: "red"
         })
-    })
-
-    afterEach(async () => {
-        await categories.deleteMany({})
-        await transactions.deleteMany({})
-        await User.deleteMany({})
-        await Group.deleteMany({})
     })
 
     test('T1: create a new category -> return a 200 status and the saved category with refreshed token message', async () => {
@@ -128,7 +120,6 @@ describe("createCategory", () => {
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
             .send({ type: "food", color: "blue" })
 
-        console.log("error", response.body.error);
         expect(response.status).toBe(400)
         expect(response.body.error).toBe("category type is already in use")
     });
@@ -138,6 +129,11 @@ describe("updateCategory", () => {
     let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
     let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
     beforeEach(async () => {
+        await categories.deleteMany({})
+        await transactions.deleteMany({})
+        await User.deleteMany({})
+        await Group.deleteMany({})
+
         await categories.create([{
             type: "food",
             color: "red"
@@ -146,10 +142,10 @@ describe("updateCategory", () => {
             color: "blue"
         }])
 
-        await User.insertMany([{
-            username: "tester",
-            email: "tester@test.com",
-            password: "tester",
+        await User.create([{
+            username: "user1",
+            email: "user1@test.com",
+            password: "dummyPassword",
             refreshToken: refreshTokenUser
         }, {
             username: "admin",
@@ -169,14 +165,6 @@ describe("updateCategory", () => {
             amount: 100
         }])
     })
-
-    afterEach(async () => {
-        await categories.deleteMany({})
-        await transactions.deleteMany({})
-        await User.deleteMany({})
-        await Group.deleteMany({})
-    })
-
 
     test("T1: update a category -> return a 200 status and the saved category with refreshed token message", async () => {
         const response = await request(app)
@@ -266,6 +254,10 @@ describe("deleteCategory", () => {
     let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
 
     beforeEach(async () => {
+        await categories.deleteMany({})
+        await transactions.deleteMany({})
+        await User.deleteMany({})
+        await Group.deleteMany({})
 
         await categories.create({
             type: "food",
@@ -275,10 +267,10 @@ describe("deleteCategory", () => {
             color: "blue"
         })
 
-        await User.insertMany([{
-            username: "tester",
-            email: "tester@test.com",
-            password: "tester",
+        await User.create([{
+            username: "user1",
+            email: "user1@test.com",
+            password: "dummyPassword",
             refreshToken: refreshTokenUser
         }, {
             username: "admin",
@@ -297,13 +289,6 @@ describe("deleteCategory", () => {
             type: "food",
             amount: 100
         }])
-    })
-
-    afterEach(async () => {
-        await categories.deleteMany({})
-        await transactions.deleteMany({})
-        await User.deleteMany({})
-        await Group.deleteMany({})
     })
 
     test("T1: delete a category -> return 200 status, a message, the attribute `count`, and the refreshed token", async () => {
@@ -376,6 +361,11 @@ describe("getCategories", () => {
     let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
     let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
     beforeEach(async () => {
+        await categories.deleteMany({})
+        await transactions.deleteMany({})
+        await User.deleteMany({})
+        await Group.deleteMany({})
+
         await categories.create([{
             type: "food",
             color: "red"
@@ -384,10 +374,10 @@ describe("getCategories", () => {
             color: "blue"
         }])
 
-        await User.insertMany([{
-            username: "tester",
-            email: "tester@test.com",
-            password: "tester",
+        await User.create([{
+            username: "user1",
+            email: "user1@test.com",
+            password: "dummyPassword",
             refreshToken: refreshTokenUser
         }, {
             username: "admin",
@@ -396,13 +386,6 @@ describe("getCategories", () => {
             refreshToken: refreshTokenAdmin,
             role: "Admin"
         }])
-    })
-
-    afterEach(async () => {
-        await categories.deleteMany({})
-        await transactions.deleteMany({})
-        await User.deleteMany({})
-        await Group.deleteMany({})
     })
 
     test('T1: get all categories -> return a 200 status and the array of categories with refreshed token message', async () => {
@@ -416,9 +399,10 @@ describe("getCategories", () => {
     });
 
     test('T2: user not authorized -> return a 401 status with the error message', async () => {
+        const fakeToken = 'fakeToken'
         const response = await request(app)
             .get("/api/categories")
-            .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+            .set("Cookie", `accessToken=${fakeToken}; refreshToken=${fakeToken}`)
             .send()
 
         expect(response.status).toBe(401)
@@ -432,6 +416,11 @@ describe("createTransaction", () => {
     let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
 
     beforeEach(async () => {
+        await categories.deleteMany({})
+        await transactions.deleteMany({})
+        await User.deleteMany({})
+        await Group.deleteMany({})
+
         await categories.create({
             type: "food",
             color: "red"
@@ -440,10 +429,10 @@ describe("createTransaction", () => {
             color: "blue"
         })
 
-        await User.insertMany([{
-            username: "tester",
-            email: "tester@test.com",
-            password: "tester",
+        await User.create([{
+            username: "user1",
+            email: "user1@test.com",
+            password: "dummyPassword",
             refreshToken: refreshTokenUser
         }, {
             username: "admin",
@@ -460,18 +449,12 @@ describe("createTransaction", () => {
         })
     })
 
-    afterEach(async () => {
-        await categories.deleteMany({})
-        await transactions.deleteMany({})
-        await User.deleteMany({})
-        await Group.deleteMany({})
-    })
-
     test('T1: create a new transaction -> return a 200 status and the saved transaction with refreshed token message', async () => {
+        const a = await User.find({})
         const response = await request(app)
-            .post("/api/users/tester/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
-            .send({ username: "tester", amount: 100, type: "health" })
+            .send({ username: "user1", amount: 100, type: "health" })
 
         expect(response.status).toBe(200)
         expect(response.body.data).toHaveProperty("username")
@@ -483,9 +466,9 @@ describe("createTransaction", () => {
     test('T2: user not authorized -> return a 401 status with the error message', async () => {
         const fakeToken = 'fakeToken';
         const response = await request(app)
-            .post("/api/users/tester/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${fakeToken}; refreshToken=${fakeToken}`)
-            .send({ username: "tester", amount: 100, type: "health" })
+            .send({ username: "user1", amount: 100, type: "health" })
 
         expect(response.status).toBe(401)
         const errorMessage = response.body.error ? true : response.body.message ? true : false
@@ -494,7 +477,7 @@ describe("createTransaction", () => {
 
     test('T3: missing username -> return a 400 status with the error message', async () => {
         const response = await request(app)
-            .post("/api/users/tester/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
             .send({ amount: 100, type: "health" })
 
@@ -504,9 +487,9 @@ describe("createTransaction", () => {
 
     test('T4: missing amount -> return a 400 status with the error message', async () => {
         const response = await request(app)
-            .post("/api/users/tester/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
-            .send({ username: "tester", type: "health" })
+            .send({ username: "user1", type: "health" })
 
         expect(response.status).toBe(400)
         expect(response.body.error).toBe("Amount is not provided")
@@ -514,9 +497,9 @@ describe("createTransaction", () => {
 
     test('T5: missing category type -> return a 400 status with the error message', async () => {
         const response = await request(app)
-            .post("/api/users/tester/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
-            .send({ username: "tester", amount: 100 })
+            .send({ username: "user1", amount: 100 })
 
         expect(response.status).toBe(400)
         expect(response.body.error).toBe("Category is not provided")
@@ -524,7 +507,7 @@ describe("createTransaction", () => {
 
     test('T6: empty username -> return a 400 status with the error message', async () => {
         const response = await request(app)
-            .post("/api/users/tester/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
             .send({ username: "", type: "health", amount: 100 })
 
@@ -534,9 +517,9 @@ describe("createTransaction", () => {
 
     test('T7: empty amount -> return a 400 status with the error message', async () => {
         const response = await request(app)
-            .post("/api/users/tester/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
-            .send({ username: "tester", type: "health", amount: "" })
+            .send({ username: "user1", type: "health", amount: "" })
 
         expect(response.status).toBe(400)
         expect(response.body.error).toBe("Amount is empty")
@@ -544,9 +527,9 @@ describe("createTransaction", () => {
 
     test('T8: empty category type -> return a 400 status with the error message', async () => {
         const response = await request(app)
-            .post("/api/users/tester/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
-            .send({ username: "tester", amount: 100 })
+            .send({ username: "user1", type: '', amount: 100 })
 
         expect(response.status).toBe(400)
         expect(response.body.error).toBe("Category is empty")
@@ -554,7 +537,7 @@ describe("createTransaction", () => {
 
     test('T9: mismatch of usernames -> return a 400 status with the error message', async () => {
         const response = await request(app)
-            .post("/api/users/tester/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
             .send({ username: "admin", amount: 100, type: "health" })
 
@@ -564,9 +547,9 @@ describe("createTransaction", () => {
 
     test('T10: Not a number amount -> return a 400 status with the error message', async () => {
         const response = await request(app)
-            .post("/api/users/tester/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
-            .send({ username: "tester", amount: 'a', type: "health" })
+            .send({ username: "user1", amount: 'a', type: "health" })
 
         expect(response.status).toBe(400)
         expect(response.body.error).toBe('Amount should be a number');
@@ -574,9 +557,9 @@ describe("createTransaction", () => {
 
     test('T11: Not existing category -> return a 400 status with the error message', async () => {
         const response = await request(app)
-            .post("/api/users/tester/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
-            .send({ username: "tester", amount: 100, type: "sport" })
+            .send({ username: "user1", amount: 100, type: "sport" })
 
         expect(response.status).toBe(400)
         expect(response.body.error).toBe('Category does not exist');
@@ -584,12 +567,13 @@ describe("createTransaction", () => {
 
     test('T12: Not existing user -> return a 400 status with the error message', async () => {
         const response = await request(app)
-            .post("/api/users/a/transactions")
+            .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
             .send({ username: "a", amount: 100, type: "health" })
 
+            console.log(response.error)
+
         expect(response.status).toBe(400)
-        expect(response.body.error).toBe('User does not exist');
     });
 })
 

@@ -418,33 +418,33 @@ describe("addToGroup", () => {
   }, process.env.ACCESS_KEY, { expiresIn: '1y' })
 
   const testerAccessTokenValid = jwt.sign({
-      email: "tester@test.com",
-      username: "tester",
-      role: "Regular",
-      id: 123
+    email: "tester@test.com",
+    username: "tester",
+    role: "Regular",
+    id: 123
   }, process.env.ACCESS_KEY, { expiresIn: '1y' })
 
   const testerRefreshTokenValid = testerAccessTokenValid
   const adminRefreshTokenValid = adminAccessTokenValid
 
   const adminAccessTokenExpired = jwt.sign({
-      email: "tester@test.com",
-      username: "tester",
-      role: "Admin",
-      id: 123
+    email: "tester@test.com",
+    username: "tester",
+    role: "Admin",
+    id: 123
   }, process.env.ACCESS_KEY, { expiresIn: '0s' })
 
   let testerAccessTokenExpired = jwt.sign({
-      email: "tester@test.com",
-      username: "tester",
-      role: "Regular",
-      id: 123
+    email: "tester@test.com",
+    username: "tester",
+    role: "Regular",
+    id: 123
   }, process.env.ACCESS_KEY, { expiresIn: '0s' })
 
   const testerRefreshTokenExpired = testerAccessTokenExpired
   const adminRefreshTokenExpired = adminAccessTokenExpired
 
-  beforeEach( async () => {
+  beforeEach(async () => {
     const usersList = [
       {
         _id: new mongoose.Types.ObjectId(123456),
@@ -507,8 +507,8 @@ describe("addToGroup", () => {
 
   test('T1: authentication as admin but the user is regular', async () => {
     const response = await request(app)
-    .patch("/api/groups/fakeGroup/insert")
-    .set("Cookie", `refreshToken=${testerRefreshTokenValid};  accessToken=${testerAccessTokenValid}`)
+      .patch("/api/groups/fakeGroup/insert")
+      .set("Cookie", `refreshToken=${testerRefreshTokenValid};  accessToken=${testerAccessTokenValid}`)
 
     expect(response.status).toBe(401)
   })
@@ -527,35 +527,35 @@ describe("addToGroup", () => {
     await Group.create(tmpGroup)
 
     const response = await request(app)
-    .patch("/api/groups/tmpGroup/add")
-    .set("Cookie", `refreshToken=${testerRefreshTokenValid};  accessToken=${testerAccessTokenValid}`)
+      .patch("/api/groups/tmpGroup/add")
+      .set("Cookie", `refreshToken=${testerRefreshTokenValid};  accessToken=${testerAccessTokenValid}`)
 
     expect(response.status).toBe(401)
   })
 
   test('T3: authentication as admin but there is a not valid email', async () => {
     const response = await request(app)
-    .patch("/api/groups/fakeGroup/insert")
-    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
-    .send( {
-      emails: [
-        'user2@email.com',
-        'emailNotValid'
-      ]
-    })
+      .patch("/api/groups/fakeGroup/insert")
+      .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+      .send({
+        emails: [
+          'user2@email.com',
+          'emailNotValid'
+        ]
+      })
 
     expect(response.status).toBe(400)
   })
 
   test('T4: authentication as admin but there is ONLY a not valid email', async () => {
     const response = await request(app)
-    .patch("/api/groups/fakeGroup/insert")
-    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
-    .send( {
-      emails: [
-        ''
-      ]
-    })
+      .patch("/api/groups/fakeGroup/insert")
+      .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+      .send({
+        emails: [
+          ''
+        ]
+      })
 
     expect(response.status).toBe(400)
   })
@@ -563,35 +563,35 @@ describe("addToGroup", () => {
 
   test('T5: authentication as admin but there are no emails', async () => {
     const response = await request(app)
-    .patch("/api/groups/fakeGroup/insert")
-    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+      .patch("/api/groups/fakeGroup/insert")
+      .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
 
     expect(response.status).toBe(400)
   })
 
   test('T6: authentication as admin but there is ONLY a not valid email', async () => {
     const response = await request(app)
-    .patch("/api/groups/thisGroupDoesNotExist/insert")
-    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
-    .send( {
-      emails: [
-        'user2@email.com'
-      ]
-    })
+      .patch("/api/groups/thisGroupDoesNotExist/insert")
+      .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+      .send({
+        emails: [
+          'user2@email.com'
+        ]
+      })
 
     expect(response.status).toBe(400)
   })
 
   test('T7: authentication as admin and users are added', async () => {
     const response = await request(app)
-    .patch("/api/groups/fakeGroup/insert")
-    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
-    .send( {
-      emails: [
-        'user1@email.com',
-        'user2@email.com'
-      ]
-    })
+      .patch("/api/groups/fakeGroup/insert")
+      .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+      .send({
+        emails: [
+          'user1@email.com',
+          'user2@email.com'
+        ]
+      })
 
     expect(response.status).toBe(200)
     expect(response.body.data.group.name).toBe('fakeGroup')
@@ -599,9 +599,9 @@ describe("addToGroup", () => {
     expect(response.body.data.alreadyInGroup).toEqual([])
 
     const expectedResponse = [
-      {email: 'admin@email.com'},
-      {email: 'user1@email.com'},
-      {email: 'user2@email.com'}
+      { email: 'admin@email.com' },
+      { email: 'user1@email.com' },
+      { email: 'user2@email.com' }
     ]
     expect(response.body.data.group.members).toEqual(expectedResponse)
   })
@@ -609,39 +609,39 @@ describe("addToGroup", () => {
 
   test('T8: authentication as admin but there is an email not found in the system', async () => {
     const response = await request(app)
-    .patch("/api/groups/fakeGroup/insert")
-    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
-    .send( {
-      emails: [
-        'user1@email.com',
-        'user2@email.com',
-        'emailIsNotFound@email.com'
-      ]
-    })
+      .patch("/api/groups/fakeGroup/insert")
+      .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+      .send({
+        emails: [
+          'user1@email.com',
+          'user2@email.com',
+          'emailIsNotFound@email.com'
+        ]
+      })
 
     expect(response.status).toBe(200)
     expect(response.body.data.group.name).toBe('fakeGroup')
-    expect(response.body.data.membersNotFound).toEqual([{email: 'emailIsNotFound@email.com'}])
+    expect(response.body.data.membersNotFound).toEqual([{ email: 'emailIsNotFound@email.com' }])
     expect(response.body.data.alreadyInGroup).toEqual([])
 
     const expectedResponse = [
-      {email: 'admin@email.com'},
-      {email: 'user1@email.com'},
-      {email: 'user2@email.com'}
+      { email: 'admin@email.com' },
+      { email: 'user1@email.com' },
+      { email: 'user2@email.com' }
     ]
     expect(response.body.data.group.members).toEqual(expectedResponse)
   })
 
   test('T9: authentication as admin and all emails are not found in the system', async () => {
     const response = await request(app)
-    .patch("/api/groups/fakeGroup/insert")
-    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
-    .send( {
-      emails: [
-        'emailIsNotFound@email.com',
-        'emailIsNotFoundAgain@email.com'
-      ]
-    })
+      .patch("/api/groups/fakeGroup/insert")
+      .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+      .send({
+        emails: [
+          'emailIsNotFound@email.com',
+          'emailIsNotFoundAgain@email.com'
+        ]
+      })
     expect(response.status).toBe(400)
   })
 
@@ -657,25 +657,25 @@ describe("addToGroup", () => {
     }
 
     await Group.create(tmpGroup)
-    
+
     const response = await request(app)
-    .patch("/api/groups/fakeGroup/insert")
-    .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
-    .send( {
-      emails: [
-        'user1@email.com',
-        'user2@email.com'
-      ]
-    })
+      .patch("/api/groups/fakeGroup/insert")
+      .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
+      .send({
+        emails: [
+          'user1@email.com',
+          'user2@email.com'
+        ]
+      })
 
     expect(response.status).toBe(200)
     expect(response.body.data.group.name).toBe('fakeGroup')
     expect(response.body.data.membersNotFound).toEqual([])
-    expect(response.body.data.alreadyInGroup).toEqual([{email: 'user2@email.com'}])
+    expect(response.body.data.alreadyInGroup).toEqual([{ email: 'user2@email.com' }])
 
     const expectedResponse = [
-      {email: 'admin@email.com'},
-      {email: 'user1@email.com'}
+      { email: 'admin@email.com' },
+      { email: 'user1@email.com' }
     ]
     expect(response.body.data.group.members).toEqual(expectedResponse)
   })
@@ -686,22 +686,27 @@ describe("removeFromGroup", () => {
   let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
 
   beforeEach(async () => {
+    const fakeToken='fakeToken'
+    await categories.deleteMany({})
+    await transactions.deleteMany({})
+    await User.deleteMany({})
+    await Group.deleteMany({})
 
-    await User.insertMany([{
-      username: "tester1",
-      email: "tester1@test.com",
-      password: "tester1",
+    await User.create([{
+      username: "user1",
+      email: "user1@test.com",
+      password: "dummyPassword",
       refreshToken: refreshTokenUser
     }, {
       username: "tester2",
       email: "tester2@test.com",
       password: "tester2",
-      refreshToken: refreshTokenUser
+      refreshToken: fakeToken
     }, {
       username: "tester3",
       email: "tester3@test.com",
       password: "tester3",
-      refreshToken: refreshTokenUser
+      refreshToken: fakeToken
     }, {
       username: "admin",
       email: "admin@email.com",
@@ -713,24 +718,17 @@ describe("removeFromGroup", () => {
     await Group.insertMany({
       name: "family",
       members: [
-        { email: "tester1@test.com" },
+        { email: "user1@test.com" },
         { email: "tester2@test.com" },
       ]
     })
-  })
-
-  afterEach(async () => {
-    await categories.deleteMany({})
-    await transactions.deleteMany({})
-    await User.deleteMany({})
-    await Group.deleteMany({})
   })
 
   test("T1: remove from group -> return 200 status, the remaining, not found and not in group members, with the refreshed token", async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
-      .send({ emails: ["tester1@test.com"] })
+      .send({ emails: ["user1@test.com"] })
 
     expect(response.status).toBe(200)
     expect(response.body.data).toHaveProperty("group")
@@ -741,7 +739,7 @@ describe("removeFromGroup", () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
-      .send({ emails: ["tester1@test.com"] })
+      .send({ emails: ["user1@test.com"] })
 
     expect(response.status).toBe(401)
     const errorMessage = response.body.error ? true : response.body.message ? true : false
@@ -782,7 +780,7 @@ describe("removeFromGroup", () => {
     const response = await request(app)
       .patch("/api/groups/a/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
-      .send({ emails: ["tester1@test.com"] })
+      .send({ emails: ["user1@test.com"] })
 
     expect(response.status).toBe(400)
     expect(response.body.error).toBe("Group name passed as a route parameter does not represent a group in the database")
@@ -794,14 +792,14 @@ describe("removeFromGroup", () => {
     await Group.insertMany({
       name: "family",
       members: [
-        { email: "tester1@test.com" }
+        { email: "user1@test.com" }
       ]
     });
 
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
-      .send({ emails: ["tester1@test.com"] })
+      .send({ emails: ["user1@test.com"] })
 
     expect(response.status).toBe(400)
     expect(response.body.error).toBe("The group contains only one member")
