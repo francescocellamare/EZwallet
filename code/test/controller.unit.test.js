@@ -135,6 +135,15 @@ describe('createCategory', () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'category type is already in use' });
     });
+
+    test('T8 : Network error -> return 500', async()=>{
+        jest.spyOn(utils, 'verifyAuthAdmin').mockImplementationOnce(()=> {throw new Error('server crash')});
+        
+        await createCategory(mockReq, mockRes);
+      
+        expect(mockRes.status).toHaveBeenCalledWith(500);
+        expect(mockRes.json).toHaveBeenCalledWith({error: 'server crash'});
+    });
 })
 
 describe("updateCategory", () => {
@@ -277,6 +286,16 @@ describe("updateCategory", () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Selected category does not exist' });
     });
+
+    test('T9: Network error -> return 500', async()=>{
+        jest.spyOn(utils, 'verifyAuthAdmin').mockImplementationOnce(()=> {throw new Error('server crash')});
+        
+        await updateCategory(mockReq, mockRes);
+      
+        expect(mockRes.status).toHaveBeenCalledWith(500);
+        expect(mockRes.json).toHaveBeenCalledWith({error: 'server crash'});
+    });
+    
 })
 
 describe("deleteCategory", () => {
@@ -473,6 +492,15 @@ describe("deleteCategory", () => {
 
     });
 
+    test('T7: Network error -> return 500', async()=>{
+        jest.spyOn(utils, 'verifyAuthAdmin').mockImplementationOnce(()=> {throw new Error('server crash')});
+        
+        await deleteCategory(mockReq, mockRes);
+      
+        expect(mockRes.status).toHaveBeenCalledWith(500);
+        expect(mockRes.json).toHaveBeenCalledWith({error: 'server crash'});
+    });
+
 
 })
 
@@ -561,6 +589,16 @@ describe("getCategories", () => {
         expect(mockRes.status).toHaveBeenCalledWith(401);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Unauthorized' });
     });
+
+    test('T3: Network error -> return 500', async()=>{
+        jest.spyOn(utils, 'verifyAuthSimple').mockImplementationOnce(()=> {throw new Error('server crash')});
+        
+        await getCategories(mockReq, mockRes);
+      
+        expect(mockRes.status).toHaveBeenCalledWith(500);
+        expect(mockRes.json).toHaveBeenCalledWith({error: 'server crash'});
+    });
+
 })
 
 describe("createTransaction", () => {
@@ -794,6 +832,15 @@ describe("createTransaction", () => {
 
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'User does not exist' });
+    });
+
+    test('T13: Network error -> return 500', async()=>{
+        jest.spyOn(utils, 'verifyAuthUser').mockImplementationOnce(()=> {throw new Error('server crash')});
+        
+        await createTransaction(mockReq, mockRes);
+      
+        expect(mockRes.status).toHaveBeenCalledWith(500);
+        expect(mockRes.json).toHaveBeenCalledWith({error: 'server crash'});
     });
 })
 
