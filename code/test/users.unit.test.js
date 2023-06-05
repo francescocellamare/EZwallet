@@ -2031,11 +2031,295 @@ test('T5: authentication as admin and users are all not valid', async () => {
 
   });
 
+  test('T6: authorized as admin but some emails are not in valid format', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/pull'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+   
+    jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValueOnce(expectedResponeAuth)
+
+    await removeFromGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+    expect(mockRes.json).toHaveBeenCalledWith({ error: "One or more emails are not in a valid format" });
+  })
 
 
 
+  test('T7: authorized as admin but some emails are empty strings', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          ''
+        ]
+      },
+      url: 'api/groups/testGroup/pull'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+   
+    jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValueOnce(expectedResponeAuth)
 
- })
+    await removeFromGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+    expect(mockRes.json).toHaveBeenCalledWith({ error: "One or more emails are empty strings"  });
+  })
+
+  test('T8: authorized as admin but group has only one memeber', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/pull'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const fakeGroup = {
+      name: 'testGroup',
+      members: [
+        {
+          email: 'mail1@mail.com',
+          _id: 123
+        },
+      ]
+    }
+    jest.spyOn(Group, 'findOne').mockReturnValueOnce(fakeGroup)
+
+    const fakeData = [
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },{
+        username: 'mail2',
+        email: 'mail2@mail.com',
+        role: 'Regular',
+        _id: 789
+      }
+    ]
+
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+   
+    jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValueOnce(expectedResponeAuth)
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(fakeGroup)
+    await removeFromGroup(mockReq, mockRes)
+    
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+    expect(mockRes.json).toHaveBeenCalledWith({ error:  "The group contains only one member" });
+  })
+  test('T9: authorized as admin but group has only one memeber', async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/pull'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const fakeGroup = {
+      name: 'testGroup',
+      members: [
+        {
+          email: 'mail1@mail.com',
+          _id: 123
+        },
+      ]
+    }
+    jest.spyOn(Group, 'findOne').mockReturnValueOnce(fakeGroup)
+
+    const fakeData = [
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },{
+        username: 'mail2',
+        email: 'mail2@mail.com',
+        role: 'Regular',
+        _id: 789
+      }
+    ]
+
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+   
+    jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValueOnce(expectedResponeAuth)
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(fakeGroup)
+    await removeFromGroup(mockReq, mockRes)
+    
+    expect(mockRes.status).toHaveBeenCalledWith(400)
+    expect(mockRes.json).toHaveBeenCalledWith({ error:  "The group contains only one member" });
+  })
+  test('T9 : Network error -> return 500', async()=>{
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/pull'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const fakeGroup = {
+      name: 'testGroup',
+      members: [
+        {
+          email: 'mail1@mail.com',
+          _id: 123
+        },
+        {
+          email: 'mail2@mail.com',
+          _id: 1234
+        }
+      ]
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+   
+    jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValueOnce(expectedResponeAuth)
+    
+    jest.spyOn(Group, 'findOne').mockImplementationOnce(()=> {throw new Error('server crash')});
+    
+    await removeFromGroup(mockReq, mockRes);
+  
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.json).toHaveBeenCalledWith({error: 'server crash'});
+  })
+  
+  // test('T10 : remove user from group ', async()=>{
+  //   const mockReq = {
+  //     cookies: {
+  //       accessToken: 'accessToken',
+  //       refreshToken: 'refreshToken'
+  //     },
+  //     params: {
+  //       name: 'testGroup'
+  //     },
+  //     body: {
+  //       emails: [
+  //         'mail1@mail.com',
+  //         'mail2@mail.com'
+  //       ]
+  //     },
+  //     url: 'api/groups/testGroup/pull'
+  //   }
+  //   const mockRes = {
+  //       locals: {
+  //           refreshedTokenMessage: "dummy message"
+  //       },
+  //       status: jest.fn().mockReturnThis(),
+  //       json: jest.fn()
+  //   }
+  //   const fakeGroup = {
+  //     name: 'testGroup',
+  //     members: [
+  //       {
+  //         email: 'mail1@mail.com',
+  //         _id: 123
+  //       },
+  //       {
+  //         email: 'mail2@mail.com',
+  //         _id: 1234
+  //       },
+  //       {
+  //         email: 'mail3@mail.com',
+  //         _id: 12345
+  //       }
+  //     ]
+  //   }
+  //   const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+   
+  //   jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValueOnce(expectedResponeAuth)
+    
+  //   jest.spyOn(Group, 'findOne').mockImplementationOnce(fakeGroup);
+  
+  //   jest.spyOn(User, 'findOne').mockResolvedValueOnce(mockReq.body.emails[0]);
+  //   jest.spyOn(User, 'findOne').mockResolvedValueOnce(mockReq.body.emails[1]);    
+
+    
+  
+  // })
+})
 
 describe("deleteUser", () => {
 
@@ -2390,3 +2674,4 @@ test('T6 : Network error -> return 500', async()=>{
 
 
 })
+
