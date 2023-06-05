@@ -386,7 +386,11 @@ describe("createGroup", () => {
     expect(mockRes.json.mock.calls[0][0].data.membersNotFound).toEqual([])
     expect(mockRes.json.mock.calls[0][0].data.alreadyInGroup).toEqual([])
     expect(mockRes.json.mock.calls[0][0].data.group.name).toBe('groupTest')
-    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(mockReq.body.memberEmails)
+
+    const expectedRespone = mockReq.body.memberEmails.map( email => {
+      return { email: email } 
+    })
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedRespone)
   });
 
   test('T3: group name is not defined in the body', async () => {
@@ -822,7 +826,10 @@ describe("createGroup", () => {
     expect(mockRes.json.mock.calls[0][0].data.group.name).toBe('groupTest')
 
     mockReq.body.memberEmails.pop()
-    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(mockReq.body.memberEmails)
+    const expectedRespone = mockReq.body.memberEmails.map( email => {
+      return { email: email } 
+    })
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedRespone)
   });
 
   test('T11: create group but an email is already in group -> retun 200', async() => {
@@ -917,7 +924,10 @@ describe("createGroup", () => {
     expect(mockRes.json.mock.calls[0][0].data.group.name).toBe('groupTest')
 
     mockReq.body.memberEmails.pop()
-    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(mockReq.body.memberEmails)
+    const expectedRespone = mockReq.body.memberEmails.map( email => {
+      return { email: email } 
+    })
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedRespone)
   });
 
   test('T12: create group but caller email is not provided (it should be added) -> retun 200', async() => {
@@ -1015,7 +1025,10 @@ describe("createGroup", () => {
         'mail2@mail.com',
         'tester@mail.com'
     ]
-    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedMembersList)
+    const expectedRespone = expectedMembersList.map( email => {
+      return { email: email } 
+    })
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedRespone)
   });
 
   test('T13: create group but all emails do not exist -> retun 400', async() => {
