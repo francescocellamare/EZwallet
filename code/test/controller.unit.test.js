@@ -739,7 +739,7 @@ describe("createTransaction", () => {
         mockReq = {
             params: { username: 'Mario' },
             body: {
-                username: 'Francesco',
+                username: 'Mario',
                 type: 'food',
                 amount: 'a',
             },
@@ -758,7 +758,7 @@ describe("createTransaction", () => {
         mockReq = {
             params: { username: 'Mario' },
             body: {
-                username: 'Francesco',
+                username: 'Mario',
                 type: 'sport',
                 amount: 100,
             },
@@ -776,16 +776,17 @@ describe("createTransaction", () => {
 
     test('T12: Not existing user -> return a 400 status with the error message', async () => {
         mockReq = {
-            params: { username: 'Mario' },
+            params: { username: 'Francesco' },
             body: {
                 username: 'Francesco',
-                type: 'sport',
+                type: 'food',
                 amount: 100,
             },
         };
 
         jest.spyOn(utils, 'verifyAuthUser').mockReturnValue({ authorized: true, cause: "Authorized" })
 
+        jest.spyOn(categories, 'countDocuments').mockResolvedValueOnce(1);
 
         jest.spyOn(User, 'countDocuments').mockResolvedValueOnce(0);
 

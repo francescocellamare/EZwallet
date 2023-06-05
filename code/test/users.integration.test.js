@@ -228,7 +228,7 @@ describe("getUser", () => {
 })
 
 
-describe.only("createGroup", () => {
+describe("createGroup", () => {
 
 
   let test_tokens = [
@@ -690,7 +690,7 @@ describe("addToGroup", () => {
   })
 })
 
-describe.only("removeFromGroup", () => {
+describe("removeFromGroup", () => {
   let refreshTokenUser1 = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
   let refreshTokenUser2 = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMiIsImVtYWlsIjoidXNlcjJAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.vcyvbioE0-iiQxVasIGSAhJwRdwgT6wxYQvoe4eMAqQ';
   let refreshTokenUser3 = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyNCIsImVtYWlsIjoidXNlcjRAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.C40TvT7lc_ufN8xwz5HKZ1XcT2DcwAtrOoZ4t-K19Pc';
@@ -836,7 +836,18 @@ describe.only("removeFromGroup", () => {
 
   });
 
-  test('T10: empty emails -> return a 400 status with the error message', async () => {
+  test('T10: not member of the group request -> return a 401 status with the error message', async () => {
+    const response = await request(app)
+      .patch("/api/groups/family/remove")
+      .set("Cookie", `accessToken=${refreshTokenUser3}; refreshToken=${refreshTokenUser3}`)
+      .send({ emails: ["user1@test.com"] })
+
+    expect(response.status).toBe(401)
+    const errorMessage = response.body.error ? true : response.body.message ? true : false
+    expect(errorMessage).toBe(true)
+  });
+
+  test('T11: empty emails -> return a 400 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -846,7 +857,7 @@ describe.only("removeFromGroup", () => {
     expect(response.body.error).toBe("One or more emails are empty strings")
   });
 
-  test('T11: missing emails -> return a 400 status with the error message', async () => {
+  test('T12: missing emails -> return a 400 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -856,7 +867,7 @@ describe.only("removeFromGroup", () => {
     expect(response.body.error).toBe("The request body does not contain all the necessary attributes")
   });
 
-  test("T12: no valid emails  -> return 400 status with the error message", async () => {
+  test("T13: no valid emails  -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -866,7 +877,7 @@ describe.only("removeFromGroup", () => {
     expect(response.body.error).toBe("One or more emails are not in a valid format")
   });
 
-  test("T13: group not found -> return 400 status with the error message", async () => {
+  test("T14: group not found -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/a/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -875,7 +886,7 @@ describe.only("removeFromGroup", () => {
     expect(response.status).toBe(401)
   });
 
-  test("T14: only one member in the group -> return 400 status with the error message", async () => {
+  test("T15: only one member in the group -> return 400 status with the error message", async () => {
     await Group.deleteMany({})
 
     await Group.insertMany({
@@ -894,9 +905,9 @@ describe.only("removeFromGroup", () => {
     expect(response.body.error).toBe("The group contains only one member")
   });
 
-  test("T15: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
+  test("T16: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
     const response = await request(app)
-      .patch("/api/groups/family/pull")
+      .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
       .send({ emails: ["user3@test.com", "user4@test.com"] })
 

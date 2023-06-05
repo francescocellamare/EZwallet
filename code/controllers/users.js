@@ -388,7 +388,6 @@ export const getGroup = async (req, res) => {
       }
   
       const group = await Group.findOne({ name: req.params.name });
-      console.log(group)
       if (!group) {
         return res.status(400).json({ error: "Group name passed as a route parameter does not represent a group in the database" })
       }

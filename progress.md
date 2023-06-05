@@ -8,7 +8,7 @@
 | updateCategory | V/V|✓ |✓ | ✓|  |
 | deleteCategory | V/V|✓ | ✓|✓ | |
 | getCategories | V/V|✓ | ✓|✓ |  |
-| createTransaction | V/V|✓ | ✓ |✓ | |
+| createTransaction | V/V|✓ | ✓ |✓ | The first test is failing|
 | getAllTransactions | F/F|✓ |✓  | ✓ | |
 | getTransactionsByUser | K/K|✓ | ✓ | ✓ | |
 | getTransactionsByUserByCategory | K/K|✓ | ✓ | ✓ |
@@ -22,7 +22,7 @@
 | getGroups | I/I |✓ | ✓ | |
 | getGroup | I/I |✓ | ✓ | |
 | addToGroup | I/F | ✓ | ✓| ✓| |
-| removeFromGroup | I/V | ✓ | |  | add route for users |
+| removeFromGroup | I/V | ✓ |✓ |  | |
 | deleteUser | I/I  | ✓ |✓|✓|one test still giving network error|
 | deleteGroup  | I/I | ✓ | ✓ |✓||
 | handleDateFilterParams | F/F| ✓ |✓ ||
