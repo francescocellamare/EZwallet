@@ -571,8 +571,6 @@ describe("createTransaction", () => {
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
             .send({ username: "a", amount: 100, type: "health" })
 
-            console.log(response.error)
-
         expect(response.status).toBe(400)
     });
 })

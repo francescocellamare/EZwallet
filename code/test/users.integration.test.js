@@ -681,12 +681,13 @@ describe("addToGroup", () => {
   })
 })
 
-describe("removeFromGroup", () => {
-  let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
+describe.only("removeFromGroup", () => {
+  let refreshTokenUser1 = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
+  let refreshTokenUser2 = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMiIsImVtYWlsIjoidXNlcjJAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.vcyvbioE0-iiQxVasIGSAhJwRdwgT6wxYQvoe4eMAqQ';
+  let refreshTokenUser3 = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyNCIsImVtYWlsIjoidXNlcjRAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.C40TvT7lc_ufN8xwz5HKZ1XcT2DcwAtrOoZ4t-K19Pc';
   let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
 
   beforeEach(async () => {
-    const fakeToken='fakeToken'
     await categories.deleteMany({})
     await transactions.deleteMany({})
     await User.deleteMany({})
@@ -696,17 +697,17 @@ describe("removeFromGroup", () => {
       username: "user1",
       email: "user1@test.com",
       password: "dummyPassword",
-      refreshToken: refreshTokenUser
+      refreshToken: refreshTokenUser1
     }, {
-      username: "tester2",
-      email: "tester2@test.com",
-      password: "tester2",
-      refreshToken: fakeToken
+      username: "user2",
+      email: "user2@test.com",
+      password: "dummyPassword",
+      refreshToken: refreshTokenUser2
     }, {
-      username: "tester3",
-      email: "tester3@test.com",
-      password: "tester3",
-      refreshToken: fakeToken
+      username: "user3",
+      email: "user3@test.com",
+      password: "dummyPassword",
+      refreshToken: refreshTokenUser3
     }, {
       username: "admin",
       email: "admin@email.com",
@@ -719,7 +720,7 @@ describe("removeFromGroup", () => {
       name: "family",
       members: [
         { email: "user1@test.com" },
-        { email: "tester2@test.com" },
+        { email: "user2@test.com" },
       ]
     })
   })
@@ -738,7 +739,7 @@ describe("removeFromGroup", () => {
   test('T2: not an admin request -> return a 401 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
-      .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
+      .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
       .send({ emails: ["user1@test.com"] })
 
     expect(response.status).toBe(401)
@@ -786,7 +787,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("Group name passed as a route parameter does not represent a group in the database")
   });
 
-  test("T7: only one member in th group -> return 400 status with the error message", async () => {
+  test("T7: only one member in the group -> return 400 status with the error message", async () => {
     await Group.deleteMany({})
 
     await Group.insertMany({
@@ -805,11 +806,90 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("The group contains only one member")
   });
 
-  test("T8: only one member in th group -> return 400 status with the error message", async () => {
+  test("T8: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
-      .send({ emails: ["tester3@test.com", "tester3@test.com"] })
+      .send({ emails: ["user3@test.com", "user4@test.com"] })
+
+    expect(response.status).toBe(400)
+    expect(response.body.error).toBe("All the members' email either do not exist or are not in the group")
+  });
+
+  test("T9: remove from group -> return 200 status, the remaining, not found and not in group members, with the refreshed token", async () => {
+    const response = await request(app)
+      .patch("/api/groups/family/remove")
+      .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
+      .send({ emails: ["user2@test.com"] })
+
+    expect(response.status).toBe(200)
+    expect(response.body.data).toHaveProperty("group")
+
+  });
+
+  test('T10: empty emails -> return a 400 status with the error message', async () => {
+    const response = await request(app)
+      .patch("/api/groups/family/remove")
+      .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
+      .send({ emails: [""] })
+
+    expect(response.status).toBe(400)
+    expect(response.body.error).toBe("One or more emails are empty strings")
+  });
+
+  test('T11: missing emails -> return a 400 status with the error message', async () => {
+    const response = await request(app)
+      .patch("/api/groups/family/remove")
+      .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
+      .send({})
+
+    expect(response.status).toBe(400)
+    expect(response.body.error).toBe("The request body does not contain all the necessary attributes")
+  });
+
+  test("T12: no valid emails  -> return 400 status with the error message", async () => {
+    const response = await request(app)
+      .patch("/api/groups/family/remove")
+      .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
+      .send({ emails: ["a@.it"] })
+
+    expect(response.status).toBe(400)
+    expect(response.body.error).toBe("One or more emails are not in a valid format")
+  });
+
+  test("T13: group not found -> return 400 status with the error message", async () => {
+    const response = await request(app)
+      .patch("/api/groups/a/remove")
+      .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
+      .send({ emails: ["user2@test.com"] })
+
+    expect(response.status).toBe(401)
+  });
+
+  test("T14: only one member in the group -> return 400 status with the error message", async () => {
+    await Group.deleteMany({})
+
+    await Group.insertMany({
+      name: "family",
+      members: [
+        { email: "user1@test.com" }
+      ]
+    });
+
+    const response = await request(app)
+      .patch("/api/groups/family/remove")
+      .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
+      .send({ emails: ["user1@test.com"] })
+
+    expect(response.status).toBe(400)
+    expect(response.body.error).toBe("The group contains only one member")
+  });
+
+  test("T15: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
+    const response = await request(app)
+      .patch("/api/groups/family/pull")
+      .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
+      .send({ emails: ["user3@test.com", "user4@test.com"] })
 
     expect(response.status).toBe(400)
     expect(response.body.error).toBe("All the members' email either do not exist or are not in the group")
@@ -1373,5 +1453,3 @@ describe("deleteGroup", () => {//create a group with only one user
     await expect(response.body.error).toBe("User does not have admin role")
   })
 })
-
-
