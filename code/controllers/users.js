@@ -383,6 +383,7 @@ export const getGroup = async (req, res) => {
       }
   
       const group = await Group.findOne({ name: req.params.name });
+      console.log(group)
       if (!group) {
         return res.status(400).json({ error: "Group name passed as a route parameter does not represent a group in the database" })
       }
@@ -401,10 +402,10 @@ export const getGroup = async (req, res) => {
       let inGroup = false;
   
       //For each input email I search if there is a User that has that email. If it is not found, I add the User in membersNotFound; if it is found, I check if the User belongs to this group (checking if group.members.email matches the email of the existing user). If the User belongs to this group it is removed from the group, otherwise it is added to notInGroup members.  
-      for (const iEmail of inputEmail) {
+      for (let iEmail of inputEmail) {
         const corrUser = await User.findOne({ email: iEmail }); //corresponding User
         if (corrUser) {
-          for (const member of group.members) {
+          for (let member of group.members) {
             if (member.email === iEmail) {
               memberToRemove.push({ "email": iEmail });
               inGroup = true;
