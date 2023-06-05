@@ -64,15 +64,20 @@ export const getUsers = async (req, res) => {
   }
 /**
  * Create a new group
-  - Request Body Content: An object having a string attribute for the `name` of the group and an array that lists all the `memberEmails`
-  - Response `data` Content: An object having an attribute `group` (this object must have a string attribute for the `name`
-    of the created group and an array for the `members` of the group), an array that lists the `alreadyInGroup` members
-    (members whose email is already present in a group) and an array that lists the `membersNotFound` (members whose email
-    +does not appear in the system)
-  - Optional behavior:
-    - error 401 is returned if there is already an existing group with the same name
-    - error 401 is returned if all the `memberEmails` either do not exist or are already in a group
-    
+- Request Parameters: None
+- Request request body Content: An object having a string attribute for the `name` of the group and an array that lists all the `memberEmails`
+  - Example: `{name: "Family", memberEmails: ["mario.red@email.com", "luigi.red@email.com"]}`
+- Response `data` Content: An object having an attribute `group` (this object must have a string attribute for the `name` of the created group and an array for the `members` of the group), an array that lists the `alreadyInGroup` members (members whose email is already present in a group) and an array that lists the `membersNotFound` (members whose email does not appear in the system)
+  - Example: `res.status(200).json({data: {group: {name: "Family", members: [{email: "mario.red@email.com"}, {email: "luigi.red@email.com"}]}, membersNotFound: [], alreadyInGroup: []} refreshedTokenMessage: res.locals.refreshedTokenMessage})`
+- If the user who calls the API does not have their email in the list of emails then their email is added to the list of members
+- Returns a 400 error if the request body does not contain all the necessary attributes
+- Returns a 400 error if the group name passed in the request body is an empty string
+- Returns a 400 error if the group name passed in the request body represents an already existing group in the database
+- Returns a 400 error if all the provided emails represent users that are already in a group or do not exist in the database
+- Returns a 400 error if the user who calls the API is already in a group
+- Returns a 400 error if at least one of the member emails is not in a valid email format
+- Returns a 400 error if at least one of the member emails is an empty string
+- Returns a 401 error if called by a user who is not authenticated (authType = Simple)
     */
 export const createGroup = async (req, res) => {
   
@@ -142,7 +147,7 @@ export const createGroup = async (req, res) => {
     }
 
     // no one has been added
-    if(memberEmails.length === alreadyInGroup.length + membersNotFound.length)
+    if(memberEmails.length === alreadyInGroup.length + membersNotFound.length + 1)
       return res.status(400).json({ error: "all the `memberEmails` either do not exist or are already in a group" });
 
     // creating object to return
@@ -162,7 +167,7 @@ export const createGroup = async (req, res) => {
       data: { 
         group: {
           name: returnedObj.group.name,
-          members: returnedObj.group.members.map( member => member.email )
+          members: returnedObj.group.members.map( member => { return {email : member.email}} )
         }, 
         membersNotFound: returnedObj.membersNotFound,
         alreadyInGroup: returnedObj.alreadyInGroup
@@ -361,6 +366,7 @@ export const getGroup = async (req, res) => {
       const groupName = req.params.name;
   
       if (!req.url.match(regexpAdmin)) {
+
         const { authorized, cause } = await verifyAuthGroup(req, res, groupName);
         if (!authorized) return res.status(401).json({ error: cause })
       }
@@ -383,7 +389,6 @@ export const getGroup = async (req, res) => {
       }
   
       const group = await Group.findOne({ name: req.params.name });
-      console.log(group)
       if (!group) {
         return res.status(400).json({ error: "Group name passed as a route parameter does not represent a group in the database" })
       }

@@ -388,19 +388,19 @@ export const createTransaction = async (req, res) => {
 
         // check if the username provided in the request reperesents a user in the database
         result = await User.countDocuments({ username: username_param })
-        console.log("result", result)
+        
 
         if (result !== 1) return res.status(400).json({ error: "User does not exist" });
 
         const new_transactions = new transactions({ username: username_body, amount, type });
         new_transactions.save()
-            .then(data => res.json({
+            .then(data => {return res.json({
                 data,
                 refreshedTokenMessage: res.locals.refreshedTokenMessage
-            }).send())
+            })})
             .catch(err => { throw err })
     } catch (error) {
-        console.log(error);
+        
         return res.status(500).json({ error: error.message })
     }
 }
