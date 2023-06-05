@@ -147,7 +147,7 @@ export const createGroup = async (req, res) => {
     }
 
     // no one has been added
-    if(memberEmails.length === alreadyInGroup.length + membersNotFound.length)
+    if(memberEmails.length === alreadyInGroup.length + membersNotFound.length + 1)
       return res.status(400).json({ error: "all the `memberEmails` either do not exist or are already in a group" });
 
     // creating object to return
@@ -167,7 +167,7 @@ export const createGroup = async (req, res) => {
       data: { 
         group: {
           name: returnedObj.group.name,
-          members: returnedObj.group.members.map( member => member.email )
+          members: returnedObj.group.members.map( member => { return {email : member.email}} )
         }, 
         membersNotFound: returnedObj.membersNotFound,
         alreadyInGroup: returnedObj.alreadyInGroup
@@ -366,6 +366,7 @@ export const getGroup = async (req, res) => {
       const groupName = req.params.name;
   
       if (!req.url.match(regexpAdmin)) {
+
         const { authorized, cause } = await verifyAuthGroup(req, res, groupName);
         if (!authorized) return res.status(401).json({ error: cause })
       }

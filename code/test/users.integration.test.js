@@ -242,7 +242,9 @@ describe("createGroup", () => {
   let test_users = [
       {username : "user1", email : "user1@test.com", password : "dummyPassword", refreshToken : test_tokens[0], role : "Regular"},
       {username : "user2", email : "user2@test.com", password : "dummyPassword", refreshToken : test_tokens[1], role : "Regular"},
-      {username : "user3", email : "user3@test.com", password : "dummyPassword", refreshToken : test_tokens[2], role : "Admin" }
+      {username : "user3", email : "user3@test.com", password : "dummyPassword", refreshToken : test_tokens[2], role : "Admin" },
+      {username : "user4", email : "user4@test.com", password : "dummyPassword", refreshToken : test_tokens[3], role : "Regular" },
+      {username : "user5", email : "user5@test.com", password : "dummyPassword", refreshToken : test_tokens[4], role : "Regular" }
   ]
 
   let test_groups = [
@@ -254,6 +256,8 @@ describe("createGroup", () => {
 
 
   beforeEach(async() => {
+      await User.deleteMany()
+      await Group.deleteMany()     
       jest.clearAllMocks();        
       // insert test data
       await User.insertMany(test_users)
@@ -268,7 +272,110 @@ describe("createGroup", () => {
                           
       expect(response.status).toBe(401);
       expect(response.body.error).toBe("Unauthorized");
-    })
+  })
+
+  test("should return an error indicating that the body does not contain all fields", async () => {
+    const response = await request(app)
+      .post("/api/groups")       
+      .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
+      .send({})
+                          
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe("body does not contain all the necessary attributes");
+  })
+
+  test("should return an error indicating that the group names passed in body is an empty string", async () => {
+    const response = await request(app)
+      .post("/api/groups")       
+      .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
+      .send({
+        name : "",
+        memberEmails : ["user1@test.com", "user2@test.com"]
+      })
+                          
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe("body does not contain all the necessary attributes");
+  })
+
+  test("should return an error indicating that the group names is already in use", async () => {
+    const response = await request(app)
+      .post("/api/groups")       
+      .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
+      .send({
+        name : "group1",
+        memberEmails : ["user1@test.com", "user2@test.com"]
+      })
+                          
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe("group's name already available");
+  })
+  
+  test("should return an error indicating that the group names is already in use", async () => {
+    const response = await request(app)
+      .post("/api/groups")       
+      .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                             
+      .send({
+        name : "group2",
+        memberEmails : ["user1@test.com", "userx@test.com"]
+      })
+                          
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe("all the `memberEmails` either do not exist or are already in a group");
+  })
+
+  test("should return an error indicating that the group names is already in use", async () => {
+    const response = await request(app)
+      .post("/api/groups")       
+      .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
+      .send({
+        name : "group2",
+        memberEmails : ["user1@test.com", "userx@test.com"]
+      })
+                          
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe("user is already in group");
+  })
+
+  test("should return an error indicating that the group names is already in use", async () => {
+    const response = await request(app)
+      .post("/api/groups")       
+      .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                             
+      .send({
+        name : "group2",
+        memberEmails : ["", "user4@test.com"]
+      })
+                          
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe("email is not valid");
+  })
+
+  test("should return an error indicating that the group names is already in use", async () => {
+    const response = await request(app)
+      .post("/api/groups")       
+      .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                             
+      .send({
+        name : "group2",
+        memberEmails : ["user1test.com", "user4@test.com"]
+      })
+                          
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe("email is not valid");
+  })
+
+  test("should return a message indicating that the group was created", async () => {
+    const response = await request(app)
+      .post("/api/groups")       
+      .set("Cookie", `accessToken=${test_tokens[3]};refreshToken=${test_tokens[3]}`)                             
+      .send({
+        name : "group2",
+        memberEmails : ["user3@test.com", "user5@test.com"]
+      })
+                          
+      expect(response.status).toBe(200);      
+      expect(response.body.data).toStrictEqual(
+        {group: {name: "group2", members: [{email: "user3@test.com"}, {email: "user5@test.com"}, {email: "user4@test.com"}]}, membersNotFound: [], alreadyInGroup: []}
+      )
+  })
 })
 
 
@@ -1473,3 +1580,5 @@ describe("deleteGroup", () => {//create a group with only one user
     await expect(response.body.error).toBe("User does not have admin role")
   })
 })
+
+
