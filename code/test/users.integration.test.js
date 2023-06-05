@@ -228,38 +228,47 @@ describe("getUser", () => {
 })
 
 
-describe("createGroup", () => {
+describe.only("createGroup", () => {
 
 
-  beforeEach(async () => {
-    await User.deleteMany({})
-  })
+  let test_tokens = [
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho",   // user 1 (regular)
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMiIsImVtYWlsIjoidXNlcjJAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.vcyvbioE0-iiQxVasIGSAhJwRdwgT6wxYQvoe4eMAqQ",   // user 2 (regular)
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU",      // user 3 (admin)
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyNCIsImVtYWlsIjoidXNlcjRAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.C40TvT7lc_ufN8xwz5HKZ1XcT2DcwAtrOoZ4t-K19Pc",   // user 4 (regular), not added to the database
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyNSIsImVtYWlsIjoidXNlcjVAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.U4oQH-vpYdwHqQEJxSOJR1ycSmTcA9reP6Lpfpwynw4"       // user 5 (admin), not added to the database
+  ]
 
-  test("T1: create group -> return 200", async () => {
+  let test_users = [
+      {username : "user1", email : "user1@test.com", password : "dummyPassword", refreshToken : test_tokens[0], role : "Regular"},
+      {username : "user2", email : "user2@test.com", password : "dummyPassword", refreshToken : test_tokens[1], role : "Regular"},
+      {username : "user3", email : "user3@test.com", password : "dummyPassword", refreshToken : test_tokens[2], role : "Admin" }
+  ]
 
-    const user = {
-      username: 'user',
-      email: 'test@example.com',
-      password: '123'
-    };
+  let test_groups = [
+      {name : "group1", members : [
+          {user : "647bb6cf593e8d6a33e403b8", email : "user1@test.com"},
+          {user : "647bb6d349f0ff376890ffc8", email : "user2@test.com"}
+      ]}
+  ]
 
-    let hashedPassowrd = await bcrypt.hash(user.password, 12);
-    const newUser = await User.create({
-      username: user.username,
-      email: user.email,
-      password: hashedPassowrd,
-      refreshToken: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU1MjAxNTQsImV4cCI6MTcxNzA1NjE1NCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlkIjoiMSIsInVzZXJuYW1lIjoidXNlciIsInJvbGUiOiJSZWd1bGFyIn0.J5FWQPm8QihGHKu6AON-TJkCFgNPSO9Tv6l5wYEunpo"
 
+  beforeEach(async() => {
+      jest.clearAllMocks();        
+      // insert test data
+      await User.insertMany(test_users)
+      await Group.insertMany(test_groups)      
+  })    
+
+
+  test("should return an error indicating that the user is not authorized", async () => {
+    const response = await request(app)
+      .post("/api/groups")                                    
+      .send({})
+                          
+      expect(response.status).toBe(401);
+      expect(response.body.error).toBe("Unauthorized");
     })
-    const resp = await request(app)
-      .get(`/api/users/${newUser.username}`)
-      .set("Cookie", `refreshToken=${newUser.refreshToken}; accessToken=${newUser.refreshToken}`);
-
-
-    expect(resp.status).toBe(200);
-
-
-  })
 })
 
 

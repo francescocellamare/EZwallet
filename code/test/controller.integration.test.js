@@ -16,22 +16,27 @@ beforeAll(async () => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });
+
 });
 
-afterAll(async () => {
-    //   await mongoose.connection.db.dropDatabase();
+afterAll(async () => {    
+    await mongoose.connection.db.dropDatabase();
     await mongoose.connection.close();
 });
+
+beforeEach(async () => {
+    jest.clearAllMocks(); 
+
+    await User.deleteMany();
+    await Group.deleteMany();
+    await transactions.deleteMany();
+    await categories.deleteMany();
+})
 
 describe("createCategory", () => {
     let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
     let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
     beforeEach(async () => {
-        await categories.deleteMany({})
-        await transactions.deleteMany({})
-        await User.deleteMany({})
-        await Group.deleteMany({})
-
 
         await User.create([{
             username: "user1",
@@ -129,10 +134,6 @@ describe("updateCategory", () => {
     let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
     let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
     beforeEach(async () => {
-        await categories.deleteMany({})
-        await transactions.deleteMany({})
-        await User.deleteMany({})
-        await Group.deleteMany({})
 
         await categories.create([{
             type: "food",
@@ -254,10 +255,6 @@ describe("deleteCategory", () => {
     let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
 
     beforeEach(async () => {
-        await categories.deleteMany({})
-        await transactions.deleteMany({})
-        await User.deleteMany({})
-        await Group.deleteMany({})
 
         await categories.create({
             type: "food",
@@ -361,10 +358,6 @@ describe("getCategories", () => {
     let refreshTokenUser = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMSIsImVtYWlsIjoidXNlcjFAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IlJlZ3VsYXIifQ.jiYB0SnMggwGL4q-2BfybxPuvU8MGvGonUNx3BZNmho';
     let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
     beforeEach(async () => {
-        await categories.deleteMany({})
-        await transactions.deleteMany({})
-        await User.deleteMany({})
-        await Group.deleteMany({})
 
         await categories.create([{
             type: "food",
@@ -392,7 +385,7 @@ describe("getCategories", () => {
         const response = await request(app)
             .get("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`) //Setting cookies in the request
-            .send()
+            
 
         expect(response.status).toBe(200)
         expect(response.body.data).toHaveLength(2)
@@ -403,7 +396,7 @@ describe("getCategories", () => {
         const response = await request(app)
             .get("/api/categories")
             .set("Cookie", `accessToken=${fakeToken}; refreshToken=${fakeToken}`)
-            .send()
+            
 
         expect(response.status).toBe(401)
         const errorMessage = response.body.error ? true : response.body.message ? true : false
@@ -416,10 +409,6 @@ describe("createTransaction", () => {
     let refreshTokenAdmin = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODU1NTY4NzksImV4cCI6MTcxNzA5Mjg4MCwiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJ1c2VyMyIsImVtYWlsIjoidXNlcjNAdGVzdC5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.GG5693N9mnBd9tODTOSB6wedJLwBEFtdMHe-8HqryHU';
 
     beforeEach(async () => {
-        await categories.deleteMany({})
-        await transactions.deleteMany({})
-        await User.deleteMany({})
-        await Group.deleteMany({})
 
         await categories.create({
             type: "food",
@@ -621,8 +610,7 @@ describe("getAllTransactions", () => {
                 color: '#FFFFFF'
             }
         ]
-        await transactions.deleteMany({})
-        await categories.deleteMany({})
+
         await transactions.create(transactionsList)
         await categories.create(categoriesList)
     })
@@ -719,19 +707,12 @@ describe("getTransactionsByUser", () => {
     ]
 
     beforeEach(async() => {
-        jest.clearAllMocks();        
+        jest.clearAllMocks();   
         // insert test data
         await User.insertMany(test_users)
         await categories.insertMany(test_categories)
         await transactions.insertMany(test_transactions)
     })    
-
-    afterEach(async() => {
-        // clear all users, categories, and transactions
-        await User.deleteMany();
-        await categories.deleteMany();
-        await transactions.deleteMany();
-    })
 
     test("Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
         const response = await request(app)
@@ -936,13 +917,6 @@ describe("getTransactionsByUserByCategory", () => {
         await transactions.insertMany(test_transactions)
     })    
 
-    afterEach(async() => {
-        // clear all users, categories, and transactions
-        await User.deleteMany();
-        await categories.deleteMany();
-        await transactions.deleteMany();
-    })
-
     test("Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
         const response = await request(app)
             .get("/api/users/user1/transactions/category/cat1")                        
@@ -1131,13 +1105,6 @@ describe("getTransactionsByGroup", () => {
         await transactions.insertMany(test_transactions)
     })    
 
-    afterEach(async() => {
-        // clear all users, categories, and transactions
-        await User.deleteMany();
-        await Group.deleteMany();
-        await categories.deleteMany();
-        await transactions.deleteMany();
-    })
 
     test("Should return an error indicating that the User is not Atuthorized (not logged in)", async () => {      
         const response = await request(app)
@@ -1246,13 +1213,6 @@ describe("getTransactionsByGroupByCategory", () => {
         await transactions.insertMany(test_transactions)
     })    
 
-    afterEach(async() => {
-        // clear all users, categories, and transactions
-        await User.deleteMany();
-        await Group.deleteMany();
-        await categories.deleteMany();
-        await transactions.deleteMany();
-    })
 
     test("Should return an error indicating that the User is not Atuthorized (not logged in)", async () => {      
         const response = await request(app)
@@ -1366,12 +1326,6 @@ describe("deleteTransaction", () => {
         await transactions.insertMany(test_transactions)
     })    
 
-    afterEach(async() => {
-        // clear all users, categories, and transactions
-        await User.deleteMany();
-        await categories.deleteMany();
-        await transactions.deleteMany();
-    })
 
     test("Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
         const response = await request(app)
@@ -1484,13 +1438,6 @@ describe("deleteTransactions", () => {
         await categories.insertMany(test_categories)
         await transactions.insertMany(test_transactions)
     })    
-
-    afterEach(async() => {
-        // clear all users, categories, and transactions
-        await User.deleteMany();
-        await categories.deleteMany();
-        await transactions.deleteMany();
-    })
 
     test("Should return an error indicating that the User is not Atuthorized (not logged in, or not and admin)", async () => {      
         const response = await request(app)
