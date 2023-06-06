@@ -37,6 +37,40 @@
 
 | Test case name | Object(s) tested | Test level | Technique used |
 |--|--|--|--|
+|   register    U1    | register    | unit|WB statement coverage|
+|   register    U2    | register    | unit| WB statement coverage|
+|   register    U3    | register    | unit|WB statement coverage|
+|   register    U4    | register    | unit| WB statement coverage|
+|   register    U5    | register    | unit|WB statement coverage|
+|   register    U6    | register    | unit| WB statement coverage|
+|   registerAdmin    U1    | registerAdmin    | unit|WB statement coverage|
+|   registerAdmin    U2    | registerAdmin    | unit| WB statement coverage|
+|   registerAdmin    U3    | registerAdmin    | unit|WB statement coverage|
+|   registerAdmin    U4    | registerAdmin    | unit| WB statement coverage|
+|   registerAdmin    U5    | registerAdmin    | unit|WB statement coverage|
+|   registerAdmin    U6    | registerAdmin    | unit| WB statement coverage|
+|   login    U1    | login    | unit| WB statement coverage|
+|   login    U2    | login    | unit| WB statement coverage|
+|   login    U3    | login    | unit| WB statement coverage|
+|   login    U4    | login    | unit| WB statement coverage|
+|   login    U5    | login    | unit| WB statement coverage|
+|   login    U6    | login    | unit| WB statement coverage|
+|   login    U7    | login    | unit| WB statement coverage|
+|   logout   U1   |  logout   | unit| WB statement coverage|
+|   logout   U2   |  logout   | unit| WB statement coverage|
+|   logout   U3   |  logout   | unit| WB statement coverage|
+|   logout   U4   |  logout   | unit| WB statement coverage|
+|   register    I1    | register, User.findOne User.create  | integration|BB/ eq partitioning|
+|   register    I2    | register, User.findOne    | integration|BB/ eq partitioning|
+|   register    I3    | register, User.findOne    | integration|BB/ eq partitioning|
+|   register    I4    | register, User.findOne   | integration|BB/ eq partitioning|
+|   register    I5    | register, User.findOne    | integration|BB/ eq partitioning|
+|   registerAdmin    I1    | registerAdmin, User.findOne User.create  | integration|BB/ eq partitioning|
+|   registerAdmin    I2    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
+|   registerAdmin    I3    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
+|   registerAdmin    I4    | registerAdmin, User.findOne   | integration|BB/ eq partitioning|
+|   registerAdmin    I5    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
+|   login    I1    | login, User.findOne, bcrypt.compare, jwt.sign, jwt.sign   | integration| BB/ eq partitioning|
 |   createGroup U1    | |unit       ||
 |   createGroup U2    | |unit       ||
 |   createGroup U3    | |unit       ||
@@ -289,7 +323,7 @@
 |FR14 registerAdmin |registerAdmin U1-U6 , registerAdmin I1-I5|
 |FR15 getUsers | getUsers U1-U4 , getUsers I1-I3|
 |FR16 getUser | getUser U1-U4 , getUser I1-I4|
-|FR17 deleteUser | deleteUser U1-U8 , deleteUser I1-I7|
+|FR17 deleteUser | deleteUser U1-U10 , deleteUser I1-I9|
 |FR2 Manage groups |
 |FR21 createGroup |createGroup U1-U13 , createGroup I1-I9|
 |FR22 getGroups| getGroups U1-U4 , getGroups I1-I2|

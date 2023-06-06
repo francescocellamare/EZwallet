@@ -49,7 +49,7 @@ beforeEach(()=>{
 
 
 
-test("T1: register user  -> return 200 and message: user added succesfully", async () => {
+test("U1: register user  -> return 200 and message: user added succesfully", async () => {
      jest.spyOn(User, "findOne").mockImplementation(()=>null) //no user is found with same username or/and password
      jest.spyOn(bcrypt, "hash").mockImplementation(()=>"hashedPassowrd")
      jest.spyOn(User, "create").mockImplementation(()=>({username:'test', email:'test@example.com', password:'hashedPassword'}))
@@ -68,7 +68,7 @@ test("T1: register user  -> return 200 and message: user added succesfully", asy
 
     });
 
-test("T2: user already exist -> return 400 and message: you are already registered ", async () =>{
+test("U2: user already exist -> return 400 and message: you are already registered ", async () =>{
         jest.spyOn(User, "findOne").mockImplementation(()=>({username:'user', email:"test@example.com"}))
         await register(mockReq, mockResp);
         
@@ -81,7 +81,7 @@ test("T2: user already exist -> return 400 and message: you are already register
     })
 
 
-test("T3: invalid email -> return 400 and message: invalid email ", async () =>{
+test("U3: invalid email -> return 400 and message: invalid email ", async () =>{
         let mockReqInvalidEmail;
         mockReqInvalidEmail = {
             body:{
@@ -100,7 +100,7 @@ test("T3: invalid email -> return 400 and message: invalid email ", async () =>{
         // Check the value of data.message
         expect(jsonResponse.error).toBe('invalid email');
     })
-test("T4: missing fields -> return 400 and message: some fields are missing ", async () =>{
+test("U4: missing fields -> return 400 and message: some fields are missing ", async () =>{
         let mockReqIncomplete;
         mockReqIncomplete = {
             body:{
@@ -117,7 +117,7 @@ test("T4: missing fields -> return 400 and message: some fields are missing ", a
         // Check the value of data.message
         expect(jsonResponse.error).toBe('some fields are missing');
     })
-test("T5: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
+test("U5: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
         let mockReqIncomplete;
         mockReqIncomplete = {
             body:{
@@ -136,7 +136,7 @@ test("T5: field with empty string -> return 400 and message: empty fields are no
         expect(jsonResponse.error).toBe('empty fields are not allowed');
     })
 
-    test("T6:Network error -> return 500 and error message", async()=>{
+    test("U6:Network error -> return 500 and error message", async()=>{
        
         jest.spyOn(User, "findOne").mockImplementationOnce(() => {throw new Error('server crash');});
         
@@ -321,7 +321,7 @@ afterEach(()=>{
     jest.clearAllMocks();
  });
 
-    test('T1: log in user -> return access and refresh tokens and status = 200', async () => {
+    test('U1: log in user -> return access and refresh tokens and status = 200', async () => {
         let findOneMock;
         findOneMock = jest.spyOn(User, "findOne");
         findOneMock.mockResolvedValue({
@@ -345,7 +345,7 @@ afterEach(()=>{
        })
 
 
-    test('T2: user does not exist -> return 400 and message: please you need to register', async ()=>{
+    test('U2: user does not exist -> return 400 and message: please you need to register', async ()=>{
         jest.spyOn(User, "findOne").mockImplementation(()=>null) //user does not exist
         await login(mockReq, mockResp)
         expect(mockResp.status).toHaveBeenCalledWith(400);
@@ -353,7 +353,7 @@ afterEach(()=>{
 
     })
 
-    test('T3: wrong password -> return 400 and message: wrong credentials', async()=>{
+    test('U3: wrong password -> return 400 and message: wrong credentials', async()=>{
         let findOneMock;
         findOneMock = jest.spyOn(User, "findOne");
         findOneMock.mockResolvedValue({
@@ -369,7 +369,7 @@ afterEach(()=>{
 
 
 
-    test("T4: invalid email -> return 400 and message: invalid email ", async () =>{
+    test("U4: invalid email -> return 400 and message: invalid email ", async () =>{
         let mockReqInvalidEmail;
         mockReqInvalidEmail = {
             body:{
@@ -392,7 +392,7 @@ afterEach(()=>{
         // Check the value of data.message
         expect(jsonResponse.error).toBe('invalid email');
     })
-    test("T5: missing fields -> return 400 and message: some fields are missing ", async () =>{
+    test("U5: missing fields -> return 400 and message: some fields are missing ", async () =>{
         let mockReqIncomplete;
         mockReqIncomplete = {
             body:{
@@ -415,7 +415,7 @@ afterEach(()=>{
         expect(jsonResponse.error).toBe('some fields are missing');
     })
 
-    test("T6: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
+    test("U6: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
         let mockReqIncomplete;
         mockReqIncomplete = {
             body:{
@@ -438,7 +438,7 @@ afterEach(()=>{
         expect(jsonResponse.error).toBe('empty fields are not allowed');
     })
 
-    test("T7:Network error -> return 500 and error message", async()=>{
+    test("U7:Network error -> return 500 and error message", async()=>{
        
         jest.spyOn(User, "findOne").mockImplementationOnce(() => {throw new Error('server crash');});
         
@@ -480,7 +480,7 @@ describe('logout', () => {
 
 
 
-    test('T1:log out the user -> return 200 and message: logged out', async()=>{
+    test('U1:log out the user -> return 200 and message: logged out', async()=>{
         let findOneMock;
         findOneMock = jest.spyOn(User, "findOne");
         findOneMock.mockResolvedValue({
@@ -495,7 +495,7 @@ describe('logout', () => {
     })
 
 
-    test('T2: no refreshToken -> return 400 and message: user not found', async () => {
+    test('U2: no refreshToken -> return 400 and message: user not found', async () => {
 
         mockReq = {
             body:{
@@ -515,7 +515,7 @@ describe('logout', () => {
 
     });
     
-    test('T3: user not found -> return 400 and message: user not found ', async() =>{
+    test('U3: user not found -> return 400 and message: user not found ', async() =>{
         jest.spyOn(User, "findOne").mockImplementation(()=>null);
         await logout(mockReq, mockResp);
         
@@ -523,7 +523,7 @@ describe('logout', () => {
         expect((mockResp.json.mock.calls[0][0].error)).toBe("user not found")
     })
 
-    test("T4:Network error -> return 500 and error message", async()=>{
+    test("U4:Network error -> return 500 and error message", async()=>{
        
         jest.spyOn(User, "findOne").mockImplementationOnce(() => {throw new Error('server crash');});
         

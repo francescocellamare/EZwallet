@@ -1089,7 +1089,7 @@ describe("deleteUser", () => {
   })
 
 
-  test("I3: user does not belong to a group -> return 200", async () => {
+  test("I2: user does not belong to a group -> return 200", async () => {
 
     const user = {
       username: 'user1',
@@ -1133,7 +1133,7 @@ describe("deleteUser", () => {
     await expect(response.body.data.deletedFromGroup).toBe(false);
   })
 
-  test("I2: user belong to a group and he is not the only user in the group -> return 200", async () => {
+  test("I3: user belong to a group and he is not the only user in the group -> return 200", async () => {
 
     const user = {
       username: 'user1',
@@ -1179,7 +1179,7 @@ describe("deleteUser", () => {
   })
 
 
-  test("I3: does not pass an email -> return 400 and error message", async () => {
+  test("I4: does not pass an email -> return 400 and error message", async () => {
 
     const user = {
       username: 'user1',
@@ -1229,7 +1229,7 @@ describe("deleteUser", () => {
 
 
 
-  test("I4: email is an empty string -> return 400 and error message", async () => {
+  test("I5: email is an empty string -> return 400 and error message", async () => {
 
     const user = {
       username: 'user2',
@@ -1273,7 +1273,7 @@ describe("deleteUser", () => {
     await expect(response.body.error).toBe("The email passed is an empty string")
   })
 
-  test("I5: requested email is not in the db -> return 400 and error message", async () => {
+  test("I6: requested email is not in the db -> return 400 and error message", async () => {
 
     const user = {
       username: 'user1',
@@ -1317,7 +1317,7 @@ describe("deleteUser", () => {
     await expect(response.body.error).toBe("The email does not represent a user in the database")
   })
 
-  test("I6: not email format -> return 400 and error message", async () => {
+  test("I7: not email format -> return 400 and error message", async () => {
 
     const user = {
       username: 'user1',
@@ -1364,7 +1364,7 @@ describe("deleteUser", () => {
 
 
 
-  test("I7: unauthorized user -> return 401 and error message", async () => {
+  test("I8: unauthorized user -> return 401 and error message", async () => {
 
 
     const user = {
@@ -1409,7 +1409,7 @@ describe("deleteUser", () => {
     await expect(response.body.error).toBe("User does not have admin role")
   })
 
-  test("I8: passed user is an admin -> return 401", async () => {
+  test("I9: passed user is an admin -> return 401", async () => {
 
 
     const user = {
