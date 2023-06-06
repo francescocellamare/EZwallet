@@ -4,13 +4,14 @@
 
 # Contents
 
+- [Test Report](#test-report)
+- [Contents](#contents)
 - [Dependency graph](#dependency-graph)
-
 - [Integration approach](#integration-approach)
-
 - [Tests](#tests)
-
-- [Coverage](#Coverage)
+- [Coverage](#coverage)
+  - [Coverage of FR](#coverage-of-fr)
+  - [Coverage white box](#coverage-white-box)
 
 
 
@@ -37,6 +38,39 @@
 | Test case name | Object(s) tested | Test level | Technique used |
 |--|--|--|--|
 |FR2 Manage groups |
+|   F21  createGroup T1    | |unit       ||
+|   F21  createGroup T2    | |unit       ||
+|   F21  createGroup T3    | |unit       ||
+|   F21  createGroup T4    | |unit       ||
+|   F21  createGroup T5    | |unit       ||
+|   F21  createGroup T6    | |unit       ||
+|   F21  createGroup T7    | |unit       ||
+|   F21  createGroup T8    | |unit       ||
+|   F21  createGroup T9    | |unit       ||
+|   F21  createGroup T10   | |unit       ||
+|   F21  createGroup T11   | |unit       ||
+|   F21  createGroup T12   | |unit       ||
+|   F21  createGroup T13   | |unit       ||
+|   F24  addToGroup T1     | |unit       ||
+|   F24  addToGroup T2     | |unit       ||
+|   F24  addToGroup T3     | |unit       ||
+|   F24  addToGroup T4     | |unit       ||
+|   F24  addToGroup T5     | |unit       ||
+|   F24  addToGroup T6     | |unit       ||
+|   F24  addToGroup T7     | |unit       ||
+|   F24  addToGroup T8     | |unit       ||
+|   F24  addToGroup T9     | |unit       ||
+|   F24  addToGroup T10    | |unit       ||
+|   F24  addToGroup T1     | |integration||
+|   F24  addToGroup T2     | |integration||
+|   F24  addToGroup T3     | |integration||
+|   F24  addToGroup T4     | |integration||
+|   F24  addToGroup T5     | |integration||
+|   F24  addToGroup T6     | |integration||
+|   F24  addToGroup T7     | |integration||
+|   F24  addToGroup T8     | |integration||
+|   F24  addToGroup T9     | |integration||
+|   F24  addToGroup T10    | |integration||
 |   FR26 removeFromGroup T1| |integration||
 |   FR26 removeFromGroup T2| |integration||
 |   FR26 removeFromGroup T3| |integration||
@@ -70,6 +104,13 @@
 |   FR31 createTransaction T6||integration||
 |   FR31 createTransaction T7||integration||
 |   FR31 createTransaction T8||integration||
+|   FR32 getAllTransactions T1||unit||
+|   FR32 getAllTransactions T2||unit||
+|   FR32 getAllTransactions T3||unit||
+|   FR32 getAllTransactions T4||unit||
+|   FR32 getAllTransactions T1||integration||
+|   FR32 getAllTransactions T2||integration||
+|   FR32 getAllTransactions T3||integration||
 |FR4   Manage categories | 
 |   FR41 createCategory T1||unit||
 |   FR41 createCategory T2||unit||
@@ -127,7 +168,62 @@
 |   FR44 getCategories T1||integration||
 |   FR44 getCategories T2||integration||
 |   FR44 getCategories T3||integration||
-|||||
+|   verifyAuth T1        ||unit       ||
+|   verifyAuth T2        ||unit       ||
+|   verifyAuth T3        ||unit       ||
+|   verifyAuth T4        ||unit       ||
+|   verifyAuth T5        ||unit       ||
+|   verifyAuth T6        ||unit       ||
+|   verifyAuth T7        ||unit       ||
+|   verifyAuth T8        ||unit       ||
+|   verifyAuth T9        ||unit       ||
+|   verifyAuth T10       ||unit       ||
+|   verifyAuth T11       ||unit       ||
+|   verifyAuth T12       ||unit       ||
+|   verifyAuth T13       ||unit       ||
+|   verifyAuth T14       ||unit       ||
+|   verifyAuth T15       ||unit       ||
+|   verifyAuth T16       ||unit       ||
+|   verifyAuth T17       ||unit       ||
+|   verifyAuth T18       ||unit       ||
+|   verifyAuth T19       ||unit       ||
+|   verifyAuth T20       ||unit       ||
+|   verifyAuth T21       ||unit       ||
+|   verifyAuth T22       ||unit       ||
+|   verifyAuth T23       ||unit       ||
+|   verifyAuth T24       ||unit       ||
+|   verifyAuth T1        ||integration||
+|   verifyAuth T2        ||integration||
+|   verifyAuth T3        ||integration||
+|   verifyAuth T4        ||integration||
+|   verifyAuth T5        ||integration||
+|   verifyAuth T6        ||integration||
+|   verifyAuth T7        ||integration||
+|   verifyAuth T8        ||integration||
+|   verifyAuth T9        ||integration||
+|   verifyAuth T10       ||integration||
+|   verifyAuth T11       ||integration||
+|   verifyAuth T12       ||integration||
+|   verifyAuth T13       ||integration||
+|   verifyAuth T14       ||integration||
+|   verifyAuth T15       ||integration||
+|   verifyAuth T16       ||integration||
+|   verifyAuth T17       ||integration||
+|   handleDateFilterParams T1 ||unit ||
+|   handleDateFilterParams T2 ||unit ||
+|   handleDateFilterParams T3 ||unit ||
+|   handleDateFilterParams T4 ||unit ||
+|   handleDateFilterParams T5 ||unit ||
+|   handleDateFilterParams T6 ||unit ||
+|   handleDateFilterParams T7 ||unit ||
+|   handleDateFilterParams T8 ||unit ||
+|   handleDateFilterParams T9 ||unit ||
+|   handleDateFilterParams T10 ||unit||
+|   handleAmountFilterParams T1||unit||
+|   handleAmountFilterParams T2||unit||
+|   handleAmountFilterParams T3||unit||
+|   handleAmountFilterParams T4||unit||
+|   handleAmountFilterParams T5||unit||
 
 
 
@@ -162,7 +258,11 @@
 |FR3  Manage transactions |
 |   FR31 createTransaction (unit)||           
 |   FR31 createTransaction (integration)||  
-|FR4   Manage categories | 
+|FR32 getAllTransactions ||
+| FR36 getTransactionsByGroupByCategory |       |
+| FR37 deleteTransaction ||
+| FR38 deleteTransactions ||
+|   FR4   Manage categories | 
 |   FR41 createCategory (unit)| |        
 |   FR41 createCategory (integration)| |   
 |   FR42 updateCategory (unit)||     

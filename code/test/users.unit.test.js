@@ -1096,17 +1096,14 @@ describe("createGroup", () => {
     // user is found by email and then we look for a group he is part of
     jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
       
-    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
 
     jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
       
-    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
 
     jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
 
-    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
       
-    jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[3])  // NOT found
 
     jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
 
