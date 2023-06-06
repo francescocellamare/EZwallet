@@ -395,7 +395,71 @@ describe("deleteCategory", () => {
         expect(mockRes.json.mock.calls[0][0].refreshedTokenMessage).toBeDefined()
     });
 
-    test('T2: not an admin request -> return a 401 status with the error message', async () => {
+    test("T2: delete all categories except the oldest one (N===T) -> return 200 status, a message, the attribute `count`, and the refreshed token", async () => {
+
+        mockReq = {
+            // what I want to delete
+            body: {
+                types: ["health", "bills"],
+            }
+        };
+
+        // the whole database (useless here)
+        const storedCategory = [
+            { type: 'health', color: '#ffffff' },
+            { type: 'bills', color: '#ffffff' },
+        ]
+
+        jest.spyOn(utils, "verifyAuthAdmin").mockReturnValue({ authorized: true, cause: "Authorized" });
+
+        // there is at least one category | 4 in the database so no error 401
+        jest.spyOn(categories, "countDocuments").mockResolvedValue(2);
+
+        // categories that find will returns from the database (both of them are defined)
+        const mockFindResult1 = [
+            { type: 'health' },
+            { type: 'bills' }
+        ]
+        // all the types we have in the database
+        jest.spyOn(categories, 'find').mockReturnValueOnce({
+            sort: jest.fn().mockResolvedValue(mockFindResult1)
+        });
+
+        jest.spyOn(categories, 'deleteMany').mockResolvedValue({ deletedCount: 1 })
+
+        jest.spyOn(transactions, 'updateMany').mockResolvedValue({ modifiedCount: 3 })
+
+        await deleteCategory(mockReq, mockRes);
+
+        // check authentication
+        expect(mockRes.status).not.toHaveBeenCalledWith(401)
+
+        // check call to the db
+        expect(categories.countDocuments).toHaveBeenCalled()
+
+        // check query for the whole set of category
+        expect(categories.find).toHaveBeenCalled()
+
+        // check if notFound !== 0 does not throw error
+        expect(mockRes.status).not.toHaveBeenCalledWith(400)
+
+        // check if at least one category has been deleted
+        expect(categories.deleteMany).toHaveBeenCalled()
+
+        // we can't say that there is at least a transaction for each category (RIGHT?)
+        // I've considered at least one in this case
+        expect(transactions.updateMany).toHaveBeenCalled()
+
+        expect(mockRes.status).toHaveBeenCalledWith(200)
+
+        // responseObj     mockobj, first call(only one) first argument
+
+        expect(mockRes.json.mock.calls[0][0].data.message).toBeDefined()
+        expect(mockRes.json.mock.calls[0][0].data.count).toBe(3)
+        expect(mockRes.json.mock.calls[0][0].refreshedTokenMessage).toBeDefined()
+    });
+
+    test('T3: not an admin request -> return a 401 status with the error message', async () => {
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: false, cause: "Unauthorized" })
 
         await deleteCategory(mockReq, mockRes);
@@ -405,7 +469,7 @@ describe("deleteCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Unauthorized' });
     });
 
-    test('T3: missing type -> return a 400 status with the error message', async () => {
+    test('T4: missing type -> return a 400 status with the error message', async () => {
         mockReq = {
             body: {}
         };
@@ -419,7 +483,7 @@ describe("deleteCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: "List of categories' types to deleted was not provided" });
     });
 
-    test('T4: empty type -> return a 400 status with the error message', async () => {
+    test('T5: empty type -> return a 400 status with the error message', async () => {
         mockReq = {
             body: {
                 types: ["", "health"]
@@ -433,7 +497,7 @@ describe("deleteCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: "The list of categories can't have empty entries" });
     });
 
-    test("T5: no categories in database  -> return 400 status with the error message", async () => {
+    test("T6: no categories in database  -> return 400 status with the error message", async () => {
 
         mockReq = {
             body: {
@@ -455,7 +519,7 @@ describe("deleteCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: "Cannot delete categories, there should be at least one category" });
     });
 
-    test("T6: not existing categories -> return 400 status with the error message", async () => {
+    test("T7: not existing categories -> return 400 status with the error message", async () => {
 
         mockReq = {
             body: {
@@ -492,7 +556,7 @@ describe("deleteCategory", () => {
 
     });
 
-    test('T7: Network error -> return 500', async()=>{
+    test('T8: Network error -> return 500', async()=>{
         jest.spyOn(utils, 'verifyAuthAdmin').mockImplementationOnce(()=> {throw new Error('server crash')});
         
         await deleteCategory(mockReq, mockRes);
@@ -500,8 +564,6 @@ describe("deleteCategory", () => {
         expect(mockRes.status).toHaveBeenCalledWith(500);
         expect(mockRes.json).toHaveBeenCalledWith({error: 'server crash'});
     });
-
-
 })
 
 describe("getCategories", () => {
@@ -611,7 +673,8 @@ describe("createTransaction", () => {
             body: {
                 username: 'Mario',
                 type: 'food',
-                amount: '100'
+                amount: 100, 
+                date: 'date'
             },
         };
 
