@@ -499,10 +499,11 @@ export const getGroup = async (req, res) => {
       if (!user) {
         return res.status(400).json({ error: "The email does not represent a user in the database" })
       }
-//I GUESS WE SHOULD REMOVE THIS CODE
-      // if (user.role === 'Admin'){
-      //   return res.status(401).json({ error: "The email represents an admin" })
-      // }
+
+      if (user.role === 'Admin'){
+        return res.status(401).json({ error: "The email represents an admin" })
+      }
+      
       let userDeleted = await User.deleteOne({ email: req.body.email });
   
       const { deletedCount } = await transactions.deleteMany({ username: user.username });

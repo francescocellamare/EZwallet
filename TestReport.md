@@ -37,137 +37,134 @@
 
 | Test case name | Object(s) tested | Test level | Technique used |
 |--|--|--|--|
-|FR2 Manage groups |
-|   F21  createGroup T1    | |unit       ||
-|   F21  createGroup T2    | |unit       ||
-|   F21  createGroup T3    | |unit       ||
-|   F21  createGroup T4    | |unit       ||
-|   F21  createGroup T5    | |unit       ||
-|   F21  createGroup T6    | |unit       ||
-|   F21  createGroup T7    | |unit       ||
-|   F21  createGroup T8    | |unit       ||
-|   F21  createGroup T9    | |unit       ||
-|   F21  createGroup T10   | |unit       ||
-|   F21  createGroup T11   | |unit       ||
-|   F21  createGroup T12   | |unit       ||
-|   F21  createGroup T13   | |unit       ||
-|   F24  addToGroup T1     | |unit       ||
-|   F24  addToGroup T2     | |unit       ||
-|   F24  addToGroup T3     | |unit       ||
-|   F24  addToGroup T4     | |unit       ||
-|   F24  addToGroup T5     | |unit       ||
-|   F24  addToGroup T6     | |unit       ||
-|   F24  addToGroup T7     | |unit       ||
-|   F24  addToGroup T8     | |unit       ||
-|   F24  addToGroup T9     | |unit       ||
-|   F24  addToGroup T10    | |unit       ||
-|   F24  addToGroup T1     | |integration||
-|   F24  addToGroup T2     | |integration||
-|   F24  addToGroup T3     | |integration||
-|   F24  addToGroup T4     | |integration||
-|   F24  addToGroup T5     | |integration||
-|   F24  addToGroup T6     | |integration||
-|   F24  addToGroup T7     | |integration||
-|   F24  addToGroup T8     | |integration||
-|   F24  addToGroup T9     | |integration||
-|   F24  addToGroup T10    | |integration||
-|   FR26 removeFromGroup I1| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I2| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I3| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I4| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I5| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I6| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I7| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I8| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I9| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I10| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I11| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I12| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I13| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I14| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I15| |integration|BB/ eq partitioning|
-|   FR26 removeFromGroup I16| |integration|BB/ eq partitioning|
-|FR3  Manage transactions|
-|   FR31 createTransaction U1| |unit|WB/ statement coverage|
-|   FR31 createTransaction U2||unit|WB/ statement coverage|
-|   FR31 createTransaction U3||unit|WB/ statement coverage|
-|   FR31 createTransaction U4||unit|WB/ statement coverage|
-|   FR31 createTransaction U5||unit|WB/ statement coverage|
-|   FR31 createTransaction U6||unit|WB/ statement coverage|
-|   FR31 createTransaction U7||unit|WB/ statement coverage|
-|   FR31 createTransaction U8||unit|WB/ statement coverage|
-|   FR31 createTransaction I1||integration|BB/ eq partitioning|
-|   FR31 createTransaction I2||integration|BB/ eq partitioning|
-|   FR31 createTransaction I3||integration|BB/ eq partitioning|
-|   FR31 createTransaction I4||integration|BB/ eq partitioning|
-|   FR31 createTransaction I5||integration|BB/ eq partitioning|
-|   FR31 createTransaction I6||integration|BB/ eq partitioning|
-|   FR31 createTransaction I7||integration|BB/ eq partitioning|
-|   FR31 createTransaction I8||integration|BB/ eq partitioning|
-|   FR32 getAllTransactions T1||unit||
-|   FR32 getAllTransactions T2||unit||
-|   FR32 getAllTransactions T3||unit||
-|   FR32 getAllTransactions T4||unit||
-|   FR32 getAllTransactions T1||integration||
-|   FR32 getAllTransactions T2||integration||
-|   FR32 getAllTransactions T3||integration||
-|FR4   Manage categories | 
-|   FR41 createCategory U1||unit|WB/ statement coverage|
-|   FR41 createCategory U2||unit|WB/ statement coverage|
-|   FR41 createCategory U3||unit|WB/ statement coverage|
-|   FR41 createCategory U4||unit|WB/ statement coverage|
-|   FR41 createCategory U5||unit|WB/ statement coverage|
-|   FR41 createCategory U6||unit|WB/ statement coverage|
-|   FR41 createCategory U7||unit|WB/ statement coverage|
-|   FR41 createCategory U8||unit|WB/ statement coverage|
-|   FR41 createCategory I1||integration|BB/ eq partitioning|
-|   FR41 createCategory I2||integration|BB/ eq partitioning|
-|   FR41 createCategory I3||integration|BB/ eq partitioning|
-|   FR41 createCategory I4||integration|BB/ eq partitioning|
-|   FR41 createCategory I5||integration|BB/ eq partitioning|
-|   FR41 createCategory I6||integration|BB/ eq partitioning|
-|   FR41 createCategory I7||integration|BB/ eq partitioning|
-|   FR41 createCategory I8||integration|BB/ eq partitioning|
-|   FR42 updateCategory U1||unit|WB/ statement coverage|
-|   FR42 updateCategory U2||unit|WB/ statement coverage|
-|   FR42 updateCategory U3||unit|WB/ statement coverage|
-|   FR42 updateCategory U4||unit|WB/ statement coverage|
-|   FR42 updateCategory U5||unit|WB/ statement coverage|
-|   FR42 updateCategory U6||unit|WB/ statement coverage|
-|   FR42 updateCategory U7||unit|WB/ statement coverage|
-|   FR42 updateCategory U8||unit|WB/ statement coverage|
-|   FR42 updateCategory U9||unit|WB/ statement coverage|
-|   FR42 updateCategory I1||integration|BB/ eq partitioning|
-|   FR42 updateCategory I2||integration|BB/ eq partitioning|
-|   FR42 updateCategory I3||integration|BB/ eq partitioning|
-|   FR42 updateCategory I4||integration|BB/ eq partitioning|
-|   FR42 updateCategory I5||integration|BB/ eq partitioning|
-|   FR42 updateCategory I6||integration|BB/ eq partitioning|
-|   FR42 updateCategory I7||integration|BB/ eq partitioning|
-|   FR42 updateCategory I8||integration|BB/ eq partitioning|
-|   FR42 updateCategory I9||integration|BB/ eq partitioning|
-|   FR43 deleteCategory U1||unit|WB/ statement coverage|
-|   FR43 deleteCategory U2||unit|WB/ statement coverage|
-|   FR43 deleteCategory U3||unit|WB/ statement coverage|
-|   FR43 deleteCategory U4||unit|WB/ statement coverage|
-|   FR43 deleteCategory U5||unit|WB/ statement coverage|
-|   FR43 deleteCategory U6||unit|WB/ statement coverage|
-|   FR43 deleteCategory U7||unit|WB/ statement coverage|
-|   FR43 deleteCategory U8||unit|WB/ statement coverage|
-|   FR43 deleteCategory I1||integration|BB/ eq partitioning|
-|   FR43 deleteCategory I2||integration|BB/ eq partitioning|
-|   FR43 deleteCategory I3||integration|BB/ eq partitioning|
-|   FR43 deleteCategory I4||integration|BB/ eq partitioning|
-|   FR43 deleteCategory I5||integration|BB/ eq partitioning|
-|   FR43 deleteCategory I6||integration|BB/ eq partitioning|
-|   FR43 deleteCategory I7||integration|BB/ eq partitioning|
-|   FR43 deleteCategory I8||integration|BB/ eq partitioning|
-|   FR44 getCategories I1||unit|WB/ statement coverage|
-|   FR44 getCategories I2||unit|WB/ statement coverage|
-|   FR44 getCategories I3||unit|WB/ statement coverage|
-|   FR44 getCategories I1||integration|BB/ eq partitioning|
-|   FR44 getCategories I2||integration|BB/ eq partitioning|
-|   FR44 getCategories I3||integration|BB/ eq partitioning|
+|   createGroup T1    | |unit       ||
+|   createGroup T2    | |unit       ||
+|   createGroup T3    | |unit       ||
+|   createGroup T4    | |unit       ||
+|   createGroup T5    | |unit       ||
+|   createGroup T6    | |unit       ||
+|   createGroup T7    | |unit       ||
+|   createGroup T8    | |unit       ||
+|   createGroup T9    | |unit       ||
+|   createGroup T10   | |unit       ||
+|   createGroup T11   | |unit       ||
+|   createGroup T12   | |unit       ||
+|   createGroup T13   | |unit       ||
+|   addToGroup T1     | |unit       ||
+|   addToGroup T2     | |unit       ||
+|   addToGroup T3     | |unit       ||
+|   addToGroup T4     | |unit       ||
+|   addToGroup T5     | |unit       ||
+|   addToGroup T6     | |unit       ||
+|   addToGroup T7     | |unit       ||
+|   addToGroup T8     | |unit       ||
+|   addToGroup T9     | |unit       ||
+|   addToGroup T10    | |unit       ||
+|   addToGroup T1     | |integration||
+|   addToGroup T2     | |integration||
+|   addToGroup T3     | |integration||
+|   addToGroup T4     | |integration||
+|   addToGroup T5     | |integration||
+|   addToGroup T6     | |integration||
+|   addToGroup T7     | |integration||
+|   addToGroup T8     | |integration||
+|   addToGroup T9     | |integration||
+|   addToGroup T10    | |integration||
+|   removeFromGroup I1| |integration|BB/ eq partitioning|
+|   removeFromGroup I2| |integration|BB/ eq partitioning|
+|   removeFromGroup I3| |integration|BB/ eq partitioning|
+|   removeFromGroup I4| |integration|BB/ eq partitioning|
+|   removeFromGroup I5| |integration|BB/ eq partitioning|
+|   removeFromGroup I6| |integration|BB/ eq partitioning|
+|   removeFromGroup I7| |integration|BB/ eq partitioning|
+|   removeFromGroup I8| |integration|BB/ eq partitioning|
+|   removeFromGroup I9| |integration|BB/ eq partitioning|
+|   removeFromGroup I10| |integration|BB/ eq partitioning|
+|   removeFromGroup I11| |integration|BB/ eq partitioning|
+|   removeFromGroup I12| |integration|BB/ eq partitioning|
+|   removeFromGroup I13| |integration|BB/ eq partitioning|
+|   removeFromGroup I14| |integration|BB/ eq partitioning|
+|   removeFromGroup I15| |integration|BB/ eq partitioning|
+|   removeFromGroup I16| |integration|BB/ eq partitioning|
+|   createTransaction U1| |unit|WB/ statement coverage|
+|   createTransaction U2||unit|WB/ statement coverage|
+|   createTransaction U3||unit|WB/ statement coverage|
+|   createTransaction U4||unit|WB/ statement coverage|
+|   createTransaction U5||unit|WB/ statement coverage|
+|   createTransaction U6||unit|WB/ statement coverage|
+|   createTransaction U7||unit|WB/ statement coverage|
+|   createTransaction U8||unit|WB/ statement coverage|
+|   createTransaction I1||integration|BB/ eq partitioning|
+|   createTransaction I2||integration|BB/ eq partitioning|
+|   createTransaction I3||integration|BB/ eq partitioning|
+|   createTransaction I4||integration|BB/ eq partitioning|
+|   createTransaction I5||integration|BB/ eq partitioning|
+|   createTransaction I6||integration|BB/ eq partitioning|
+|   createTransaction I7||integration|BB/ eq partitioning|
+|   createTransaction I8||integration|BB/ eq partitioning|
+|   getAllTransactions T1||unit||
+|   getAllTransactions T2||unit||
+|   getAllTransactions T3||unit||
+|   getAllTransactions T4||unit||
+|   getAllTransactions T1||integration||
+|   getAllTransactions T2||integration||
+|   getAllTransactions T3||integration||
+|   createCategory U1||unit|WB/ statement coverage|
+|   createCategory U2||unit|WB/ statement coverage|
+|   createCategory U3||unit|WB/ statement coverage|
+|   createCategory U4||unit|WB/ statement coverage|
+|   createCategory U5||unit|WB/ statement coverage|
+|   createCategory U6||unit|WB/ statement coverage|
+|   createCategory U7||unit|WB/ statement coverage|
+|   createCategory U8||unit|WB/ statement coverage|
+|   createCategory I1||integration|BB/ eq partitioning|
+|   createCategory I2||integration|BB/ eq partitioning|
+|   createCategory I3||integration|BB/ eq partitioning|
+|   createCategory I4||integration|BB/ eq partitioning|
+|   createCategory I5||integration|BB/ eq partitioning|
+|   createCategory I6||integration|BB/ eq partitioning|
+|   createCategory I7||integration|BB/ eq partitioning|
+|   createCategory I8||integration|BB/ eq partitioning|
+|   updateCategory U1||unit|WB/ statement coverage|
+|   updateCategory U2||unit|WB/ statement coverage|
+|   updateCategory U3||unit|WB/ statement coverage|
+|   updateCategory U4||unit|WB/ statement coverage|
+|   updateCategory U5||unit|WB/ statement coverage|
+|   updateCategory U6||unit|WB/ statement coverage|
+|   updateCategory U7||unit|WB/ statement coverage|
+|   updateCategory U8||unit|WB/ statement coverage|
+|   updateCategory U9||unit|WB/ statement coverage|
+|   updateCategory I1||integration|BB/ eq partitioning|
+|   updateCategory I2||integration|BB/ eq partitioning|
+|   updateCategory I3||integration|BB/ eq partitioning|
+|   updateCategory I4||integration|BB/ eq partitioning|
+|   updateCategory I5||integration|BB/ eq partitioning|
+|   updateCategory I6||integration|BB/ eq partitioning|
+|   updateCategory I7||integration|BB/ eq partitioning|
+|   updateCategory I8||integration|BB/ eq partitioning|
+|   updateCategory I9||integration|BB/ eq partitioning|
+|   deleteCategory U1||unit|WB/ statement coverage|
+|   deleteCategory U2||unit|WB/ statement coverage|
+|   deleteCategory U3||unit|WB/ statement coverage|
+|   deleteCategory U4||unit|WB/ statement coverage|
+|   deleteCategory U5||unit|WB/ statement coverage|
+|   deleteCategory U6||unit|WB/ statement coverage|
+|   deleteCategory U7||unit|WB/ statement coverage|
+|   deleteCategory U8||unit|WB/ statement coverage|
+|   deleteCategory I1||integration|BB/ eq partitioning|
+|   deleteCategory I2||integration|BB/ eq partitioning|
+|   deleteCategory I3||integration|BB/ eq partitioning|
+|   deleteCategory I4||integration|BB/ eq partitioning|
+|   deleteCategory I5||integration|BB/ eq partitioning|
+|   deleteCategory I6||integration|BB/ eq partitioning|
+|   deleteCategory I7||integration|BB/ eq partitioning|
+|   deleteCategory I8||integration|BB/ eq partitioning|
+|   getCategories I1||unit|WB/ statement coverage|
+|   getCategories I2||unit|WB/ statement coverage|
+|   getCategories I3||unit|WB/ statement coverage|
+|   getCategories I1||integration|BB/ eq partitioning|
+|   getCategories I2||integration|BB/ eq partitioning|
+|   getCategories I3||integration|BB/ eq partitioning|
 |   verifyAuth T1        ||unit       ||
 |   verifyAuth T2        ||unit       ||
 |   verifyAuth T3        ||unit       ||
@@ -239,23 +236,15 @@
 
 | Functional Requirements covered |   Test(s) | 
 | ------------------------------- | ----------- | 
-|FR2 Manage groups |
-| FR21 createGroup                |             |
-| FR22 getGroups                  |             |
-| FR23 getGroup                   |             |  
-| FR24 addToGroup                 |             |  
-|   FR26 removeFromGroup | |  
+|FR2 Manage groups | 
+|   FR26 removeFromGroup | removeFromGroup U-U , removeFromGroup I1-I16 |  
 |FR3  Manage transactions |
-|   FR31 createTransaction||           
-|   FR32 getAllTransactions ||
-|   FR36 getTransactionsByGroupByCategory |       |
-|   FR37 deleteTransaction ||
-|   FR38 deleteTransactions ||
+|   FR31 createTransaction| createTransaction U1-U13 , createTransaction I1-I12 |           
 |FR4   Manage categories | 
-|   FR41 createCategory| |        
-|   FR42 updateCategory||     
-|   FR43 deleteCategory ||  
-|   FR44 getCategories ||  
+|   FR41 createCategory| createCategory U1-U8 , createCategory I1-I7 |        
+|   FR42 updateCategory| updateCategory U1-U9 , updateCategory I1-I8 |     
+|   FR43 deleteCategory | deleteCategory U1-U8 , deleteCategory I1-I6 |  
+|   FR44 getCategories | getCategories U1-U3 , getCategories I1-I2 |  
 
 
 
