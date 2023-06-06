@@ -247,11 +247,11 @@
 |   FR26 removeFromGroup | |  
 |FR3  Manage transactions |
 |   FR31 createTransaction||           
-|FR32 getAllTransactions ||
-| FR36 getTransactionsByGroupByCategory |       |
-| FR37 deleteTransaction ||
-| FR38 deleteTransactions ||
-|   FR4   Manage categories | 
+|   FR32 getAllTransactions ||
+|   FR36 getTransactionsByGroupByCategory |       |
+|   FR37 deleteTransaction ||
+|   FR38 deleteTransactions ||
+|FR4   Manage categories | 
 |   FR41 createCategory| |        
 |   FR42 updateCategory||     
 |   FR43 deleteCategory ||  
