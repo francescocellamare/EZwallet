@@ -143,8 +143,22 @@
 
 | Functional Requirements covered |   Test(s) | 
 | ------------------------------- | ----------- | 
+|FR1 Manage users| |
+|FR11  register | register U1-U6 , register I1-I5|
+|FR12 login| login U1-U7 , login I1-I6|
+|FR13 logout| logout U1-U4 , logout I1-I3|
+|FR14 registerAdmin |registerAdmin U1-U6 , registerAdmin I1-I5|
+|FR15 getUsers | getUsers U1-U4 , getUsers I1-I3|
+|FR16 getUser | getUser U1-U4 , getUser I1-I4|
+|FR17 deleteUser | deleteUser U1-U8 , deleteUser I1-I7|
 |FR2 Manage groups |
-|   FR26 removeFromGroup (integration) | |  
+|FR21 createGroup |createGroup U1-U13 , createGroup I1-I9|
+|FR22 getGroups| getGroups U1-U4 , getGroups I1-I2|
+|FR23 getGroup | getGroup U1-U4, getGroup I1-I4|
+|FR24 addToGroup| addToGroup U1-U10 , I1-I10|
+|FR26 removeFromGroup| removeFromGroup U1-U11 , I1-I16|
+|FR28 deleteGroup | deleteGroup deleteGroup U1-U6 , I1-I5|  
+|FR26 removeFromGroup (integration) | |  
 |FR3  Manage transactions |
 |   FR31 createTransaction (unit)||           
 |   FR31 createTransaction (integration)||  
