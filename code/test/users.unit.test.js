@@ -2266,59 +2266,83 @@ test('T5: authentication as admin and users are all not valid', async () => {
     expect(mockRes.json).toHaveBeenCalledWith({error: 'server crash'});
   })
   
-  // test('T10 : remove user from group ', async()=>{
-  //   const mockReq = {
-  //     cookies: {
-  //       accessToken: 'accessToken',
-  //       refreshToken: 'refreshToken'
-  //     },
-  //     params: {
-  //       name: 'testGroup'
-  //     },
-  //     body: {
-  //       emails: [
-  //         'mail1@mail.com',
-  //         'mail2@mail.com'
-  //       ]
-  //     },
-  //     url: 'api/groups/testGroup/pull'
-  //   }
-  //   const mockRes = {
-  //       locals: {
-  //           refreshedTokenMessage: "dummy message"
-  //       },
-  //       status: jest.fn().mockReturnThis(),
-  //       json: jest.fn()
-  //   }
-  //   const fakeGroup = {
-  //     name: 'testGroup',
-  //     members: [
-  //       {
-  //         email: 'mail1@mail.com',
-  //         _id: 123
-  //       },
-  //       {
-  //         email: 'mail2@mail.com',
-  //         _id: 1234
-  //       },
-  //       {
-  //         email: 'mail3@mail.com',
-  //         _id: 12345
-  //       }
-  //     ]
-  //   }
-  //   const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+  test('T10 : remove user from group ', async()=>{
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/pull'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const fakeGroup = {
+      name: 'testGroup',
+      members: [
+        {
+          email: 'mail1@mail.com',
+          _id: 123
+        },
+        {
+          email: 'mail2@mail.com',
+          _id: 1234
+        }
+      ]
+    }
+    const fakeData = [
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },{
+        username: 'mail2',
+        email: 'mail2@mail.com',
+        role: 'Regular',
+        _id: 789
+      }
+    ]
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
    
-  //   jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValueOnce(expectedResponeAuth)
+    jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValueOnce(expectedResponeAuth)
     
-  //   jest.spyOn(Group, 'findOne').mockImplementationOnce(fakeGroup);
+    jest.spyOn(Group, 'findOne').mockImplementationOnce(fakeGroup);
   
-  //   jest.spyOn(User, 'findOne').mockResolvedValueOnce(mockReq.body.emails[0]);
-  //   jest.spyOn(User, 'findOne').mockResolvedValueOnce(mockReq.body.emails[1]);    
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[0]);
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[1]);    
 
-    
   
-  // })
+    jest.spyOn(Group, 'updateOne').mockImplementation( () => {} )
+    await removeFromGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(200)
+    expect(mockRes.json.mock.calls[0][0].data.group.name).toBe(fakeGroup.name)
+    expect(mockRes.json.mock.calls[0][0].data.membersNotFound).toEqual([])
+    expect(mockRes.json.mock.calls[0][0].data.notInGroup).toEqual([])
+
+    const expectedDataRespone = [
+      { email: 'oldMember@mail.com' },
+      { email: 'anotherOldMember@mail.com' },
+      { email: 'mail1@mail.com' },
+      { email: 'mail2@mail.com' }
+    ]
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedDataRespone)
+  
+  })
 })
 
 describe("deleteUser", () => {
