@@ -265,7 +265,7 @@ describe("createGroup", () => {
   })    
 
 
-  test("should return an error indicating that the user is not authorized", async () => {
+  test("I1 : should return an error indicating that the user is not authorized", async () => {
     const response = await request(app)
       .post("/api/groups")                                    
       .send({})
@@ -274,7 +274,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("Unauthorized");
   })
 
-  test("should return an error indicating that the body does not contain all fields", async () => {
+  test("I2 : should return an error indicating that the body does not contain all fields", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
@@ -284,7 +284,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("body does not contain all the necessary attributes");
   })
 
-  test("should return an error indicating that the group names passed in body is an empty string", async () => {
+  test("I3 : should return an error indicating that the group names passed in body is an empty string", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
@@ -297,7 +297,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("body does not contain all the necessary attributes");
   })
 
-  test("should return an error indicating that the group names is already in use", async () => {
+  test("I4 : should return an error indicating that the group names is already in use", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
@@ -310,7 +310,20 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("group's name already available");
   })
   
-  test("should return an error indicating that the group names is already in use", async () => {
+  test("I5 : should return an error indicating that all the members either do not exist or are already in a group", async () => {
+    const response = await request(app)
+      .post("/api/groups")       
+      .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                             
+      .send({
+        name : "group2",
+        memberEmails : ["user1@test.com", "userx@test.com", "user3@test.com"]
+      })
+                          
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe("all the `memberEmails` either do not exist or are already in a group");
+  })
+
+  test("I6 : should return an error indicating that all the members either do not exist or are already in a group", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                             
@@ -321,9 +334,9 @@ describe("createGroup", () => {
                           
       expect(response.status).toBe(400);
       expect(response.body.error).toBe("all the `memberEmails` either do not exist or are already in a group");
-  })
+  })  
 
-  test("should return an error indicating that the group names is already in use", async () => {
+  test("I7 : should return an error indicating that the user is already in group", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
@@ -336,7 +349,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("user is already in group");
   })
 
-  test("should return an error indicating that the group names is already in use", async () => {
+  test("I8 : should return an error indicating that at least one of the emails provided is not valid", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                             
@@ -349,7 +362,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("email is not valid");
   })
 
-  test("should return an error indicating that the group names is already in use", async () => {
+  test("I9 : should return an error indicating that at least one of the emails provided is not valid", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                             
@@ -362,7 +375,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("email is not valid");
   })
 
-  test("should return a message indicating that the group was created", async () => {
+  test("I10: should return a message indicating that the group was created", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[3]};refreshToken=${test_tokens[3]}`)                             
