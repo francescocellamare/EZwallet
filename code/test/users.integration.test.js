@@ -1051,7 +1051,8 @@ describe("deleteUser", () => {
     const user = {
       username: 'user1',
       email: 'test1@example.com',
-      password: '123'
+      password: '123',
+      role: "Regular"
     }
 
     let hashedPassowrd = await bcrypt.hash(user.password, 12);
@@ -1088,12 +1089,57 @@ describe("deleteUser", () => {
   })
 
 
+  test("I3: user does not belong to a group -> return 200", async () => {
+
+    const user = {
+      username: 'user1',
+      email: 'test1@example.com',
+      password: '123',
+      role: "Regular"
+    }
+
+    let hashedPassowrd = await bcrypt.hash(user.password, 12);
+    const newUser = await User.create({
+      username: user.username,
+      email: user.email,
+      password: hashedPassowrd
+    })
+
+    const newGroup = await Group.create({
+      name: 'My Group',
+      members: [
+        {
+          email: 'test2@example.com'
+        },
+        {
+          email: 'test3@example.com'
+        }
+
+      ]
+    });
+
+    const requestBody = {
+      email: newUser.email
+    }
+
+    //This token is generatd with role = admin
+    const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4ifQ.9wJED0kKWyCEUKcZzeCzWNBAgachnMVFrR4cvshwzpo'
+
+    const response = await request(app)
+      .delete("/api/users")
+      .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+      .send(requestBody)
+    await expect(response.status).toBe(200)
+    await expect(response.body.data.deletedFromGroup).toBe(false);
+  })
+
   test("I2: user belong to a group and he is not the only user in the group -> return 200", async () => {
 
     const user = {
       username: 'user1',
       email: 'test1@example.com',
-      password: '123'
+      password: '123',
+      role: "Regular"
     }
 
     let hashedPassowrd = await bcrypt.hash(user.password, 12);
@@ -1138,7 +1184,9 @@ describe("deleteUser", () => {
     const user = {
       username: 'user1',
       email: 'test1@example.com',
-      password: '123'
+      password: '123',
+      role: "Regular"
+      
     }
 
     let hashedPassowrd = await bcrypt.hash(user.password, 12);
@@ -1186,7 +1234,8 @@ describe("deleteUser", () => {
     const user = {
       username: 'user2',
       email: 'test2@example.com',
-      password: '123'
+      password: '123',
+      role: "Regular"
     }
 
     let hashedPassowrd = await bcrypt.hash(user.password, 12);
@@ -1229,7 +1278,8 @@ describe("deleteUser", () => {
     const user = {
       username: 'user1',
       email: 'test1@example.com',
-      password: '123'
+      password: '123',
+      role: "Regular"
     }
 
     let hashedPassowrd = await bcrypt.hash(user.password, 12);
@@ -1272,7 +1322,8 @@ describe("deleteUser", () => {
     const user = {
       username: 'user1',
       email: 'test1@example.com',
-      password: '123'
+      password: '123',
+      role: "Regular"
     }
 
     let hashedPassowrd = await bcrypt.hash(user.password, 12);
@@ -1319,7 +1370,8 @@ describe("deleteUser", () => {
     const user = {
       username: 'user1',
       email: 'test1@example.com',
-      password: '123'
+      password: '123',
+      role: "Regular"
     }
 
     let hashedPassowrd = await bcrypt.hash(user.password, 12);
@@ -1356,6 +1408,50 @@ describe("deleteUser", () => {
     await expect(response.status).toBe(401)
     await expect(response.body.error).toBe("User does not have admin role")
   })
+
+  test("I8: passed user is an admin -> return 401", async () => {
+
+
+    const user = {
+      username: 'user1',
+      email: 'test1@example.com',
+      password: '123',
+      role: "Admin"
+    }
+
+    let hashedPassowrd = await bcrypt.hash(user.password, 12);
+    const newUser = await User.create({
+      username: user.username,
+      email: user.email,
+      password: hashedPassowrd,
+      role: "Admin"
+    })
+
+    const newGroup = await Group.create({
+      name: 'My Group',
+      members: [
+        {
+          email: 'test1@example.com'
+        }
+
+      ]
+    });
+
+    const requestBody = {
+      email: newUser.email
+    }
+
+    //This token is generatd with role = admin
+    const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4ifQ.9wJED0kKWyCEUKcZzeCzWNBAgachnMVFrR4cvshwzpo'
+
+    const response = await request(app)
+      .delete("/api/users")
+      .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
+      .send(requestBody)
+    await expect(response.status).toBe(401)
+    await expect(response.body.error).toBe("The email represents an admin");
+  })
+
 
 
 })
