@@ -58,7 +58,7 @@ describe("getUsers", () => {
  })
 
 
-  test("T1:no users -> return 200 and empty list", async () => {
+  test("U1:no users -> return 200 and empty list", async () => {
     //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
     //sverifyAuthAdmin.mockImplementation(()=>({ authorized: false, cause: "Unauthorized"}))
     
@@ -76,7 +76,7 @@ describe("getUsers", () => {
 
   })
 
-  test("T2: at least one user exists -> return 200 and list of retrieved users", async () => {
+  test("U2: at least one user exists -> return 200 and list of retrieved users", async () => {
     const retrievedUsers = [{ username: 'test1', email: 'test1@example.com', password: 'hashedPassword1' }, { username: 'test2', email: 'test2@example.com', password: 'hashedPassword2' }]
     jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
       {authorized: true,
@@ -91,7 +91,7 @@ describe("getUsers", () => {
     expect(mockResp.locals).toEqual({refreshTokenMessage : "dummy message"});
   })
 
-  test("T3:not authentified -> return 401", async () => {
+  test("U3:not authentified -> return 401", async () => {
     //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
     jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
       {authorized: false,
@@ -103,7 +103,7 @@ describe("getUsers", () => {
     expect(mockResp.status).toHaveBeenCalledWith(401);
   })
 
-  test("T4: Network error -> return 500", async () =>{
+  test("U4: Network error -> return 500", async () =>{
     jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
       {authorized: true,
         cause:"Authorized"
@@ -149,7 +149,7 @@ beforeEach(
  })
 
 
-test('T1: user exists -> return 200 and user info', async ()=>{
+test('U1: user exists -> return 200 and user info', async ()=>{
   const user ={
     username: 'user',
     email: 'test@example.com',
@@ -178,7 +178,7 @@ test('T1: user exists -> return 200 and user info', async ()=>{
 
 })
 
-test('T2: user not found -> return 400 and message: user not found', async()=>{
+test('U2: user not found -> return 400 and message: user not found', async()=>{
   jest.spyOn(User, "findOne").mockImplementation(()=>null);
   // jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
   //   {authorized: true,
@@ -197,7 +197,7 @@ test('T2: user not found -> return 400 and message: user not found', async()=>{
   expect(mockResp.json.mock.calls[0][0].error).toBe('user not found')
 })
 
-test('T3: not authorized -> return 401 and message: unauthorized', async ()=>
+test('U3: not authorized -> return 401 and message: unauthorized', async ()=>
 {jest.spyOn(User, "findOne").mockImplementation(()=>user);
 
 const user ={
@@ -238,7 +238,7 @@ expect(mockResp.json.mock.calls[0][0].error).toBe('not authorized');
 
 
 
-test("T4: Network error -> return 500", async () =>{
+test("U4: Network error -> return 500", async () =>{
   jest.spyOn(User, "findOne").mockImplementation(()=> {throw new Error('server crash')});
   jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
     {authorized: true,
@@ -269,7 +269,7 @@ describe("createGroup", () => {
   beforeEach(() => jest.resetAllMocks())
 
 
-  test('T1: not authentified -> return 401' , async () =>{
+  test('U1: not authentified -> return 401' , async () =>{
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -296,7 +296,7 @@ describe("createGroup", () => {
     expect(mockRes.status).toHaveBeenCalledWith(401);
   });
 
-  test('T2: create group -> retun 200', async() => {
+  test('U2: create group -> retun 200', async() => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -393,7 +393,7 @@ describe("createGroup", () => {
     expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedRespone)
   });
 
-  test('T3: group name is not defined in the body', async () => {
+  test('U3: group name is not defined in the body', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -443,7 +443,7 @@ describe("createGroup", () => {
     expect(mockRes.json).toBeDefined()
   });
 
-  test('T4: email list is not defined in the body', async () => {
+  test('U4: email list is not defined in the body', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -489,7 +489,7 @@ describe("createGroup", () => {
     expect(mockRes.json).toBeDefined()
   });
 
-  test('T5: group name is empty', async () => {
+  test('U5: group name is empty', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -540,7 +540,7 @@ describe("createGroup", () => {
     expect(mockRes.json).toBeDefined()
   });
 
-  test('T6: email is not valid according to pattern', async () => {
+  test('U6: email is not valid according to pattern', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -592,7 +592,7 @@ describe("createGroup", () => {
     expect(mockRes.json).toBeDefined()
   });
 
-  test('T7: email is empty', async () => {
+  test('U7: email is empty', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -641,7 +641,7 @@ describe("createGroup", () => {
     expect(mockRes.json).toBeDefined()
   });
 
-  test('T8: group name is not unique', async () => {
+  test('U8: group name is not unique', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -690,7 +690,7 @@ describe("createGroup", () => {
     expect(mockRes.json).toBeDefined()
   });
 
-  test('T9: user is registered into another group', async () => {
+  test('U9: user is registered into another group', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -739,7 +739,7 @@ describe("createGroup", () => {
     expect(mockRes.json).toBeDefined()
   });
 
-  test('T10: create group but an email is not registered -> retun 200', async() => {
+  test('U10: create group but an email is not registered -> retun 200', async() => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -832,7 +832,7 @@ describe("createGroup", () => {
     expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedRespone)
   });
 
-  test('T11: create group but an email is already in group -> retun 200', async() => {
+  test('U11: create group but an email is already in group -> retun 200', async() => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -930,7 +930,7 @@ describe("createGroup", () => {
     expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedRespone)
   });
 
-  test('T12: create group but caller email is not provided (it should be added) -> retun 200', async() => {
+  test('U12: create group but caller email is not provided (it should be added) -> retun 200', async() => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1031,7 +1031,7 @@ describe("createGroup", () => {
     expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedRespone)
   });
 
-  test('T13: create group but all emails do not exist -> retun 400', async() => {
+  test('U13: create group but all emails do not exist -> retun 400', async() => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1096,17 +1096,14 @@ describe("createGroup", () => {
     // user is found by email and then we look for a group he is part of
     jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
       
-    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
 
     jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
       
-    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
 
     jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
 
-    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
       
-    jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[3])  // NOT found
 
     jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
 
@@ -1146,7 +1143,7 @@ describe("getGroups", () => {
    })
 
 
-  test("T1:no groups -> return 200 and empty list", async () => {
+  test("U1:no groups -> return 200 and empty list", async () => {
     //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
     //sverifyAuthAdmin.mockImplementation(()=>({ authorized: false, cause: "Unauthorized"}))
     
@@ -1175,7 +1172,7 @@ describe("getGroups", () => {
 
   })
 
-  test("T2: at least one group exists -> return 200 and list of retrieved groups", async () => {
+  test("U2: at least one group exists -> return 200 and list of retrieved groups", async () => {
     const retrievedGroups = '[{name: "Family", members: [{email: "mario.red@email.com"}, {email: "luigi.red@email.com"}]';
     jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
       {authorized: true,
@@ -1198,7 +1195,7 @@ describe("getGroups", () => {
   
   })
 
-  test("T3:not authentified -> return 401", async () => {
+  test("U3:not authentified -> return 401", async () => {
     //any time the `User.find()` method is called jest will replace its actual implementation with the one defined below
     jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
       {authorized: false,
@@ -1215,7 +1212,7 @@ describe("getGroups", () => {
     expect(mockResp.status).toHaveBeenCalledWith(401);
   })
 
-  test("T4: Network error -> return 500", async () =>{
+  test("U4: Network error -> return 500", async () =>{
     jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
       {authorized: true,
         cause:"Authorized"
@@ -1261,7 +1258,7 @@ describe("getGroup", () => {
       jest.clearAllMocks();
    })
 
-   test('T1: get group -> return 200', async()=>{
+   test('U1: get group -> return 200', async()=>{
     const group_r = 
         {name: "Family", members: [{email: "mario.red@email.com"}, {email: "luigi.red@email.com"}]};
         
@@ -1284,7 +1281,7 @@ describe("getGroup", () => {
 
    })
 
-   test('T2: group does not exist -> return 400', async ()=>{
+   test('U2: group does not exist -> return 400', async ()=>{
     const group = '{name: "Family", members: [{email: "mario.red@email.com"}, {email: "luigi.red@email.com"}]}'
     jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
       {authorized: true,
@@ -1304,7 +1301,7 @@ describe("getGroup", () => {
 
    })
 
-   test('T3: User not authentified -> return 401', async()=>{
+   test('U3: User not authentified -> return 401', async()=>{
     jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
       {authorized: false,
         cause:"Unauthorized"
@@ -1319,7 +1316,7 @@ describe("getGroup", () => {
 
    })
 
-   test("T4: Network error -> return 500", async () =>{
+   test("U4: Network error -> return 500", async () =>{
     jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
       {authorized: true,
         cause:"Authorized"
@@ -1347,7 +1344,7 @@ describe("addToGroup", () => {
   })
   beforeEach(() => jest.resetAllMocks())
 
-  test('T1: authentication as admin but the user is regular', async () => {
+  test('U1: authentication as admin but the user is regular', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1380,7 +1377,7 @@ describe("addToGroup", () => {
     expect(mockRes.status).toHaveBeenCalledWith(401)
   })
 
-  test('T2: authentication as group but the user is not part of the group', async () => {
+  test('U2: authentication as group but the user is not part of the group', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1413,7 +1410,7 @@ describe("addToGroup", () => {
     expect(mockRes.status).toHaveBeenCalledWith(401)
   })
 
-  test('T3: authentication as admin but there is a not valid email', async () => {
+  test('U3: authentication as admin but there is a not valid email', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1446,7 +1443,7 @@ describe("addToGroup", () => {
     expect(mockRes.status).toHaveBeenCalledWith(400)
   })
 
-  test('T4: authentication as admin but there is ONLY a not valid email', async () => {
+  test('U4: authentication as admin but there is ONLY a not valid email', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1475,7 +1472,7 @@ describe("addToGroup", () => {
     expect(mockRes.status).toHaveBeenCalledWith(400)
   })
 
-  test('T5: authentication as admin but there are no emails', async () => {
+  test('U5: authentication as admin but there are no emails', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1508,7 +1505,7 @@ describe("addToGroup", () => {
     expect(mockRes.status).toHaveBeenCalledWith(400)
   })
 
-  test('T6: authentication as admin but the group does not exist', async () => {
+  test('U6: authentication as admin but the group does not exist', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1542,7 +1539,7 @@ describe("addToGroup", () => {
     expect(mockRes.status).toHaveBeenCalledWith(400)
   })
 
-  test('T7: authentication as admin and users are added', async () => {
+  test('U7: authentication as admin and users are added', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1622,7 +1619,7 @@ describe("addToGroup", () => {
     expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedDataRespone)
   })
 
-  test('T8: authentication as admin and one email is not registered', async () => {
+  test('U8: authentication as admin and one email is not registered', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1696,7 +1693,7 @@ describe("addToGroup", () => {
     expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedDataRespone)
   })
 
-  test('T9: authentication as admin and all emails are not registered', async () => {
+  test('U9: authentication as admin and all emails are not registered', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1759,7 +1756,7 @@ describe("addToGroup", () => {
     expect(mockRes.status).toHaveBeenCalledWith(400)
   })
 
-  test('T10: authentication as admin and one email is already registered to other group', async () => {
+  test('U10: authentication as admin and one email is already registered to other group', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1845,7 +1842,7 @@ describe("removeFromGroup", () => {
   })
   beforeEach(() => jest.resetAllMocks())
 
-  test('T1: authentication as admin but the user is regular', async () => {
+  test('U1: authentication as admin but the user is regular', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1878,7 +1875,7 @@ describe("removeFromGroup", () => {
     expect(mockRes.status).toHaveBeenCalledWith(401)
   })
 
-  test('T2: authentication as group but the user is not part of the group', async () => {
+  test('U2: authentication as group but the user is not part of the group', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1910,7 +1907,7 @@ describe("removeFromGroup", () => {
 
     expect(mockRes.status).toHaveBeenCalledWith(401)
   })
-  test('T3: authorized as admin but some attribures are missing', async () => {
+  test('U3: authorized as admin but some attribures are missing', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1942,7 +1939,7 @@ describe("removeFromGroup", () => {
   })
 
   
-  test('T4: authentication as admin but the group does not exist', async () => {
+  test('U4: authentication as admin but the group does not exist', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1977,7 +1974,7 @@ describe("removeFromGroup", () => {
     expect(mockRes.status).toHaveBeenCalledWith(400)
   })
 
-test('T5: authentication as admin and users are all not valid', async () => {
+test('U5: authentication as admin and users are all not valid', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -2044,7 +2041,7 @@ test('T5: authentication as admin and users are all not valid', async () => {
 
   });
 
-  test('T6: authorized as admin but some emails are not in valid format', async () => {
+  test('U6: authorized as admin but some emails are not in valid format', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -2080,7 +2077,7 @@ test('T5: authentication as admin and users are all not valid', async () => {
 
 
 
-  test('T7: authorized as admin but some emails are empty strings', async () => {
+  test('U7: authorized as admin but some emails are empty strings', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -2114,7 +2111,7 @@ test('T5: authentication as admin and users are all not valid', async () => {
     expect(mockRes.json).toHaveBeenCalledWith({ error: "One or more emails are empty strings"  });
   })
 
-  test('T8: authorized as admin but group has only one memeber', async () => {
+  test('U8: authorized as admin but group has only one memeber', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -2172,7 +2169,7 @@ test('T5: authentication as admin and users are all not valid', async () => {
     expect(mockRes.status).toHaveBeenCalledWith(400)
     expect(mockRes.json).toHaveBeenCalledWith({ error:  "The group contains only one member" });
   })
-  test('T9: authorized as admin but group has only one memeber', async () => {
+  test('U9: authorized as admin but group has only one memeber', async () => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -2230,7 +2227,7 @@ test('T5: authentication as admin and users are all not valid', async () => {
     expect(mockRes.status).toHaveBeenCalledWith(400)
     expect(mockRes.json).toHaveBeenCalledWith({ error:  "The group contains only one member" });
   })
-  test('T9 : Network error -> return 500', async()=>{
+  test('U10 : Network error -> return 500', async()=>{
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -2279,59 +2276,81 @@ test('T5: authentication as admin and users are all not valid', async () => {
     expect(mockRes.json).toHaveBeenCalledWith({error: 'server crash'});
   })
   
-  // test('T10 : remove user from group ', async()=>{
-  //   const mockReq = {
-  //     cookies: {
-  //       accessToken: 'accessToken',
-  //       refreshToken: 'refreshToken'
-  //     },
-  //     params: {
-  //       name: 'testGroup'
-  //     },
-  //     body: {
-  //       emails: [
-  //         'mail1@mail.com',
-  //         'mail2@mail.com'
-  //       ]
-  //     },
-  //     url: 'api/groups/testGroup/pull'
-  //   }
-  //   const mockRes = {
-  //       locals: {
-  //           refreshedTokenMessage: "dummy message"
-  //       },
-  //       status: jest.fn().mockReturnThis(),
-  //       json: jest.fn()
-  //   }
-  //   const fakeGroup = {
-  //     name: 'testGroup',
-  //     members: [
-  //       {
-  //         email: 'mail1@mail.com',
-  //         _id: 123
-  //       },
-  //       {
-  //         email: 'mail2@mail.com',
-  //         _id: 1234
-  //       },
-  //       {
-  //         email: 'mail3@mail.com',
-  //         _id: 12345
-  //       }
-  //     ]
-  //   }
-  //   const expectedResponeAuth = { authorized: true, cause: 'authorized'}
+  test('U11 : remove user from group ', async()=>{
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'mail2@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/pull'
+    }
+    const mockRes = {
+        locals: {
+            refreshedTokenMessage: "dummy message"
+        },
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    }
+    const fakeGroup = {
+      name: 'testGroup',
+      members: [
+        {
+          email: 'mail1@mail.com',
+          _id: 123
+        },
+        {
+          email: 'mail2@mail.com',
+          _id: 1234
+        }
+      ]
+    }
+    const fakeData = [
+      {
+        username: 'mail1',
+        email: 'mail1@mail.com',
+        role: 'Regular',
+        _id: 456
+      },{
+        username: 'mail2',
+        email: 'mail2@mail.com',
+        role: 'Regular',
+        _id: 789
+      }
+    ]
+    const expectedResponeAuth = { authorized: true, cause: 'authorized'}
    
-  //   jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValueOnce(expectedResponeAuth)
+    jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValueOnce(expectedResponeAuth)
     
-  //   jest.spyOn(Group, 'findOne').mockImplementationOnce(fakeGroup);
+    jest.spyOn(Group, 'findOne').mockResolvedValueOnce(fakeGroup);
   
-  //   jest.spyOn(User, 'findOne').mockResolvedValueOnce(mockReq.body.emails[0]);
-  //   jest.spyOn(User, 'findOne').mockResolvedValueOnce(mockReq.body.emails[1]);    
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[0]);
+    jest.spyOn(User, 'findOne').mockResolvedValueOnce(fakeData[1]);    
 
-    
   
-  // })
+    jest.spyOn(Group, 'updateOne').mockImplementation( () => {} )
+    await removeFromGroup(mockReq, mockRes)
+
+    expect(mockRes.status).toHaveBeenCalledWith(200)
+    expect(mockRes.json.mock.calls[0][0].data.group.name).toBe(fakeGroup.name)
+    expect(mockRes.json.mock.calls[0][0].data.membersNotFound).toEqual([])
+    expect(mockRes.json.mock.calls[0][0].data.notInGroup).toEqual([])
+
+    const expectedDataRespone = [
+     
+      { email: 'mail1@mail.com' }
+    ]
+    expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedDataRespone)
+  
+  })
 })
 
 describe("deleteUser", () => {
@@ -2364,7 +2383,7 @@ describe("deleteUser", () => {
       }
       )
       
-      test('T1: delete the user that does not exist in a group -> return 200' , async()=>{
+      test('U1: delete the user that does not exist in a group -> return 200' , async()=>{
         let mockReq = {
           body:{
             email: 'test@example.com'
@@ -2392,7 +2411,7 @@ describe("deleteUser", () => {
             },
             refreshedTokenMessage: "dummy message"});
           });
-  test('T2: delete the user beloging to a group -> return 200' , async()=>{
+  test('U2: delete the user beloging to a group -> return 200' , async()=>{
             let mockReq = {
               body:{
                 email: 'test@example.com'
@@ -2429,7 +2448,7 @@ describe("deleteUser", () => {
     
     
     
-  test('T2: missing field in body -> retunr 400', async()=>{
+  test('U3: missing field in body -> retunr 400', async()=>{
       
       let mockReq_miss = {
         body: {
@@ -2449,7 +2468,7 @@ describe("deleteUser", () => {
     })
 
     
-    test('T3: missing values -> retunr 400', async()=>{
+    test('U4: missing values -> retunr 400', async()=>{
       
       let mockReq_empty = {
         body: {
@@ -2468,7 +2487,7 @@ describe("deleteUser", () => {
       expect(mockResp.json).toHaveBeenCalledWith({ error: "The email passed is an empty string" });
     })
 
-    test('T4: invalid email format -> retunr 400', async()=>{
+    test('U5: invalid email format -> retunr 400', async()=>{
       
       let mockReq_invalid = {
         body: {
@@ -2487,7 +2506,7 @@ describe("deleteUser", () => {
       expect(mockResp.json).toHaveBeenCalledWith({ error: "The email is not in a valid format"  });
     })
 
-    test('T5: user does not exist -> retunr 400', async()=>{
+    test('U6: user does not exist -> retunr 400', async()=>{
       
       let mockReq = {
         body: {
@@ -2507,7 +2526,7 @@ describe("deleteUser", () => {
       expect(mockResp.json).toHaveBeenCalledWith({ error: "The email does not represent a user in the database"  });
     })
 
-    test('T6: the user not authentified -> retunr 400', async()=>{
+    test('U7: the user not authentified -> retunr 400', async()=>{
       
       let mockReq_miss = {
         body: {
@@ -2528,7 +2547,7 @@ describe("deleteUser", () => {
 
 
    })
-   test("T7: Network error -> return 500", async () =>{
+   test("U8: Network error -> return 500", async () =>{
     let mockReq = {
       body: {
         email: 'test@example.com'
@@ -2585,7 +2604,7 @@ describe("deleteGroup", () => {
     }
     )
 
-test('T1 : delte group -> return 200', async()=>{
+test('U1 : delte group -> return 200', async()=>{
   jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
     {authorized: true,
       cause:"Authorized"
@@ -2601,7 +2620,7 @@ test('T1 : delte group -> return 200', async()=>{
   expect(mockResp.json).toHaveBeenCalledWith({data: {message: "Group deleted successfully"}, refreshedTokenMessage: mockResp.locals.refreshedTokenMessage})
 })
 
-test('T2: missing fields -> return 400', async() =>{
+test('U2: missing fields -> return 400', async() =>{
   jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
     {authorized: true,
       cause:"Authorized"
@@ -2618,7 +2637,7 @@ test('T2: missing fields -> return 400', async() =>{
 
 })
 
-test('T3: name is an empty string -> return 400', async() =>{
+test('U3: name is an empty string -> return 400', async() =>{
   jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
     {authorized: true,
       cause:"Authorized"
@@ -2635,7 +2654,7 @@ test('T3: name is an empty string -> return 400', async() =>{
   expect(mockResp.json).toHaveBeenCalledWith({ error: "The name passed is an empty string" });
 
 })
-test('T4 : group does not exist -> return 400', async()=>{
+test('U4 : group does not exist -> return 400', async()=>{
   jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
     {authorized: true,
       cause:"Authorized"
@@ -2653,7 +2672,7 @@ test('T4 : group does not exist -> return 400', async()=>{
 
 
 
-test('T5: user is unauthenrified -> return 401', async() =>{
+test('U5: user is unauthenrified -> return 401', async() =>{
   jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
     {authorized: false,
       cause:"UnAuthorized"
@@ -2666,7 +2685,7 @@ test('T5: user is unauthenrified -> return 401', async() =>{
 
 })
 
-test('T6 : Network error -> return 500', async()=>{
+test('U6 : Network error -> return 500', async()=>{
   jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(()=>(
     {authorized: true,
       cause:"Authorized"

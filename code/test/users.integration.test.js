@@ -41,7 +41,7 @@ describe("getUsers", () => {
     await User.deleteMany({})
   })
 
-  test("T1: at least one user exists -> return 200 and list of users", async () => {
+  test("I1: at least one user exists -> return 200 and list of users", async () => {
 
     const user = {
       username: 'user',
@@ -66,7 +66,7 @@ describe("getUsers", () => {
 
   })
 
-  test("T2: no users -> return 200 and empty list", async () => {
+  test("I2: no users -> return 200 and empty list", async () => {
     const admin = {
       username: 'admin',
       email: 'admin@example.com',
@@ -86,7 +86,7 @@ describe("getUsers", () => {
 
   })
 
-  test("T3: user is not authorized -> should retrieve 401 and error message", async () => {
+  test("I3: user is not authorized -> should retrieve 401 and error message", async () => {
 
     //This token is generatd with role = Regular
     const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU2NTIwMzEsImV4cCI6MTcxNzE4ODAzMSwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlkIjoiMTIzIiwidXNlcm5hbWUiOiJ1c2VyIiwicm9sZSI6IlJlZ3VsYXIifQ.7H1LKiSf56TPwJ6b5lCFb0uwafvAVRrqW6SUy7_xB5k'
@@ -112,7 +112,7 @@ describe("getUser", () => {
     await User.deleteMany({})
   })
 
-  test("T1: authorized user sending the request -> return 200", async () => {
+  test("I1: authorized user sending the request -> return 200", async () => {
 
     const user = {
       username: 'user',
@@ -140,7 +140,7 @@ describe("getUser", () => {
   })
 
 
-  test("T2: authorized admin sending the request -> return 200", async () => {
+  test("I2: authorized admin sending the request -> return 200", async () => {
 
     const user = {
       username: 'user',
@@ -166,7 +166,7 @@ describe("getUser", () => {
   })
 
 
-  test("T3: unauthorized user sending the request -> return 401 and error message", async () => {
+  test("I3: unauthorized user sending the request -> return 401 and error message", async () => {
 
     const user = {
       username: 'user',
@@ -192,7 +192,7 @@ describe("getUser", () => {
 
   })
 
-  test("T4: user requested is not in db -> return 400 and error message", async () => {
+  test("I4: user requested is not in db -> return 400 and error message", async () => {
 
     const user = {
       username: 'user123',
@@ -265,7 +265,7 @@ describe("createGroup", () => {
   })    
 
 
-  test("should return an error indicating that the user is not authorized", async () => {
+  test("I1 : should return an error indicating that the user is not authorized", async () => {
     const response = await request(app)
       .post("/api/groups")                                    
       .send({})
@@ -274,7 +274,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("Unauthorized");
   })
 
-  test("should return an error indicating that the body does not contain all fields", async () => {
+  test("I2 : should return an error indicating that the body does not contain all fields", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
@@ -284,7 +284,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("body does not contain all the necessary attributes");
   })
 
-  test("should return an error indicating that the group names passed in body is an empty string", async () => {
+  test("I3 : should return an error indicating that the group names passed in body is an empty string", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
@@ -297,7 +297,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("body does not contain all the necessary attributes");
   })
 
-  test("should return an error indicating that the group names is already in use", async () => {
+  test("I4 : should return an error indicating that the group names is already in use", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
@@ -310,7 +310,20 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("group's name already available");
   })
   
-  test("should return an error indicating that the group names is already in use", async () => {
+  test("I5 : should return an error indicating that all the members either do not exist or are already in a group", async () => {
+    const response = await request(app)
+      .post("/api/groups")       
+      .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                             
+      .send({
+        name : "group2",
+        memberEmails : ["user1@test.com", "userx@test.com", "user3@test.com"]
+      })
+                          
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe("all the `memberEmails` either do not exist or are already in a group");
+  })
+
+  test("I6 : should return an error indicating that all the members either do not exist or are already in a group", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                             
@@ -321,9 +334,9 @@ describe("createGroup", () => {
                           
       expect(response.status).toBe(400);
       expect(response.body.error).toBe("all the `memberEmails` either do not exist or are already in a group");
-  })
+  })  
 
-  test("should return an error indicating that the group names is already in use", async () => {
+  test("I7 : should return an error indicating that the user is already in group", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                             
@@ -336,7 +349,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("user is already in group");
   })
 
-  test("should return an error indicating that the group names is already in use", async () => {
+  test("I8 : should return an error indicating that at least one of the emails provided is not valid", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                             
@@ -349,7 +362,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("email is not valid");
   })
 
-  test("should return an error indicating that the group names is already in use", async () => {
+  test("I9 : should return an error indicating that at least one of the emails provided is not valid", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                             
@@ -362,7 +375,7 @@ describe("createGroup", () => {
       expect(response.body.error).toBe("email is not valid");
   })
 
-  test("should return a message indicating that the group was created", async () => {
+  test("I10: should return a message indicating that the group was created", async () => {
     const response = await request(app)
       .post("/api/groups")       
       .set("Cookie", `accessToken=${test_tokens[3]};refreshToken=${test_tokens[3]}`)                             
@@ -385,7 +398,7 @@ describe("getGroups", () => {
     await Group.deleteMany({})
   })
 
-  test("T1: at least one group exists -> return 200 and list of groups", async () => {
+  test("I1: at least one group exists -> return 200 and list of groups", async () => {
 
     const newGroup = await Group.create({
       name: 'My Group',
@@ -410,7 +423,7 @@ describe("getGroups", () => {
       })
 
   })
-  test("T2: unauthorized user -> return 401 and error message", async () => {
+  test("I2: unauthorized user -> return 401 and error message", async () => {
     //This token is generatd with role = Regular
     const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU2NTIwMzEsImV4cCI6MTcxNzE4ODAzMSwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlkIjoiMTIzIiwidXNlcm5hbWUiOiJ1c2VyIiwicm9sZSI6IlJlZ3VsYXIifQ.7H1LKiSf56TPwJ6b5lCFb0uwafvAVRrqW6SUy7_xB5k'
     await request(app)
@@ -433,7 +446,7 @@ describe("getGroup", () => {
     await Group.deleteMany({})
   })
 
-  test("T1: admin requesting to get group that exists -> return 200 and group", async () => {
+  test("I1: admin requesting to get group that exists -> return 200 and group", async () => {
 
     const newGroup = await Group.create({
       name: 'My Group',
@@ -459,7 +472,7 @@ describe("getGroup", () => {
 
   })
 
-  test("T2: user is in the group -> return 200 and group", async () => {
+  test("I2: user is in the group -> return 200 and group", async () => {
 
     const newGroup = await Group.create({
       name: 'My Group',
@@ -485,7 +498,7 @@ describe("getGroup", () => {
 
   })
 
-  test("T3: unautharized user requesting to get group that exists -> return 401 and error message", async () => {
+  test("I3: unautharized user requesting to get group that exists -> return 401 and error message", async () => {
 
     const newGroup = await Group.create({
       name: 'My Group',
@@ -511,7 +524,7 @@ describe("getGroup", () => {
       })
   })
 
-  test("T4: group does not exist -> return 400 and error message", async () => {
+  test("I4: group does not exist -> return 400 and error message", async () => {
     //This token is generatd with role = admin
     const refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU3Mzg3ODYsImV4cCI6MTcxNzI3NDc4NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiZXhhbXBsZTMzQGV4YW1wbGUuY29tIiwiaWQiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3QiLCJyb2xlIjoiQWRtaW4ifQ.9wJED0kKWyCEUKcZzeCzWNBAgachnMVFrR4cvshwzpo'
     await request(app)
@@ -621,7 +634,7 @@ describe("addToGroup", () => {
   })
 
 
-  test('T1: authentication as admin but the user is regular', async () => {
+  test('I1: authentication as admin but the user is regular', async () => {
     const response = await request(app)
       .patch("/api/groups/fakeGroup/insert")
       .set("Cookie", `refreshToken=${testerRefreshTokenValid};  accessToken=${testerAccessTokenValid}`)
@@ -629,7 +642,7 @@ describe("addToGroup", () => {
     expect(response.status).toBe(401)
   })
 
-  test('T2: authentication as group but the user is not part of the group', async () => {
+  test('I2: authentication as group but the user is not part of the group', async () => {
     const tmpGroup = {
       name: 'tmpGroup',
       members: [
@@ -649,7 +662,7 @@ describe("addToGroup", () => {
     expect(response.status).toBe(401)
   })
 
-  test('T3: authentication as admin but there is a not valid email', async () => {
+  test('I3: authentication as admin but there is a not valid email', async () => {
     const response = await request(app)
       .patch("/api/groups/fakeGroup/insert")
       .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
@@ -663,7 +676,7 @@ describe("addToGroup", () => {
     expect(response.status).toBe(400)
   })
 
-  test('T4: authentication as admin but there is ONLY a not valid email', async () => {
+  test('I4: authentication as admin but there is ONLY a not valid email', async () => {
     const response = await request(app)
       .patch("/api/groups/fakeGroup/insert")
       .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
@@ -677,7 +690,7 @@ describe("addToGroup", () => {
   })
 
 
-  test('T5: authentication as admin but there are no emails', async () => {
+  test('I5: authentication as admin but there are no emails', async () => {
     const response = await request(app)
       .patch("/api/groups/fakeGroup/insert")
       .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
@@ -685,7 +698,7 @@ describe("addToGroup", () => {
     expect(response.status).toBe(400)
   })
 
-  test('T6: authentication as admin but there is ONLY a not valid email', async () => {
+  test('I6: authentication as admin but there is ONLY a not valid email', async () => {
     const response = await request(app)
       .patch("/api/groups/thisGroupDoesNotExist/insert")
       .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
@@ -698,7 +711,7 @@ describe("addToGroup", () => {
     expect(response.status).toBe(400)
   })
 
-  test('T7: authentication as admin and users are added', async () => {
+  test('I7: authentication as admin and users are added', async () => {
     const response = await request(app)
       .patch("/api/groups/fakeGroup/insert")
       .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
@@ -723,7 +736,7 @@ describe("addToGroup", () => {
   })
 
 
-  test('T8: authentication as admin but there is an email not found in the system', async () => {
+  test('I8: authentication as admin but there is an email not found in the system', async () => {
     const response = await request(app)
       .patch("/api/groups/fakeGroup/insert")
       .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
@@ -748,7 +761,7 @@ describe("addToGroup", () => {
     expect(response.body.data.group.members).toEqual(expectedResponse)
   })
 
-  test('T9: authentication as admin and all emails are not found in the system', async () => {
+  test('I9: authentication as admin and all emails are not found in the system', async () => {
     const response = await request(app)
       .patch("/api/groups/fakeGroup/insert")
       .set("Cookie", `refreshToken=${adminRefreshTokenValid};  accessToken=${adminAccessTokenValid}`)
@@ -761,7 +774,7 @@ describe("addToGroup", () => {
     expect(response.status).toBe(400)
   })
 
-  test('T10: authentication as admin and one email is already registered to other group', async () => {
+  test('I10: authentication as admin and one email is already registered to other group', async () => {
     const tmpGroup = {
       name: 'tmpGroup',
       members: [
@@ -1032,7 +1045,7 @@ describe("deleteUser", () => {
     await Group.deleteMany({})
   })
 
-  test("T1: user belong to a group and he is the only user in the group -> return 200", async () => {
+  test("I1: user belong to a group and he is the only user in the group -> return 200", async () => {
 
 
     const user = {
@@ -1075,7 +1088,7 @@ describe("deleteUser", () => {
   })
 
 
-  test("T1: user belong to a group and he is not the only user in the group -> return 200", async () => {
+  test("I2: user belong to a group and he is not the only user in the group -> return 200", async () => {
 
     const user = {
       username: 'user1',
@@ -1120,7 +1133,7 @@ describe("deleteUser", () => {
   })
 
 
-  test("T2: does not pass an email -> return 400 and error message", async () => {
+  test("I3: does not pass an email -> return 400 and error message", async () => {
 
     const user = {
       username: 'user1',
@@ -1168,7 +1181,7 @@ describe("deleteUser", () => {
 
 
 
-  test("T3: email is an empty string -> return 400 and error message", async () => {
+  test("I4: email is an empty string -> return 400 and error message", async () => {
 
     const user = {
       username: 'user2',
@@ -1211,7 +1224,7 @@ describe("deleteUser", () => {
     await expect(response.body.error).toBe("The email passed is an empty string")
   })
 
-  test("T4: requested email is not in the db -> return 400 and error message", async () => {
+  test("I5: requested email is not in the db -> return 400 and error message", async () => {
 
     const user = {
       username: 'user1',
@@ -1254,7 +1267,7 @@ describe("deleteUser", () => {
     await expect(response.body.error).toBe("The email does not represent a user in the database")
   })
 
-  test("T5: not email format -> return 400 and error message", async () => {
+  test("I6: not email format -> return 400 and error message", async () => {
 
     const user = {
       username: 'user1',
@@ -1300,7 +1313,7 @@ describe("deleteUser", () => {
 
 
 
-  test("T6: unauthorized user -> return 401 and error message", async () => {
+  test("I7: unauthorized user -> return 401 and error message", async () => {
 
 
     const user = {
@@ -1356,7 +1369,7 @@ describe("deleteGroup", () => {//create a group with only one user
     await Group.deleteMany({})
   })
 
-  test("T1:authorized user -> return 200", async () => {
+  test("I1:authorized user -> return 200", async () => {
 
 
     const user = {
@@ -1401,7 +1414,7 @@ describe("deleteGroup", () => {//create a group with only one user
   })
 
 
-  test("T2: body does not contain all necessary attributes -> return 200", async () => {
+  test("I2: body does not contain all necessary attributes -> return 200", async () => {
 
     const user = {
       username: 'user1',
@@ -1446,7 +1459,7 @@ describe("deleteGroup", () => {//create a group with only one user
   })
 
 
-  test("T3: name is an empty string -> return 400 and error message", async () => {
+  test("I3: name is an empty string -> return 400 and error message", async () => {
 
     const user = {
       username: 'user1',
@@ -1494,7 +1507,7 @@ describe("deleteGroup", () => {//create a group with only one user
 
 
 
-  test("T4: not a group in the db-> return 400 and error message", async () => {
+  test("I4: not a group in the db-> return 400 and error message", async () => {
 
     const user = {
       username: 'user2',
@@ -1537,7 +1550,7 @@ describe("deleteGroup", () => {//create a group with only one user
     await expect(response.body.error).toBe("The name passed does not represent a group in the database")
   })
 
-  test("T5: unAuthorized user -> return 401 and error message", async () => {
+  test("I5: unAuthorized user -> return 401 and error message", async () => {
 
     const user = {
       username: 'user1',

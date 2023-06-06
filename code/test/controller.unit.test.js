@@ -1097,7 +1097,7 @@ describe("getTransactionsByUser", () => {
         jest.clearAllMocks();
     })
 
-    test("Should return an error indicating that the user is not authorized", async () => {
+    test("U1 : Should return an error indicating that the user is not authorized", async () => {
 
         // called by user
         req.url = `/users/${req.params.username}/transactions`;
@@ -1117,7 +1117,7 @@ describe("getTransactionsByUser", () => {
         });
     });
 
-    test("Should return an error indicating that the user is not authorized or not an admin", async () => {
+    test("U2 : Should return an error indicating that the user is not authorized or not an admin", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -1137,7 +1137,7 @@ describe("getTransactionsByUser", () => {
         });
     });
 
-    test("Should return an error indicating that the user specified by params does not exist (authorized as an admin)", async () => {
+    test("U3 : Should return an error indicating that the user specified by params does not exist (authorized as an admin)", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -1160,7 +1160,7 @@ describe("getTransactionsByUser", () => {
         });
     });
 
-    test("Should return a list of transactions (authorized as an admin)", async () => {
+    test("U4 : Should return a list of transactions (authorized as an admin)", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -1195,7 +1195,7 @@ describe("getTransactionsByUser", () => {
         });
     });
 
-    test("Should return an empty list (authorized as an admin)", async () => {
+    test("U5 : Should return an empty list (authorized as an admin)", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -1224,7 +1224,7 @@ describe("getTransactionsByUser", () => {
         });
     });
 
-    test("Should return an error indicating that the user specified by params does not exist (authorized as a user)", async () => {
+    test("U6 : Should return an error indicating that the user specified by params does not exist (authorized as a user)", async () => {
 
         // called by user
         req.url = `/users/${req.params.username}/transactions`;
@@ -1256,7 +1256,7 @@ describe("getTransactionsByUser", () => {
         });
     });
 
-    test("Should return a list of transactions (authorized as a user)", async () => {
+    test("U7 : Should return a list of transactions (authorized as a user)", async () => {
 
         // called by user
         req.url = `/users/${req.params.username}/transactions`;
@@ -1291,7 +1291,7 @@ describe("getTransactionsByUser", () => {
         });
     });
 
-    test("Should return an empty list (authorized as a user)", async () => {
+    test("U8 : Should return an empty list (authorized as a user)", async () => {
 
         // called by user
         req.url = `/users/${req.params.username}/transactions`;
@@ -1320,7 +1320,7 @@ describe("getTransactionsByUser", () => {
         });
     });
 
-    test("Should return an error caused by an exception (authorized as an admin)", async () => {
+    test("U9 : Should return an error caused by an exception (authorized as an admin)", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -1376,7 +1376,7 @@ describe("getTransactionsByUserByCategory", () => {
         jest.clearAllMocks();
     })
 
-    test("Should return an error indicating that the user is not authorized", async () => {
+    test("U1 : Should return an error indicating that the user is not authorized", async () => {
 
         // called by user
         req.url = `/users/${req.params.username}/transactions`;
@@ -1396,7 +1396,7 @@ describe("getTransactionsByUserByCategory", () => {
         });
     });
 
-    test("Should return an error indicating that the user is not authorized or not an admin", async () => {
+    test("U2 : Should return an error indicating that the user is not authorized or not an admin", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -1416,7 +1416,7 @@ describe("getTransactionsByUserByCategory", () => {
         });
     });
 
-    test("Should return an error indicating that the user specified by params does not exist (auth type doesn't matter)", async () => {
+    test("U3 : Should return an error indicating that the user specified by params does not exist (auth type doesn't matter)", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -1439,7 +1439,7 @@ describe("getTransactionsByUserByCategory", () => {
         });
     });
 
-    test("Should return an error indicating that the category specified by params does not exist (auth type doesn't matter)", async () => {
+    test("U4 : Should return an error indicating that the category specified by params does not exist (auth type doesn't matter)", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -1464,7 +1464,7 @@ describe("getTransactionsByUserByCategory", () => {
         });
     });
 
-    test("Should return a list of transactions (auth type doesn't matter)", async () => {
+    test("U5 : Should return a list of transactions (auth type doesn't matter)", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -1501,7 +1501,7 @@ describe("getTransactionsByUserByCategory", () => {
         });
     });
 
-    test("Should return an empty list (auth type doesn't matter)", async () => {
+    test("U6 : Should return an empty list (auth type doesn't matter)", async () => {
 
         // called by admin
         req.url = `/transactions/users/`;
@@ -1532,7 +1532,7 @@ describe("getTransactionsByUserByCategory", () => {
         });
     });
 
-    test("Should return an error caused by an exception (auth type doesn't matter)", async () => {
+    test("U7 : Should return an error caused by an exception (auth type doesn't matter)", async () => {
 
         // called by user
         req.url = `/users/${req.params.username}/transactions`;
@@ -1581,7 +1581,7 @@ describe("getTransactionsByGroup", () => {
         jest.clearAllMocks();
     })
 
-    test("Should return an error indicating that the user is not authorized or not and admin", async () => {
+    test("U1 : Should return an error indicating that the user is not authorized or not and admin", async () => {
 
         // called by an admin
         req.url = `/transactions/groups/`;
@@ -1601,7 +1601,7 @@ describe("getTransactionsByGroup", () => {
         });
     });
 
-    test("Should return an error indicating that the user is not authorized or not a member of the group", async () => {
+    test("U2 : Should return an error indicating that the user is not authorized or not a member of the group", async () => {
 
         // called by group member
         req.url = `/transactions/users/`;
@@ -1621,7 +1621,7 @@ describe("getTransactionsByGroup", () => {
         });
     });
 
-    test("Should return an error indicating that the group specified in the request params does not exist (authorization does not matter)", async () => {
+    test("U3 : Should return an error indicating that the group specified in the request params does not exist (authorization does not matter)", async () => {
 
         // called by an admin (does not matter, functionality for both auth types is the same)
         req.url = `/transactions/groups/`;
@@ -1645,7 +1645,7 @@ describe("getTransactionsByGroup", () => {
     });
 
 
-    test("Should return a list of transactions (authorization does not matter)", async () => {
+    test("U4 : Should return a list of transactions (authorization does not matter)", async () => {
 
         // called by an admin (does not matter, functionality for both auth types is the same)
         req.url = `/transactions/groups/`;
@@ -1684,7 +1684,7 @@ describe("getTransactionsByGroup", () => {
         });
     });
 
-    test("Should return an empty list (authorization does not matter)", async () => {
+    test("U5 : Should return an empty list (authorization does not matter)", async () => {
 
         // called by an admin (does not matter, functionality for both auth types is the same)
         req.url = `/transactions/groups/`;
@@ -1717,7 +1717,7 @@ describe("getTransactionsByGroup", () => {
         });
     });
 
-    test("Should return an error caused by an exception (auth type doesn't matter)", async () => {
+    test("U6 : Should return an error caused by an exception (auth type doesn't matter)", async () => {
 
         // called by an admin (does not matter, functionality for both auth types is the same)
         req.url = `/transactions/groups/`;
@@ -1767,7 +1767,7 @@ describe("getTransactionsByGroupByCategory", () => {
         jest.clearAllMocks();
     })
 
-    test("Should return an error indicating that the user is not authorized or not an admin", async () => {
+    test("U1 : Should return an error indicating that the user is not authorized or not an admin", async () => {
 
         // called by admin
         req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
@@ -1786,7 +1786,7 @@ describe("getTransactionsByGroupByCategory", () => {
         });
     });
 
-    test("Should return an error indicating that the user is not authorized or not a member of the group", async () => {
+    test("U2 : Should return an error indicating that the user is not authorized or not a member of the group", async () => {
 
         // called by group member
         req.url = `/groups/${req.params.name}/transactions/category/${req.params.name}`;
@@ -1805,7 +1805,7 @@ describe("getTransactionsByGroupByCategory", () => {
         });
     });
 
-    test("Should return an error indicating that the group does not exist (auth type doesn't matter)", async () => {
+    test("U3 : Should return an error indicating that the group does not exist (auth type doesn't matter)", async () => {
 
         // called by admin (authorization type doesn't matter)
         req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
@@ -1827,7 +1827,7 @@ describe("getTransactionsByGroupByCategory", () => {
         });
     });
 
-    test("Should return an error indicating that the category does not exist (auth type doesn't matter)", async () => {
+    test("U4 : Should return an error indicating that the category does not exist (auth type doesn't matter)", async () => {
 
         // called by admin (authorization type doesn't matter)
         req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
@@ -1855,7 +1855,7 @@ describe("getTransactionsByGroupByCategory", () => {
         });
     });
 
-    test("Should return an error indicating that group or category don't exist (auth type doesn't matter)", async () => {
+    test("U5 : Should return an error indicating that group or category don't exist (auth type doesn't matter)", async () => {
 
         // called by admin (authorization type doesn't matter)
         req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
@@ -1890,7 +1890,7 @@ describe("getTransactionsByGroupByCategory", () => {
         });
     });
 
-    test("Should return an empty list of transactions (auth type doesn't matter)", async () => {
+    test("U6 : Should return an empty list of transactions (auth type doesn't matter)", async () => {
 
         // called by admin (authorization type doesn't matter)
         req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
@@ -1936,7 +1936,7 @@ describe("getTransactionsByGroupByCategory", () => {
         });
     });
 
-    test("Should return a list of transactions (auth type doesn't matter)", async () => {
+    test("U7 : Should return a list of transactions (auth type doesn't matter)", async () => {
 
         // called by admin (authorization type doesn't matter)
         req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;
@@ -1986,7 +1986,7 @@ describe("getTransactionsByGroupByCategory", () => {
         });
     });
 
-    test("Should return an error caused by an exception (auth type doesn't matter)", async () => {
+    test("U8 : Should return an error caused by an exception (auth type doesn't matter)", async () => {
 
         // called by admin (authorization type doesn't matter)
         req.url = `/transactions/groups/${req.params.name}/category/${req.params.name}`;        
@@ -2025,7 +2025,7 @@ describe("deleteTransaction", () => {
         jest.clearAllMocks();
     })
 
-    test("Should return an error indicating that the user is not authorized", async () => {
+    test("U1 : Should return an error indicating that the user is not authorized", async () => {
 
         // mock request
         req = {
@@ -2052,7 +2052,7 @@ describe("deleteTransaction", () => {
         });
     });
 
-    test("Should return an error indicating that not all attributes in body are present", async () => {
+    test("U2 : Should return an error indicating that not all attributes in body are present", async () => {
         // mock request
         req = {
             params: {
@@ -2076,7 +2076,7 @@ describe("deleteTransaction", () => {
         });
     });
 
-    test("Should return an error indicating that the user was not found", async () => {
+    test("U3 : Should return an error indicating that the user was not found", async () => {
         // mock request
         req = {
             params: {
@@ -2105,7 +2105,7 @@ describe("deleteTransaction", () => {
         });
     });
 
-    test("Should return an error indicating that the transaction was not found", async () => {
+    test("U4 : Should return an error indicating that the transaction was not found", async () => {
         // mock request
         req = {
             params: {
@@ -2143,7 +2143,7 @@ describe("deleteTransaction", () => {
         });
     });
 
-    test("Should return an error indicating that the transaction does not exist (failed to delete it)", async () => {
+    test("U5 : Should return an error indicating that the transaction does not exist (failed to delete it)", async () => {
         // mock request
         req = {
             params: {
@@ -2186,7 +2186,7 @@ describe("deleteTransaction", () => {
         });
     });
 
-    test("Should return an error indicating that the transaction was not found", async () => {
+    test("U6 : Should return an error indicating that the transaction was not found", async () => {
         // mock request
         req = {
             params: {
@@ -2238,7 +2238,7 @@ describe("deleteTransaction", () => {
         });
     });
 
-    test("Should return a message indicating that the transaction was deleted", async () => {
+    test("U7 : Should return a message indicating that the transaction was deleted", async () => {
         // mock request
         req = {
             params: {
@@ -2293,7 +2293,7 @@ describe("deleteTransaction", () => {
         });
     });
 
-    test("Should return an error caused by an exception", async () => {
+    test("U8 : Should return an error caused by an exception", async () => {
 
         // mock request
         req = {
@@ -2346,7 +2346,7 @@ describe("deleteTransactions", () => {
         jest.clearAllMocks();
     })
 
-    test("Should return an error indicating that the user is not authorized", async () => {
+    test("U1 : Should return an error indicating that the user is not authorized", async () => {
 
         // mock request
         req = {
@@ -2373,7 +2373,7 @@ describe("deleteTransactions", () => {
         });
     });
 
-    test("Should return an error indicating that not all attributes in body are present", async () => {
+    test("U2 : Should return an error indicating that not all attributes in body are present", async () => {
         // mock request
         req = {
             params: {
@@ -2397,7 +2397,7 @@ describe("deleteTransactions", () => {
         });
     });
 
-    test("Should return an error indicating that the IDs are not valid", async () => {
+    test("U3 : Should return an error indicating that the IDs are not valid", async () => {
         // mock request
         req = {
             params: {
@@ -2423,7 +2423,7 @@ describe("deleteTransactions", () => {
         });
     });
 
-    test("Should return an error indicating that some of the IDs are not found", async () => {
+    test("U4 : Should return an error indicating that some of the IDs are not found", async () => {
         // mock request
         req = {
             params: {
@@ -2453,7 +2453,7 @@ describe("deleteTransactions", () => {
     });
 
 
-    test("Should return an error indicating that all of the IDs are not found", async () => {
+    test("U5 : Should return an error indicating that all of the IDs are not found", async () => {
         // mock request
         req = {
             params: {
@@ -2482,7 +2482,7 @@ describe("deleteTransactions", () => {
         });
     });
 
-    test("Should return a message indicating that the transactions were deleted", async () => {
+    test("U6 : Should return a message indicating that the transactions were deleted", async () => {
         // mock request
         req = {
             params: {
@@ -2525,7 +2525,7 @@ describe("deleteTransactions", () => {
         });
     });
 
-    test("Should return an error caused by an exception", async () => {
+    test("U7 : Should return an error caused by an exception", async () => {
 
         // mock request
         req = {

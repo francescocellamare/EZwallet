@@ -714,7 +714,7 @@ describe("getTransactionsByUser", () => {
         await transactions.insertMany(test_transactions)
     })    
 
-    test("Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
+    test("I1 : Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
         const response = await request(app)
             .get("/api/users/user1/transactions")                        
                         
@@ -722,7 +722,7 @@ describe("getTransactionsByUser", () => {
         expect(response.body.error).toBe("Unauthorized");
     });
     
-    test("Should return an error indicating that the user specified by params does not exist (authorized as a regular user)", async () => {      
+    test("I2 : Should return an error indicating that the user specified by params does not exist (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user4/transactions")                        
             .set("Cookie", `accessToken=${test_tokens[3]};refreshToken=${test_tokens[3]}`)
@@ -731,7 +731,7 @@ describe("getTransactionsByUser", () => {
         expect(response.body.error).toBe("User does not exist");
     });
     
-    test("Should return an error indicating that the User is not Atuthorized (not logged in, or not an admin)", async () => {      
+    test("I3 : Should return an error indicating that the User is not Atuthorized (not logged in, or not an admin)", async () => {      
         const response = await request(app)
             .get("/api/transactions/users/user1")                        
                         
@@ -739,7 +739,7 @@ describe("getTransactionsByUser", () => {
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that the user specified by params does not exist (authorized as an admin)", async () => {      
+    test("I4 : Should return an error indicating that the user specified by params does not exist (authorized as an admin)", async () => {      
         const response = await request(app)
             .get("/api/transactions/users/user5")   
             .set("Cookie", `accessToken=${test_tokens[4]};refreshToken=${test_tokens[4]}`)
@@ -748,7 +748,7 @@ describe("getTransactionsByUser", () => {
         expect(response.body.error).toBe("User does not exist");
     });
 
-    test("Should return a list of transactions (authorized as an admin)", async () => {      
+    test("I5 : Should return a list of transactions (authorized as an admin)", async () => {      
         const response = await request(app)
             .get("/api/transactions/users/user2")   
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
@@ -762,7 +762,7 @@ describe("getTransactionsByUser", () => {
         ]);
     });
 
-    test("Should return a list of transactions of date after 2023-02-08 (authorized as a regular user)", async () => {      
+    test("I6 : Should return a list of transactions of date after 2023-02-08 (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user2/transactions?from=2023-02-08")                        
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
@@ -775,7 +775,7 @@ describe("getTransactionsByUser", () => {
         ])
     });
 
-    test("Should return a list of transactions of date before 2023-04-01 (authorized as a regular user)", async () => {      
+    test("I7 : Should return a list of transactions of date before 2023-04-01 (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user2/transactions?upTo=2023-04-01")                        
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
@@ -788,7 +788,7 @@ describe("getTransactionsByUser", () => {
         ])
     });
 
-    test("Should return a list of transactions of date between 2023-02-08 and 2023-04-01  (authorized as a regular user)", async () => {      
+    test("I8 : Should return a list of transactions of date between 2023-02-08 and 2023-04-01  (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user2/transactions?from=2023-02-08&upTo=2023-04-01")                        
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
@@ -800,7 +800,7 @@ describe("getTransactionsByUser", () => {
         ])
     });
 
-    test("Should return a list of transactions of amount more than 300  (authorized as a regular user)", async () => {      
+    test("I9 : Should return a list of transactions of amount more than 300  (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user2/transactions?min=300")                        
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
@@ -812,7 +812,7 @@ describe("getTransactionsByUser", () => {
         ])
     });
 
-    test("Should return a list of transactions of amount less than 300  (authorized as a regular user)", async () => {      
+    test("I10: Should return a list of transactions of amount less than 300  (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user2/transactions?max=300")                        
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
@@ -824,7 +824,7 @@ describe("getTransactionsByUser", () => {
         ])
     });
 
-    test("Should return a list of transactions of amount between 100 and 500 (authorized as a regular user)", async () => {      
+    test("I11: Should return a list of transactions of amount between 100 and 500 (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user1/transactions?max=500&min=100")                        
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
@@ -836,7 +836,7 @@ describe("getTransactionsByUser", () => {
         ])
     });
 
-    test("Should return a list of transactions of amount between 100 and 500 and date between 2023-01-01 and 2023-03-01 (authorized as a regular user)", async () => {      
+    test("I12: Should return a list of transactions of amount between 100 and 500 and date between 2023-01-01 and 2023-03-01 (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user1/transactions?max=500&min=100&upTo=2023-04-01&from=2023-01-01")                        
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                           
@@ -847,7 +847,7 @@ describe("getTransactionsByUser", () => {
         ])
     });
 
-    test("Should return a list of transactions of date = 2023-03-26 (authorized as a regular user)", async () => {      
+    test("I13: Should return a list of transactions of date = 2023-03-26 (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user3/transactions?date=2023-03-26")                        
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                           
@@ -859,7 +859,7 @@ describe("getTransactionsByUser", () => {
         ])
     });
 
-    test("Should return a list of transactions of date = 2023-03-26 and amount between 10 and 20 (authorized as a regular user)", async () => {      
+    test("I14: Should return a list of transactions of date = 2023-03-26 and amount between 10 and 20 (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user3/transactions?date=2023-03-26&min=10&max=20")                        
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                           
@@ -917,7 +917,7 @@ describe("getTransactionsByUserByCategory", () => {
         await transactions.insertMany(test_transactions)
     })    
 
-    test("Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
+    test("I1 : Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
         const response = await request(app)
             .get("/api/users/user1/transactions/category/cat1")                        
             .send({
@@ -929,7 +929,7 @@ describe("getTransactionsByUserByCategory", () => {
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that the User is not Atuthorized (not logged in, or not an admin)", async () => {      
+    test("I2 : Should return an error indicating that the User is not Atuthorized (not logged in, or not an admin)", async () => {      
         const response = await request(app)
             .get("/api/transactions/users/user1/category/cat1")                        
             .send({
@@ -941,7 +941,7 @@ describe("getTransactionsByUserByCategory", () => {
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that the user specified by params does not exist (authorized as a regular user)", async () => {      
+    test("I3 : Should return an error indicating that the user specified by params does not exist (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user4/transactions/category/cat1")                        
             .set("Cookie", `accessToken=${test_tokens[3]};refreshToken=${test_tokens[3]}`)
@@ -954,7 +954,7 @@ describe("getTransactionsByUserByCategory", () => {
         expect(response.body.error).toBe("User does not exist");
     });
 
-    test("Should return an error indicating that the user specified by params does not exist (authorized as an admin)", async () => {      
+    test("I4 : Should return an error indicating that the user specified by params does not exist (authorized as an admin)", async () => {      
         const response = await request(app)
             .get("/api/transactions/users/user5/category/cat1")                            
             .set("Cookie", `accessToken=${test_tokens[4]};refreshToken=${test_tokens[4]}`)
@@ -967,7 +967,7 @@ describe("getTransactionsByUserByCategory", () => {
         expect(response.body.error).toBe("User does not exist");
     });
 
-    test("Should return an error indicating that the category specified by params does not exist (authorized as a regular user)", async () => {      
+    test("I5 : Should return an error indicating that the category specified by params does not exist (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user1/transactions/category/catx")                        
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
@@ -980,7 +980,7 @@ describe("getTransactionsByUserByCategory", () => {
         expect(response.body.error).toBe("Category does not exist");
     });
 
-    test("Should return an error indicating that the category specified by params does not exist (authorized as an admin)", async () => {      
+    test("I6 : Should return an error indicating that the category specified by params does not exist (authorized as an admin)", async () => {      
         const response = await request(app)
             .get("/api/transactions/users/user1/category/catx")                             
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
@@ -993,7 +993,7 @@ describe("getTransactionsByUserByCategory", () => {
         expect(response.body.error).toBe("Category does not exist");
     });
 
-    test("Should return an empty list of transactions (authorized as a regular user)", async () => {      
+    test("I7 : Should return an empty list of transactions (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user2/transactions/category/cat1")                        
             .set("Cookie", `accessToken=${test_tokens[1]};refreshToken=${test_tokens[1]}`)
@@ -1006,7 +1006,7 @@ describe("getTransactionsByUserByCategory", () => {
         expect(response.body.data).toStrictEqual([]);
     });
 
-    test("Should return an empty list of transactions (authorized as an admin)", async () => {      
+    test("I8 : Should return an empty list of transactions (authorized as an admin)", async () => {      
         const response = await request(app)
             .get("/api/transactions/users/user2/category/cat1")                                                        
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
@@ -1019,7 +1019,7 @@ describe("getTransactionsByUserByCategory", () => {
         expect(response.body.data).toStrictEqual([]);
     });
 
-    test("Should return a list of transactions (authorized as a regular user)", async () => {      
+    test("I9 : Should return a list of transactions (authorized as a regular user)", async () => {      
         const response = await request(app)
             .get("/api/users/user1/transactions/category/cat1")                        
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
@@ -1035,7 +1035,7 @@ describe("getTransactionsByUserByCategory", () => {
         ]);
     });
 
-    test("Should return a list of transactions (authorized as an admin)", async () => {      
+    test("I10: Should return a list of transactions (authorized as an admin)", async () => {      
         const response = await request(app)
             .get("/api/transactions/users/user1/category/cat1")                                                        
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
@@ -1106,7 +1106,7 @@ describe("getTransactionsByGroup", () => {
     })    
 
 
-    test("Should return an error indicating that the User is not Atuthorized (not logged in)", async () => {      
+    test("I1 : Should return an error indicating that the User is not Atuthorized (not logged in)", async () => {      
         const response = await request(app)
             .get("/api/groups/group1/transactions")                                    
                         
@@ -1114,7 +1114,7 @@ describe("getTransactionsByGroup", () => {
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that the User is not Atuthorized (not member of the group specified in params)", async () => {      
+    test("I2 : Should return an error indicating that the User is not Atuthorized (not member of the group specified in params)", async () => {      
         const response = await request(app)
         .get("/api/groups/group1/transactions")                                    
         .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
@@ -1123,7 +1123,7 @@ describe("getTransactionsByGroup", () => {
         expect(response.body.error).toBe("User is not part of the group");
     });
 
-    test("Should return an error indicating that the User is not Atuthorized (not an admin)", async () => {      
+    test("I3 : Should return an error indicating that the User is not Atuthorized (not an admin)", async () => {      
         const response = await request(app)
             .get("/api/transactions/groups/group1")                                    
                         
@@ -1131,7 +1131,7 @@ describe("getTransactionsByGroup", () => {
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that group does not exist (authorized as an admin)", async () => {      
+    test("I4 : Should return an error indicating that group does not exist (authorized as an admin)", async () => {      
         const response = await request(app)
         .get("/api/transactions/groups/group2")                                        
         .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                                            
@@ -1140,7 +1140,7 @@ describe("getTransactionsByGroup", () => {
         expect(response.body.error).toStrictEqual("Group does not exist")
     });    
 
-    test("Should return a list of transactions (auth type doesn't matter)", async () => {      
+    test("I5 : Should return a list of transactions (auth type doesn't matter)", async () => {      
         const response = await request(app)
         .get("/api/groups/group1/transactions")                                    
         .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)                                    
@@ -1214,7 +1214,7 @@ describe("getTransactionsByGroupByCategory", () => {
     })    
 
 
-    test("Should return an error indicating that the User is not Atuthorized (not logged in)", async () => {      
+    test("I1 : Should return an error indicating that the User is not Atuthorized (not logged in)", async () => {      
         const response = await request(app)
             .get("/api/groups/group1/transactions/category/cat1")                                    
                         
@@ -1222,7 +1222,7 @@ describe("getTransactionsByGroupByCategory", () => {
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that the User is not Atuthorized (not member of the group specified in params)", async () => {      
+    test("I2 : Should return an error indicating that the User is not Atuthorized (not member of the group specified in params)", async () => {      
         const response = await request(app)
         .get("/api/groups/group1/transactions/category/cat1")                                    
         .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
@@ -1231,7 +1231,7 @@ describe("getTransactionsByGroupByCategory", () => {
         expect(response.body.error).toBe("User is not part of the group");
     });
 
-    test("Should return an error indicating that the User is not Atuthorized (not an admin)", async () => {      
+    test("I3 : Should return an error indicating that the User is not Atuthorized (not an admin)", async () => {      
         const response = await request(app)
             .get("/api/transactions/groups/group1/category/cat1")                                    
                         
@@ -1239,7 +1239,7 @@ describe("getTransactionsByGroupByCategory", () => {
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that group does not exist (authorized as an admin)", async () => {      
+    test("I4 : Should return an error indicating that group does not exist (authorized as an admin)", async () => {      
         const response = await request(app)
         .get("/api/transactions/groups/group2/category/cat1")                                        
         .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                                            
@@ -1248,7 +1248,7 @@ describe("getTransactionsByGroupByCategory", () => {
         expect(response.body.error).toStrictEqual("group does not exist")
     });   
 
-    test("Should return an error indicating that category does not exist (authtype does not matter)", async () => {      
+    test("I5 : Should return an error indicating that category does not exist (authtype does not matter)", async () => {      
         const response = await request(app)
         .get("/api/transactions/groups/group1/category/cat5")                                        
         .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                                            
@@ -1257,7 +1257,7 @@ describe("getTransactionsByGroupByCategory", () => {
         expect(response.body.error).toStrictEqual("category does not exist")
     });  
     
-    test("Should return an empty list of transactions (authtype does not matter)", async () => {      
+    test("I6 : Should return an empty list of transactions (authtype does not matter)", async () => {      
         const response = await request(app)
         .get("/api/transactions/groups/group1/category/cat4")                                        
         .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                                            
@@ -1266,7 +1266,7 @@ describe("getTransactionsByGroupByCategory", () => {
         expect(response.body.data).toStrictEqual([])
     }); 
 
-    test("Should return a list of transactions (authtype does not matter)", async () => {      
+    test("I7 : Should return a list of transactions (authtype does not matter)", async () => {      
         const response = await request(app)
         .get("/api/transactions/groups/group1/category/cat2")                                        
         .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)                                            
@@ -1327,7 +1327,7 @@ describe("deleteTransaction", () => {
     })    
 
 
-    test("Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
+    test("I1 : Should return an error indicating that the User is not Atuthorized (not logged in, or the requested user doesn't match authorized user)", async () => {      
         const response = await request(app)
             .delete("/api/users/user1/transactions")                        
                         
@@ -1335,7 +1335,7 @@ describe("deleteTransaction", () => {
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that not all body fields are present", async () => {      
+    test("I2 : Should return an error indicating that not all body fields are present", async () => {      
         const response = await request(app)
             .delete("/api/users/user1/transactions")  
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
@@ -1345,7 +1345,7 @@ describe("deleteTransaction", () => {
         expect(response.body.error).toBe("body does not contain all the necessary attributes");
     });
 
-    test("Should return an error indicating that the user sending the request does not exist", async () => {      
+    test("I3 : Should return an error indicating that the user sending the request does not exist", async () => {      
         const response = await request(app)
             .delete("/api/users/user4/transactions")  
             .set("Cookie", `accessToken=${test_tokens[3]};refreshToken=${test_tokens[3]}`)
@@ -1357,7 +1357,7 @@ describe("deleteTransaction", () => {
         expect(response.body.error).toBe("user not found");
     });
 
-    test("Should return an error indicating that the transaction does not exist", async () => {      
+    test("I4 : Should return an error indicating that the transaction does not exist", async () => {      
         const response = await request(app)
             .delete("/api/users/user1/transactions")  
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
@@ -1369,7 +1369,7 @@ describe("deleteTransaction", () => {
         expect(response.body.error).toBe("transaction not found");
     });
 
-    test("Should return an error indicating that the transaction does not belong to the user sending the request", async () => {      
+    test("I5 : Should return an error indicating that the transaction does not belong to the user sending the request", async () => {      
         const response = await request(app)
             .delete("/api/users/user1/transactions")  
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
@@ -1381,7 +1381,7 @@ describe("deleteTransaction", () => {
         expect(response.body.error).toBe("transaction not found for the user");
     });
 
-    test("Should return a message indicating that the transaction was deleted", async () => {      
+    test("I6 : Should return a message indicating that the transaction was deleted", async () => {      
         const response = await request(app)
             .delete("/api/users/user1/transactions")  
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
@@ -1439,7 +1439,7 @@ describe("deleteTransactions", () => {
         await transactions.insertMany(test_transactions)
     })    
 
-    test("Should return an error indicating that the User is not Atuthorized (not logged in, or not and admin)", async () => {      
+    test("I1 : Should return an error indicating that the User is not Atuthorized (not logged in, or not and admin)", async () => {      
         const response = await request(app)
             .delete("/api/transactions")                        
                         
@@ -1447,7 +1447,7 @@ describe("deleteTransactions", () => {
         expect(response.body.error).toBe("Unauthorized");
     });
 
-    test("Should return an error indicating that the request body does not contain all the necessary values", async () => {      
+    test("I2 : Should return an error indicating that the request body does not contain all the necessary values", async () => {      
         const response = await request(app)
             .delete("/api/transactions")                        
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
@@ -1456,7 +1456,7 @@ describe("deleteTransactions", () => {
         expect(response.body.error).toBe("body does not contain all the necessary attributes");
     });
 
-    test("Should return an error indicating that at _ids in request body are not valid", async () => {      
+    test("I3 : Should return an error indicating that at _ids in request body are not valid", async () => {      
         const response = await request(app)
             .delete("/api/transactions")                        
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
@@ -1472,7 +1472,7 @@ describe("deleteTransactions", () => {
         expect(response.body.error).toBe("input _ids are not valid");
     });
 
-    test("Should return an error indicating that the request body does not contain all the necessary values", async () => {      
+    test("I4 : Should return an error indicating that the request body does not contain all the necessary values", async () => {      
         const response = await request(app)
             .delete("/api/transactions")     
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
@@ -1490,7 +1490,7 @@ describe("deleteTransactions", () => {
         expect(response.body.error).toBe("the following transactions don't exist : 647bb0a167c7cb3eeaea0009,647bb0ab94e0075e7aca571f");
     });
 
-    test("Should return a message indicating that the transaction were deleted", async () => {      
+    test("I5 : Should return a message indicating that the transaction were deleted", async () => {      
         const response = await request(app)
             .delete("/api/transactions")     
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)
