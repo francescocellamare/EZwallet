@@ -221,6 +221,52 @@
 |   handleAmountFilterParams T3||unit||
 |   handleAmountFilterParams T4||unit||
 |   handleAmountFilterParams T5||unit||
+| getTransactionsByUser U1   ||unit||
+| getTransactionsByUser U2   ||unit||
+| getTransactionsByUser U3   ||unit||
+| getTransactionsByUser U4   ||unit||
+| getTransactionsByUser U5   ||unit||
+| getTransactionsByUser U6   ||unit||
+| getTransactionsByUser U7   ||unit||
+| getTransactionsByUser U8   ||unit||
+| getTransactionsByUser U9   ||unit||
+| getTransactionsByUserByCategory U1   ||unit||
+| getTransactionsByUserByCategory U2   ||unit||
+| getTransactionsByUserByCategory U3   ||unit||
+| getTransactionsByUserByCategory U4   ||unit||
+| getTransactionsByUserByCategory U5   ||unit||
+| getTransactionsByUserByCategory U6   ||unit||
+| getTransactionsByUserByCategory U7   ||unit||
+| getTransactionsByGroup U1   ||unit||
+| getTransactionsByGroup U2   ||unit||
+| getTransactionsByGroup U3   ||unit||
+| getTransactionsByGroup U4   ||unit||
+| getTransactionsByGroup U5   ||unit||
+| getTransactionsByGroup U6   ||unit||
+| getTransactionsByGroupByCategory U1   ||unit||
+| getTransactionsByGroupByCategory U2   ||unit||
+| getTransactionsByGroupByCategory U3   ||unit||
+| getTransactionsByGroupByCategory U4   ||unit||
+| getTransactionsByGroupByCategory U5   ||unit||
+| getTransactionsByGroupByCategory U6   ||unit||
+| getTransactionsByGroupByCategory U7   ||unit||
+| getTransactionsByGroupByCategory U8   ||unit||
+| deleteTransaction U1   ||unit||
+| deleteTransaction U2   ||unit||
+| deleteTransaction U3   ||unit||
+| deleteTransaction U4   ||unit||
+| deleteTransaction U5   ||unit||
+| deleteTransaction U6   ||unit||
+| deleteTransaction U7   ||unit||
+| deleteTransaction U8   ||unit||
+| deleteTransactions U1   ||unit||
+| deleteTransactions U2   ||unit||
+| deleteTransactions U3   ||unit||
+| deleteTransactions U4   ||unit||
+| deleteTransactions U5   ||unit||
+| deleteTransactions U6   ||unit||
+| deleteTransactions U7   ||unit||
+
 
 
 
@@ -250,15 +296,20 @@
 |FR23 getGroup | getGroup U1-U4, getGroup I1-I4|
 |FR24 addToGroup| addToGroup U1-U10 , I1-I10|
 |FR26 removeFromGroup| removeFromGroup U1-U11 , I1-I16|
-|FR28 deleteGroup | deleteGroup deleteGroup U1-U6 , I1-I5|  
-|FR26 removeFromGroup (integration) | |  
+|FR28 deleteGroup | deleteGroup deleteGroup U1-U6 , I1-I5|   
 |FR3  Manage transactions |
 |   FR31 createTransaction| createTransaction U1-U13 , createTransaction I1-I12 |           
+| FR33 getTransactionsByUser  | getTransactionsByUser U1-U9, getTransactionsByUser I1-I14 |
+| FR34 getTransactionsByUserByCategory| getTransactionsByUserByCategory U1-U7, getTransactionsByUserByCategory I1-I10 |
+| FR35 getTransactionsByGroup | getTransactionsByGroup U1-U6, getTransactionsByGroup I1-I5 |
+| FR36 getTransactionsByGroupByCategory | getTransactionsByGroupByCategory U1-U8, getTransactionsByGroupByCategory I1-I7 |
+| FR37 deleteTransaction | deleteTransaction U1-U8, deleteTransaction I1-I6|
+| FR38 deleteTransactions | deleteTransactions U1-U7, deleteTransactions I1-I5 |
 |FR4   Manage categories | 
 |   FR41 createCategory| createCategory U1-U8 , createCategory I1-I7 |        
 |   FR42 updateCategory| updateCategory U1-U9 , updateCategory I1-I8 |     
 |   FR43 deleteCategory | deleteCategory U1-U8 , deleteCategory I1-I6 |  
-|   FR44 getCategories | getCategories U1-U3 , getCategories I1-I2 |  
+|   FR44 getCategories | getCategories U1-U3 , getCategories I1-I2 |   
 
 
 
