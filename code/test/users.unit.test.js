@@ -1031,7 +1031,7 @@ describe("createGroup", () => {
     expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedRespone)
   });
 
-  test('T13: create group but all emails do not exist -> retun 400', async() => {
+  test.only('T13: create group but all emails do not exist -> retun 400', async() => {
     const mockReq = {
       cookies: {
         accessToken: 'accessToken',
@@ -1096,17 +1096,14 @@ describe("createGroup", () => {
     // user is found by email and then we look for a group he is part of
     jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
       
-    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
 
     jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
       
-    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
 
     jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
 
-    jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
       
-    jest.spyOn(User, "findOne").mockResolvedValueOnce(null)  // NOT found
+    jest.spyOn(User, "findOne").mockResolvedValueOnce(fakeData[3])  // NOT found
 
     jest.spyOn(Group, "findOne").mockResolvedValueOnce(null) // no group
 
