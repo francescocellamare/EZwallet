@@ -57,7 +57,7 @@ describe("createCategory", () => {
         })
     })
 
-    test('T1: create a new category -> return a 200 status and the saved category with refreshed token message', async () => {
+    test('I1: create a new category -> return a 200 status and the saved category with refreshed token message', async () => {
         const response = await request(app)
             .post("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -68,7 +68,7 @@ describe("createCategory", () => {
         expect(response.body.data).toHaveProperty("color", "red")
     });
 
-    test('T2: not an admin request -> return a 401 status with the error message', async () => {
+    test('I2: not an admin request -> return a 401 status with the error message', async () => {
         const response = await request(app)
             .post("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -79,7 +79,7 @@ describe("createCategory", () => {
         expect(errorMessage).toBe(true)
     });
 
-    test('T3: missing type -> return a 400 status with the error message', async () => {
+    test('I3: missing type -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -89,7 +89,7 @@ describe("createCategory", () => {
         expect(response.body.error).toBe("type is not provided")
     });
 
-    test('T4: missing color -> return a 400 status with the error message', async () => {
+    test('I4: missing color -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -99,7 +99,7 @@ describe("createCategory", () => {
         expect(response.body.error).toBe("color is not provided")
     });
 
-    test('T5: empty type -> return a 400 status with the error message', async () => {
+    test('I5: empty type -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -109,7 +109,7 @@ describe("createCategory", () => {
         expect(response.body.error).toBe("type is empty")
     });
 
-    test('T6: empty color -> return a 400 status with the error message', async () => {
+    test('I6: empty color -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -119,7 +119,7 @@ describe("createCategory", () => {
         expect(response.body.error).toBe("color is empty")
     });
 
-    test('T7: already existing category type -> return a 400 status with the error message', async () => {
+    test('I7: already existing category type -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -167,7 +167,7 @@ describe("updateCategory", () => {
         }])
     })
 
-    test("T1: update a category -> return a 200 status and the saved category with refreshed token message", async () => {
+    test("I1: update a category -> return a 200 status and the saved category with refreshed token message", async () => {
         const response = await request(app)
             .patch("/api/categories/food") //Route to call
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`) //Setting cookies in the request
@@ -178,7 +178,7 @@ describe("updateCategory", () => {
         expect(response.body.data).toHaveProperty("count", 2)
     })
 
-    test("T2: not an admin request -> return a 401 status with the error message", async () => {
+    test("I2: not an admin request -> return a 401 status with the error message", async () => {
         const response = await request(app)
             .patch("/api/categories/food")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -189,7 +189,7 @@ describe("updateCategory", () => {
         expect(errorMessage).toBe(true)
     })
 
-    test('T3: missing new type -> return a 400 status with the error message', async () => {
+    test('I3: missing new type -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .patch("/api/categories/food")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -199,7 +199,7 @@ describe("updateCategory", () => {
         expect(response.body.error).toBe("New type is not provided")
     })
 
-    test('T4: missing new color -> return a 400 status with the error message', async () => {
+    test('I4: missing new color -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .patch("/api/categories/food")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -209,7 +209,7 @@ describe("updateCategory", () => {
         expect(response.body.error).toBe("New color is not provided")
     })
 
-    test('T5: empty new type -> return a 400 status with the error message', async () => {
+    test('I5: empty new type -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .patch("/api/categories/food")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -219,7 +219,7 @@ describe("updateCategory", () => {
         expect(response.body.error).toBe("New type is empty")
     })
 
-    test('T6: empty new color -> return a 400 status with the error message', async () => {
+    test('I6: empty new color -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .patch("/api/categories/food")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -229,7 +229,7 @@ describe("updateCategory", () => {
         expect(response.body.error).toBe("New color is empty")
     })
 
-    test('T7: already in use type -> return a 400 status with the error message ', async () => {
+    test('I7: already in use type -> return a 400 status with the error message ', async () => {
         const response = await request(app)
             .patch("/api/categories/food")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -239,7 +239,7 @@ describe("updateCategory", () => {
         expect(response.body.error).toBe("New type is already in use")
     })
 
-    test('T8: not existing selected category -> return a 400 status with the error message', async () => {
+    test('I8: not existing selected category -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .patch("/api/categories/investment")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -288,7 +288,7 @@ describe("deleteCategory", () => {
         }])
     })
 
-    test("T1: delete a category -> return 200 status, a message, the attribute `count`, and the refreshed token", async () => {
+    test("I1: delete a category -> return 200 status, a message, the attribute `count`, and the refreshed token", async () => {
         const response = await request(app)
             .delete("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -300,7 +300,7 @@ describe("deleteCategory", () => {
 
     });
 
-    test('T2: not an admin request -> return a 401 status with the error message', async () => {
+    test('I2: not an admin request -> return a 401 status with the error message', async () => {
         const response = await request(app)
             .delete("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -311,7 +311,7 @@ describe("deleteCategory", () => {
         expect(errorMessage).toBe(true)
     });
 
-    test('T3: missing type -> return a 400 status with the error message', async () => {
+    test('I3: missing type -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .delete("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -321,7 +321,7 @@ describe("deleteCategory", () => {
         expect(response.body.error).toBe("List of categories' types to deleted was not provided")
     });
 
-    test('T4: empty type -> return a 400 status with the error message', async () => {
+    test('I4: empty type -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .delete("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -331,7 +331,7 @@ describe("deleteCategory", () => {
         expect(response.body.error).toBe("The list of categories can't have empty entries")
     });
 
-    test("T5: no categories in database  -> return 400 status with the error message", async () => {
+    test("I5: no categories in database  -> return 400 status with the error message", async () => {
         await categories.deleteMany({})
 
         const response = await request(app)
@@ -343,7 +343,7 @@ describe("deleteCategory", () => {
         expect(response.body.error).toBe("Cannot delete categories, there should be at least one category")
     });
 
-    test("T6: not existing categories -> return 400 status with the error message", async () => {
+    test("I6: not existing categories -> return 400 status with the error message", async () => {
         const response = await request(app)
             .delete("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -381,7 +381,7 @@ describe("getCategories", () => {
         }])
     })
 
-    test('T1: get all categories -> return a 200 status and the array of categories with refreshed token message', async () => {
+    test('I1: get all categories -> return a 200 status and the array of categories with refreshed token message', async () => {
         const response = await request(app)
             .get("/api/categories")
             .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`) //Setting cookies in the request
@@ -391,7 +391,7 @@ describe("getCategories", () => {
         expect(response.body.data).toHaveLength(2)
     });
 
-    test('T2: user not authorized -> return a 401 status with the error message', async () => {
+    test('I2: user not authorized -> return a 401 status with the error message', async () => {
         const fakeToken = 'fakeToken'
         const response = await request(app)
             .get("/api/categories")
@@ -438,7 +438,7 @@ describe("createTransaction", () => {
         })
     })
 
-    test('T1: create a new transaction -> return a 200 status and the saved transaction with refreshed token message', async () => {
+    test('I1: create a new transaction -> return a 200 status and the saved transaction with refreshed token message', async () => {
         const a = await User.find({})
         const response = await request(app)
             .post("/api/users/user1/transactions")
@@ -452,7 +452,7 @@ describe("createTransaction", () => {
         expect(response.body.data).toHaveProperty("date")
     });
 
-    test('T2: user not authorized -> return a 401 status with the error message', async () => {
+    test('I2: user not authorized -> return a 401 status with the error message', async () => {
         const fakeToken = 'fakeToken';
         const response = await request(app)
             .post("/api/users/user1/transactions")
@@ -464,7 +464,7 @@ describe("createTransaction", () => {
         expect(errorMessage).toBe(true)
     });
 
-    test('T3: missing username -> return a 400 status with the error message', async () => {
+    test('I3: missing username -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -474,7 +474,7 @@ describe("createTransaction", () => {
         expect(response.body.error).toBe("Username is not provided")
     });
 
-    test('T4: missing amount -> return a 400 status with the error message', async () => {
+    test('I4: missing amount -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -484,7 +484,7 @@ describe("createTransaction", () => {
         expect(response.body.error).toBe("Amount is not provided")
     });
 
-    test('T5: missing category type -> return a 400 status with the error message', async () => {
+    test('I5: missing category type -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -494,7 +494,7 @@ describe("createTransaction", () => {
         expect(response.body.error).toBe("Category is not provided")
     });
 
-    test('T6: empty username -> return a 400 status with the error message', async () => {
+    test('I6: empty username -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -504,7 +504,7 @@ describe("createTransaction", () => {
         expect(response.body.error).toBe("Username is empty")
     });
 
-    test('T7: empty amount -> return a 400 status with the error message', async () => {
+    test('I7: empty amount -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -514,7 +514,7 @@ describe("createTransaction", () => {
         expect(response.body.error).toBe("Amount is empty")
     });
 
-    test('T8: empty category type -> return a 400 status with the error message', async () => {
+    test('I8: empty category type -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -524,7 +524,7 @@ describe("createTransaction", () => {
         expect(response.body.error).toBe("Category is empty")
     });
 
-    test('T9: mismatch of usernames -> return a 400 status with the error message', async () => {
+    test('I9: mismatch of usernames -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -534,7 +534,7 @@ describe("createTransaction", () => {
         expect(response.body.error).toBe("Username provided in the request body does not match the username provided in the request params")
     });
 
-    test('T10: Not a number amount -> return a 400 status with the error message', async () => {
+    test('I10: Not a number amount -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -544,7 +544,7 @@ describe("createTransaction", () => {
         expect(response.body.error).toBe('Amount should be a number');
     });
 
-    test('T11: Not existing category -> return a 400 status with the error message', async () => {
+    test('I11: Not existing category -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)
@@ -554,7 +554,7 @@ describe("createTransaction", () => {
         expect(response.body.error).toBe('Category does not exist');
     });
 
-    test('T12: Not existing user -> return a 400 status with the error message', async () => {
+    test('I12: Not existing user -> return a 400 status with the error message', async () => {
         const response = await request(app)
             .post("/api/users/user1/transactions")
             .set("Cookie", `accessToken=${refreshTokenUser}; refreshToken=${refreshTokenUser}`)

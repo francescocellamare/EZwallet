@@ -43,7 +43,7 @@ describe('createCategory', () => {
         jest.clearAllMocks();
     })
 
-    test('T1: create a new category -> return a 200 status and the saved category with refreshed token message', async () => {
+    test('U1: create a new category -> return a 200 status and the saved category with refreshed token message', async () => {
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         const countDocumentsMock = jest.spyOn(categories, 'countDocuments').mockResolvedValueOnce(0); //no category with the same type exists
@@ -61,7 +61,7 @@ describe('createCategory', () => {
         });
     });
 
-    test('T2: not an admin request -> return a 401 status with the error message', async () => {
+    test('U2: not an admin request -> return a 401 status with the error message', async () => {
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: false, cause: "Unauthorized" })
 
         await createCategory(mockReq, mockRes);
@@ -71,7 +71,7 @@ describe('createCategory', () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Unauthorized' });
     });
 
-    test('T3: missing type -> return a 400 status with the error message', async () => {
+    test('U3: missing type -> return a 400 status with the error message', async () => {
         mockReq = {
             body: {
                 color: 'red'
@@ -87,7 +87,7 @@ describe('createCategory', () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'type is not provided' });
     });
 
-    test('T4: missing color -> return a 400 status with the error message', async () => {
+    test('U4: missing color -> return a 400 status with the error message', async () => {
         mockReq = {
             body: {
                 type: 'food'
@@ -101,7 +101,7 @@ describe('createCategory', () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'color is not provided' });
     });
 
-    test('T5: empty type -> return a 400 status with the error message', async () => {
+    test('U5: empty type -> return a 400 status with the error message', async () => {
         mockReq.body.type = '';
 
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
@@ -113,7 +113,7 @@ describe('createCategory', () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'type is empty' });
     });
 
-    test('T6: empty color -> return a 400 status with the error message', async () => {
+    test('U6: empty color -> return a 400 status with the error message', async () => {
         mockReq.body.color = '';
 
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
@@ -124,7 +124,7 @@ describe('createCategory', () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'color is empty' });
     });
 
-    test('T7: already existing category type -> return a 400 status with the error message', async () => {
+    test('U7: already existing category type -> return a 400 status with the error message', async () => {
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         const countDocumentsMock = jest.spyOn(categories, 'countDocuments').mockResolvedValueOnce(1);
@@ -136,7 +136,7 @@ describe('createCategory', () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'category type is already in use' });
     });
 
-    test('T8 : Network error -> return 500', async()=>{
+    test('U8 : Network error -> return 500', async()=>{
         jest.spyOn(utils, 'verifyAuthAdmin').mockImplementationOnce(()=> {throw new Error('server crash')});
         
         await createCategory(mockReq, mockRes);
@@ -172,7 +172,7 @@ describe("updateCategory", () => {
         jest.clearAllMocks();
     })
 
-    test('T1: update a category -> return a 200 status and the saved category with refreshed token message', async () => {
+    test('U1: update a category -> return a 200 status and the saved category with refreshed token message', async () => {
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         const countDocumentsMock = jest.spyOn(categories, 'countDocuments').mockResolvedValueOnce(0); //no category with the same type exists
@@ -200,7 +200,7 @@ describe("updateCategory", () => {
         });
     });
 
-    test('T2: not an admin request -> return a 401 status with the error message', async () => {
+    test('U2: not an admin request -> return a 401 status with the error message', async () => {
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: false, cause: "Unauthorized" })
 
         await updateCategory(mockReq, mockRes);
@@ -209,7 +209,7 @@ describe("updateCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Unauthorized' });
     });
 
-    test('T3: missing new type -> return a 400 status with the error message', async () => {
+    test('U3: missing new type -> return a 400 status with the error message', async () => {
         mockReq = {
             params: { type: 'food' },
             body: {
@@ -225,7 +225,7 @@ describe("updateCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'New type is not provided' });
     });
 
-    test('T4: missing new color -> return a 400 status with the error message', async () => {
+    test('U4: missing new color -> return a 400 status with the error message', async () => {
         mockReq = {
             params: { type: 'food' },
             body: {
@@ -240,7 +240,7 @@ describe("updateCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'New color is not provided' });
     });
 
-    test('T5: empty new type -> return a 400 status with the error message', async () => {
+    test('U5: empty new type -> return a 400 status with the error message', async () => {
         mockReq.body.type = '';
 
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
@@ -252,7 +252,7 @@ describe("updateCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'New type is empty' });
     });
 
-    test('T6: empty new color -> return a 400 status with the error message', async () => {
+    test('U6: empty new color -> return a 400 status with the error message', async () => {
         mockReq.body.color = '';
 
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
@@ -263,7 +263,7 @@ describe("updateCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'New color is empty' });
     });
 
-    test('T7: already in use type -> return a 400 status with the error message ', async () => {
+    test('U7: already in use type -> return a 400 status with the error message ', async () => {
         categories.countDocuments.mockResolvedValue(1);
 
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: true, cause: "Authorized" })
@@ -275,7 +275,7 @@ describe("updateCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'New type is already in use' });
     });
 
-    test('T8: not existing selected category -> return a 400 status with the error message', async () => {
+    test('U8: not existing selected category -> return a 400 status with the error message', async () => {
         categories.countDocuments.mockResolvedValue(0);
         categories.updateOne.mockResolvedValue({ modifiedCount: 0 });
 
@@ -287,7 +287,7 @@ describe("updateCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Selected category does not exist' });
     });
 
-    test('T9: Network error -> return 500', async()=>{
+    test('U9: Network error -> return 500', async()=>{
         jest.spyOn(utils, 'verifyAuthAdmin').mockImplementationOnce(()=> {throw new Error('server crash')});
         
         await updateCategory(mockReq, mockRes);
@@ -316,7 +316,7 @@ describe("deleteCategory", () => {
         jest.clearAllMocks();
     })
 
-    test("T1: delete a category -> return 200 status, a message, the attribute `count`, and the refreshed token", async () => {
+    test("U1: delete a category -> return 200 status, a message, the attribute `count`, and the refreshed token", async () => {
 
         mockReq = {
             // what I want to delete
@@ -395,7 +395,7 @@ describe("deleteCategory", () => {
         expect(mockRes.json.mock.calls[0][0].refreshedTokenMessage).toBeDefined()
     });
 
-    test("T2: delete all categories except the oldest one (N===T) -> return 200 status, a message, the attribute `count`, and the refreshed token", async () => {
+    test("U2: delete all categories except the oldest one (N===T) -> return 200 status, a message, the attribute `count`, and the refreshed token", async () => {
 
         mockReq = {
             // what I want to delete
@@ -459,7 +459,7 @@ describe("deleteCategory", () => {
         expect(mockRes.json.mock.calls[0][0].refreshedTokenMessage).toBeDefined()
     });
 
-    test('T3: not an admin request -> return a 401 status with the error message', async () => {
+    test('U3: not an admin request -> return a 401 status with the error message', async () => {
         jest.spyOn(utils, 'verifyAuthAdmin').mockReturnValue({ authorized: false, cause: "Unauthorized" })
 
         await deleteCategory(mockReq, mockRes);
@@ -469,7 +469,7 @@ describe("deleteCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Unauthorized' });
     });
 
-    test('T4: missing type -> return a 400 status with the error message', async () => {
+    test('U4: missing type -> return a 400 status with the error message', async () => {
         mockReq = {
             body: {}
         };
@@ -483,7 +483,7 @@ describe("deleteCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: "List of categories' types to deleted was not provided" });
     });
 
-    test('T5: empty type -> return a 400 status with the error message', async () => {
+    test('U5: empty type -> return a 400 status with the error message', async () => {
         mockReq = {
             body: {
                 types: ["", "health"]
@@ -497,7 +497,7 @@ describe("deleteCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: "The list of categories can't have empty entries" });
     });
 
-    test("T6: no categories in database  -> return 400 status with the error message", async () => {
+    test("U6: no categories in database  -> return 400 status with the error message", async () => {
 
         mockReq = {
             body: {
@@ -519,7 +519,7 @@ describe("deleteCategory", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: "Cannot delete categories, there should be at least one category" });
     });
 
-    test("T7: not existing categories -> return 400 status with the error message", async () => {
+    test("U7: not existing categories -> return 400 status with the error message", async () => {
 
         mockReq = {
             body: {
@@ -556,7 +556,7 @@ describe("deleteCategory", () => {
 
     });
 
-    test('T8: Network error -> return 500', async()=>{
+    test('U8: Network error -> return 500', async()=>{
         jest.spyOn(utils, 'verifyAuthAdmin').mockImplementationOnce(()=> {throw new Error('server crash')});
         
         await deleteCategory(mockReq, mockRes);
@@ -586,7 +586,7 @@ describe("getCategories", () => {
         jest.clearAllMocks();
     })
 
-    test('T1: get all categories -> return a 200 status and the array of categories with refreshed token message', async () => {
+    test('U1: get all categories -> return a 200 status and the array of categories with refreshed token message', async () => {
         const mockReq = {}
         const mockRes = {
             status: jest.fn().mockReturnThis(),
@@ -642,7 +642,7 @@ describe("getCategories", () => {
         })
     })
 
-    test('T2: user not authorized -> return a 401 status with the error message', async () => {
+    test('U2: user not authorized -> return a 401 status with the error message', async () => {
         jest.spyOn(utils, 'verifyAuthSimple').mockReturnValue({ authorized: false, cause: "Unauthorized" })
 
         await getCategories(mockReq, mockRes);
@@ -652,7 +652,7 @@ describe("getCategories", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Unauthorized' });
     });
 
-    test('T3: Network error -> return 500', async()=>{
+    test('U3: Network error -> return 500', async()=>{
         jest.spyOn(utils, 'verifyAuthSimple').mockImplementationOnce(()=> {throw new Error('server crash')});
         
         await getCategories(mockReq, mockRes);
@@ -691,7 +691,7 @@ describe("createTransaction", () => {
         jest.clearAllMocks();
     })
 
-    test('T1: create a new transaction -> return a 200 status and the saved transaction with refreshed token message', async () => {
+    test('U1: create a new transaction -> return a 200 status and the saved transaction with refreshed token message', async () => {
         jest.spyOn(utils, 'verifyAuthUser').mockReturnValue({ authorized: true, cause: "Authorized" })
 
         const countDocumentsMock = jest.spyOn(categories, 'countDocuments').mockResolvedValueOnce(1);
@@ -719,7 +719,7 @@ describe("createTransaction", () => {
         });
     });
 
-    test('T2: user not authorized -> return a 401 status with the error message', async () => {
+    test('U2: user not authorized -> return a 401 status with the error message', async () => {
         jest.spyOn(utils, 'verifyAuthUser').mockReturnValue({ authorized: false, cause: "Unauthorized" })
 
         await createTransaction(mockReq, mockRes);
@@ -729,7 +729,7 @@ describe("createTransaction", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Unauthorized' });
     });
 
-    test('T3: missing username -> return a 400 status with the error message', async () => {
+    test('U3: missing username -> return a 400 status with the error message', async () => {
         mockReq = {
             params: { username: 'Mario' },
             body: {
@@ -750,7 +750,7 @@ describe("createTransaction", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Username is not provided' });
     });
 
-    test('T4: missing amount -> return a 400 status with the error message', async () => {
+    test('U4: missing amount -> return a 400 status with the error message', async () => {
         mockReq = {
             params: { username: 'Mario' },
             body: {
@@ -767,7 +767,7 @@ describe("createTransaction", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Amount is not provided' });
     });
 
-    test('T5: missing category type -> return a 400 status with the error message', async () => {
+    test('U5: missing category type -> return a 400 status with the error message', async () => {
         mockReq = {
             params: { username: 'Mario' },
             body: {
@@ -783,7 +783,7 @@ describe("createTransaction", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Category is not provided' });
     });
 
-    test('T6: empty username -> return a 400 status with the error message', async () => {
+    test('U6: empty username -> return a 400 status with the error message', async () => {
         mockReq.body.username = '';
 
         jest.spyOn(utils, 'verifyAuthUser').mockReturnValue({ authorized: true, cause: "Authorized" })
@@ -795,7 +795,7 @@ describe("createTransaction", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Username is empty' });
     });
 
-    test('T7: empty amount -> return a 400 status with the error message', async () => {
+    test('U7: empty amount -> return a 400 status with the error message', async () => {
         mockReq.body.amount = '';
 
         jest.spyOn(utils, 'verifyAuthUser').mockReturnValue({ authorized: true, cause: "Authorized" })
@@ -806,7 +806,7 @@ describe("createTransaction", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Amount is empty' });
     });
 
-    test('T8: empty category type -> return a 400 status with the error message', async () => {
+    test('U8: empty category type -> return a 400 status with the error message', async () => {
         mockReq.body.type = '';
 
         jest.spyOn(utils, 'verifyAuthUser').mockReturnValue({ authorized: true, cause: "Authorized" })
@@ -817,7 +817,7 @@ describe("createTransaction", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Category is empty' });
     });
 
-    test('T9: mismatch of usernames -> return a 400 status with the error message', async () => {
+    test('U9: mismatch of usernames -> return a 400 status with the error message', async () => {
         mockReq = {
             params: { username: 'Mario' },
             body: {
@@ -836,7 +836,7 @@ describe("createTransaction", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Username provided in the request body does not match the username provided in the request params' });
     });
 
-    test('T10: Not a number amount -> return a 400 status with the error message', async () => {
+    test('U10: Not a number amount -> return a 400 status with the error message', async () => {
         mockReq = {
             params: { username: 'Mario' },
             body: {
@@ -855,7 +855,7 @@ describe("createTransaction", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Amount should be a number' });
     });
 
-    test('T11: Not existing category -> return a 400 status with the error message', async () => {
+    test('U11: Not existing category -> return a 400 status with the error message', async () => {
         mockReq = {
             params: { username: 'Mario' },
             body: {
@@ -875,7 +875,7 @@ describe("createTransaction", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'Category does not exist' });
     });
 
-    test('T12: Not existing user -> return a 400 status with the error message', async () => {
+    test('U12: Not existing user -> return a 400 status with the error message', async () => {
         mockReq = {
             params: { username: 'Francesco' },
             body: {
@@ -897,7 +897,7 @@ describe("createTransaction", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'User does not exist' });
     });
 
-    test('T13: Network error -> return 500', async()=>{
+    test('U13: Network error -> return 500', async()=>{
         jest.spyOn(utils, 'verifyAuthUser').mockImplementationOnce(()=> {throw new Error('server crash')});
         
         await createTransaction(mockReq, mockRes);

@@ -841,7 +841,7 @@ describe("removeFromGroup", () => {
     })
   })
 
-  test("T1: remove from group -> return 200 status, the remaining, not found and not in group members, with the refreshed token", async () => {
+  test("I1: remove from group -> return 200 status, the remaining, not found and not in group members, with the refreshed token", async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -852,7 +852,7 @@ describe("removeFromGroup", () => {
 
   });
 
-  test('T2: not an admin request -> return a 401 status with the error message', async () => {
+  test('I2: not an admin request -> return a 401 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -863,7 +863,7 @@ describe("removeFromGroup", () => {
     expect(errorMessage).toBe(true)
   });
 
-  test('T3: empty emails -> return a 400 status with the error message', async () => {
+  test('I3: empty emails -> return a 400 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -873,7 +873,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("One or more emails are empty strings")
   });
 
-  test('T4: missing emails -> return a 400 status with the error message', async () => {
+  test('I4: missing emails -> return a 400 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -883,7 +883,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("The request body does not contain all the necessary attributes")
   });
 
-  test("T5: no valid emails  -> return 400 status with the error message", async () => {
+  test("I5: no valid emails  -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -893,7 +893,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("One or more emails are not in a valid format")
   });
 
-  test("T6: group not found -> return 400 status with the error message", async () => {
+  test("I6: group not found -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/a/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -903,7 +903,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("Group name passed as a route parameter does not represent a group in the database")
   });
 
-  test("T7: only one member in the group -> return 400 status with the error message", async () => {
+  test("I7: only one member in the group -> return 400 status with the error message", async () => {
     await Group.deleteMany({})
 
     await Group.insertMany({
@@ -922,7 +922,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("The group contains only one member")
   });
 
-  test("T8: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
+  test("I8: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -932,7 +932,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("All the members' email either do not exist or are not in the group")
   });
 
-  test("T9: remove from group -> return 200 status, the remaining, not found and not in group members, with the refreshed token", async () => {
+  test("I9: remove from group -> return 200 status, the remaining, not found and not in group members, with the refreshed token", async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -943,7 +943,7 @@ describe("removeFromGroup", () => {
 
   });
 
-  test('T10: not member of the group request -> return a 401 status with the error message', async () => {
+  test('I10: not member of the group request -> return a 401 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser3}; refreshToken=${refreshTokenUser3}`)
@@ -954,7 +954,7 @@ describe("removeFromGroup", () => {
     expect(errorMessage).toBe(true)
   });
 
-  test('T11: empty emails -> return a 400 status with the error message', async () => {
+  test('I11: empty emails -> return a 400 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -964,7 +964,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("One or more emails are empty strings")
   });
 
-  test('T12: missing emails -> return a 400 status with the error message', async () => {
+  test('I12: missing emails -> return a 400 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -974,7 +974,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("The request body does not contain all the necessary attributes")
   });
 
-  test("T13: no valid emails  -> return 400 status with the error message", async () => {
+  test("I13: no valid emails  -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -984,7 +984,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("One or more emails are not in a valid format")
   });
 
-  test("T14: group not found -> return 400 status with the error message", async () => {
+  test("I14: group not found -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/a/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -993,7 +993,7 @@ describe("removeFromGroup", () => {
     expect(response.status).toBe(401)
   });
 
-  test("T15: only one member in the group -> return 400 status with the error message", async () => {
+  test("I15: only one member in the group -> return 400 status with the error message", async () => {
     await Group.deleteMany({})
 
     await Group.insertMany({
@@ -1012,7 +1012,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("The group contains only one member")
   });
 
-  test("T16: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
+  test("I16: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
