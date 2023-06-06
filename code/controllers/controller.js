@@ -394,7 +394,7 @@ export const createTransaction = async (req, res) => {
 
         const new_transactions = new transactions({ username: username_body, amount, type });
         new_transactions.save()
-            .then(data => {return res.json({
+            .then(data => {return res.status(200).json({
                 data,
                 refreshedTokenMessage: res.locals.refreshedTokenMessage
             })})
