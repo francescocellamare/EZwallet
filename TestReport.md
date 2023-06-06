@@ -37,39 +37,39 @@
 
 | Test case name | Object(s) tested | Test level | Technique used |
 |--|--|--|--|
-|   createGroup T1    | |unit       ||
-|   createGroup T2    | |unit       ||
-|   createGroup T3    | |unit       ||
-|   createGroup T4    | |unit       ||
-|   createGroup T5    | |unit       ||
-|   createGroup T6    | |unit       ||
-|   createGroup T7    | |unit       ||
-|   createGroup T8    | |unit       ||
-|   createGroup T9    | |unit       ||
-|   createGroup T10   | |unit       ||
-|   createGroup T11   | |unit       ||
-|   createGroup T12   | |unit       ||
-|   createGroup T13   | |unit       ||
-|   addToGroup T1     | |unit       ||
-|   addToGroup T2     | |unit       ||
-|   addToGroup T3     | |unit       ||
-|   addToGroup T4     | |unit       ||
-|   addToGroup T5     | |unit       ||
-|   addToGroup T6     | |unit       ||
-|   addToGroup T7     | |unit       ||
-|   addToGroup T8     | |unit       ||
-|   addToGroup T9     | |unit       ||
-|   addToGroup T10    | |unit       ||
-|   addToGroup T1     | |integration||
-|   addToGroup T2     | |integration||
-|   addToGroup T3     | |integration||
-|   addToGroup T4     | |integration||
-|   addToGroup T5     | |integration||
-|   addToGroup T6     | |integration||
-|   addToGroup T7     | |integration||
-|   addToGroup T8     | |integration||
-|   addToGroup T9     | |integration||
-|   addToGroup T10    | |integration||
+|   createGroup U1    | |unit       ||
+|   createGroup U2    | |unit       ||
+|   createGroup U3    | |unit       ||
+|   createGroup U4    | |unit       ||
+|   createGroup U5    | |unit       ||
+|   createGroup U6    | |unit       ||
+|   createGroup U7    | |unit       ||
+|   createGroup U8    | |unit       ||
+|   createGroup U9    | |unit       ||
+|   createGroup U10   | |unit       ||
+|   createGroup U11   | |unit       ||
+|   createGroup U12   | |unit       ||
+|   createGroup U13   | |unit       ||
+|   addToGroup U1     | |unit       ||
+|   addToGroup U2     | |unit       ||
+|   addToGroup U3     | |unit       ||
+|   addToGroup U4     | |unit       ||
+|   addToGroup U5     | |unit       ||
+|   addToGroup U6     | |unit       ||
+|   addToGroup U7     | |unit       ||
+|   addToGroup U8     | |unit       ||
+|   addToGroup U9     | |unit       ||
+|   addToGroup U10    | |unit       ||
+|   addToGroup I1     | |integration||
+|   addToGroup I2     | |integration||
+|   addToGroup I3     | |integration||
+|   addToGroup I4     | |integration||
+|   addToGroup I5     | |integration||
+|   addToGroup I6     | |integration||
+|   addToGroup I7     | |integration||
+|   addToGroup I8     | |integration||
+|   addToGroup I9     | |integration||
+|   addToGroup I10    | |integration||
 |   removeFromGroup I1| |integration|BB/ eq partitioning|
 |   removeFromGroup I2| |integration|BB/ eq partitioning|
 |   removeFromGroup I3| |integration|BB/ eq partitioning|
@@ -102,13 +102,13 @@
 |   createTransaction I6||integration|BB/ eq partitioning|
 |   createTransaction I7||integration|BB/ eq partitioning|
 |   createTransaction I8||integration|BB/ eq partitioning|
-|   getAllTransactions T1||unit||
-|   getAllTransactions T2||unit||
-|   getAllTransactions T3||unit||
-|   getAllTransactions T4||unit||
-|   getAllTransactions T1||integration||
-|   getAllTransactions T2||integration||
-|   getAllTransactions T3||integration||
+|   getAllTransactions U1||unit||
+|   getAllTransactions U2||unit||
+|   getAllTransactions U3||unit||
+|   getAllTransactions U4||unit||
+|   getAllTransactions I1||integration||
+|   getAllTransactions I2||integration||
+|   getAllTransactions I3||integration||
 |   createCategory U1||unit|WB/ statement coverage|
 |   createCategory U2||unit|WB/ statement coverage|
 |   createCategory U3||unit|WB/ statement coverage|
@@ -165,62 +165,62 @@
 |   getCategories I1||integration|BB/ eq partitioning|
 |   getCategories I2||integration|BB/ eq partitioning|
 |   getCategories I3||integration|BB/ eq partitioning|
-|   verifyAuth T1        ||unit       ||
-|   verifyAuth T2        ||unit       ||
-|   verifyAuth T3        ||unit       ||
-|   verifyAuth T4        ||unit       ||
-|   verifyAuth T5        ||unit       ||
-|   verifyAuth T6        ||unit       ||
-|   verifyAuth T7        ||unit       ||
-|   verifyAuth T8        ||unit       ||
-|   verifyAuth T9        ||unit       ||
-|   verifyAuth T10       ||unit       ||
-|   verifyAuth T11       ||unit       ||
-|   verifyAuth T12       ||unit       ||
-|   verifyAuth T13       ||unit       ||
-|   verifyAuth T14       ||unit       ||
-|   verifyAuth T15       ||unit       ||
-|   verifyAuth T16       ||unit       ||
-|   verifyAuth T17       ||unit       ||
-|   verifyAuth T18       ||unit       ||
-|   verifyAuth T19       ||unit       ||
-|   verifyAuth T20       ||unit       ||
-|   verifyAuth T21       ||unit       ||
-|   verifyAuth T22       ||unit       ||
-|   verifyAuth T23       ||unit       ||
-|   verifyAuth T24       ||unit       ||
-|   verifyAuth T1        ||integration||
-|   verifyAuth T2        ||integration||
-|   verifyAuth T3        ||integration||
-|   verifyAuth T4        ||integration||
-|   verifyAuth T5        ||integration||
-|   verifyAuth T6        ||integration||
-|   verifyAuth T7        ||integration||
-|   verifyAuth T8        ||integration||
-|   verifyAuth T9        ||integration||
-|   verifyAuth T10       ||integration||
-|   verifyAuth T11       ||integration||
-|   verifyAuth T12       ||integration||
-|   verifyAuth T13       ||integration||
-|   verifyAuth T14       ||integration||
-|   verifyAuth T15       ||integration||
-|   verifyAuth T16       ||integration||
-|   verifyAuth T17       ||integration||
-|   handleDateFilterParams T1 ||unit ||
-|   handleDateFilterParams T2 ||unit ||
-|   handleDateFilterParams T3 ||unit ||
-|   handleDateFilterParams T4 ||unit ||
-|   handleDateFilterParams T5 ||unit ||
-|   handleDateFilterParams T6 ||unit ||
-|   handleDateFilterParams T7 ||unit ||
-|   handleDateFilterParams T8 ||unit ||
-|   handleDateFilterParams T9 ||unit ||
-|   handleDateFilterParams T10 ||unit||
-|   handleAmountFilterParams T1||unit||
-|   handleAmountFilterParams T2||unit||
-|   handleAmountFilterParams T3||unit||
-|   handleAmountFilterParams T4||unit||
-|   handleAmountFilterParams T5||unit||
+|   verifyAuth U1        ||unit       ||
+|   verifyAuth U2        ||unit       ||
+|   verifyAuth U3        ||unit       ||
+|   verifyAuth U4        ||unit       ||
+|   verifyAuth U5        ||unit       ||
+|   verifyAuth U6        ||unit       ||
+|   verifyAuth U7        ||unit       ||
+|   verifyAuth U8        ||unit       ||
+|   verifyAuth U9        ||unit       ||
+|   verifyAuth U10       ||unit       ||
+|   verifyAuth U11       ||unit       ||
+|   verifyAuth U12       ||unit       ||
+|   verifyAuth U13       ||unit       ||
+|   verifyAuth U14       ||unit       ||
+|   verifyAuth U15       ||unit       ||
+|   verifyAuth U16       ||unit       ||
+|   verifyAuth U17       ||unit       ||
+|   verifyAuth U18       ||unit       ||
+|   verifyAuth U19       ||unit       ||
+|   verifyAuth U20       ||unit       ||
+|   verifyAuth U21       ||unit       ||
+|   verifyAuth U22       ||unit       ||
+|   verifyAuth U23       ||unit       ||
+|   verifyAuth U24       ||unit       ||
+|   verifyAuth I1        ||integration||
+|   verifyAuth I2        ||integration||
+|   verifyAuth I3        ||integration||
+|   verifyAuth I4        ||integration||
+|   verifyAuth I5        ||integration||
+|   verifyAuth I6        ||integration||
+|   verifyAuth I7        ||integration||
+|   verifyAuth I8        ||integration||
+|   verifyAuth I9        ||integration||
+|   verifyAuth I10       ||integration||
+|   verifyAuth I11       ||integration||
+|   verifyAuth I12       ||integration||
+|   verifyAuth I13       ||integration||
+|   verifyAuth I14       ||integration||
+|   verifyAuth I15       ||integration||
+|   verifyAuth I16       ||integration||
+|   verifyAuth I17       ||integration||
+|   handleDateFilterParams U1 ||unit ||
+|   handleDateFilterParams U2 ||unit ||
+|   handleDateFilterParams U3 ||unit ||
+|   handleDateFilterParams U4 ||unit ||
+|   handleDateFilterParams U5 ||unit ||
+|   handleDateFilterParams U6 ||unit ||
+|   handleDateFilterParams U7 ||unit ||
+|   handleDateFilterParams U8 ||unit ||
+|   handleDateFilterParams U9 ||unit ||
+|   handleDateFilterParams U10 ||unit||
+|   handleAmountFilterParams U1||unit||
+|   handleAmountFilterParams U2||unit||
+|   handleAmountFilterParams U3||unit||
+|   handleAmountFilterParams U4||unit||
+|   handleAmountFilterParams U5||unit||
 | getTransactionsByUser U1   ||unit||
 | getTransactionsByUser U2   ||unit||
 | getTransactionsByUser U3   ||unit||
@@ -294,12 +294,13 @@
 |FR21 createGroup |createGroup U1-U13 , createGroup I1-I9|
 |FR22 getGroups| getGroups U1-U4 , getGroups I1-I2|
 |FR23 getGroup | getGroup U1-U4, getGroup I1-I4|
-|FR24 addToGroup| addToGroup U1-U10 , I1-I10|
+|FR24 addToGroup| addToGroup U1-U10 , addToGroup I1-I10|
 |FR26 removeFromGroup| removeFromGroup U1-U11 , I1-I16|
 |FR28 deleteGroup | deleteGroup deleteGroup U1-U6 , I1-I5|   
 |FR3  Manage transactions |
-|   FR31 createTransaction| createTransaction U1-U13 , createTransaction I1-I12 |           
-| FR33 getTransactionsByUser  | getTransactionsByUser U1-U9, getTransactionsByUser I1-I14 |
+|   FR31 createTransaction| createTransaction U1-U13 , createTransaction I1-I12 |    
+| FR32 getAllTransactions | getAllTransactions U1-U4, getAllTransactions I1-I3|       
+| FR33 getTransactionsByUser  | getTransactionsByUser U1-U9, getTransactionsByUser I1-I14, handleAmountFilterParams U1-U5, handleDateFilterParams U1-U10 |
 | FR34 getTransactionsByUserByCategory| getTransactionsByUserByCategory U1-U7, getTransactionsByUserByCategory I1-I10 |
 | FR35 getTransactionsByGroup | getTransactionsByGroup U1-U6, getTransactionsByGroup I1-I5 |
 | FR36 getTransactionsByGroupByCategory | getTransactionsByGroupByCategory U1-U8, getTransactionsByGroupByCategory I1-I7 |
