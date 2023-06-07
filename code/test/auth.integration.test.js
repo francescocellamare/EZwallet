@@ -29,7 +29,7 @@ describe('register', () => {
     await User.deleteMany({})
   })
 
-  test('T1: register new user -> return 200 and message: user added succesfully', async()=>{
+  test('I1: register new user -> return 200 and message: user added succesfully', async()=>{
     const newUser = {
       username : 'user',
       email: 'test@example.com',
@@ -47,7 +47,7 @@ describe('register', () => {
 
   })
 
-    test('T2: one field is empty -> return 200 and error message', async()=>{
+    test('I2: one field is empty -> return 400 and error message', async()=>{
     const newUser = {
       username : '',
       email: 'test@example.com',
