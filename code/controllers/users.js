@@ -429,8 +429,6 @@ export const getGroup = async (req, res) => {
         memberToRemove.splice(0, 1);
       }
   
-      
-  
       remainingMembers = group.members.filter(
         (member) => !memberToRemove.find((m) => m.email === member.email)
       ).map(({ email }) => ({ email }));

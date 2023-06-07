@@ -54,7 +54,6 @@ export const createCategory = async (req, res) => {
                     refreshedTokenMessage: res.locals.refreshedTokenMessage
                 })
             })
-            .catch(err => { throw err })
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
@@ -398,7 +397,6 @@ export const createTransaction = async (req, res) => {
                 data,
                 refreshedTokenMessage: res.locals.refreshedTokenMessage
             })})
-            .catch(err => { throw err })
     } catch (error) {
         
         return res.status(500).json({ error: error.message })
@@ -435,7 +433,7 @@ export const getAllTransactions = async (req, res) => {
                 data: data,
                 refreshedTokenMessage: res.locals.refreshedTokenMessage
             });
-        }).catch(error => { throw (error) })
+        })
     } catch (error) {
         return res.status(500).json({ error: error.message })
     }
