@@ -71,6 +71,14 @@
 |   registerAdmin    I4    | registerAdmin, User.findOne   | integration|BB/ eq partitioning|
 |   registerAdmin    I5    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
 |   login    I1    | login, User.findOne, bcrypt.compare, jwt.sign, jwt.sign   | integration| BB/ eq partitioning|
+|   login    I2    | login, User.findOne  | integration| BB/ eq partitioning|
+|   login    I3    | login, User.findOne  | integration| BB/ eq partitioning|
+|   login    I4    | login | integration| BB/ eq partitioning|
+|   login    I5    | login | integration| BB/ eq partitioning|
+|   login    I6    | login, User.findOne, bcrypt.compare | integration| BB/ eq partitioning|
+|   logout    I1    | logout, User.findOne, user.save | integration| BB/ eq partitioning|
+|   logout    I2    | logout | integration| BB/ eq partitioning|
+|   logout    I3    | logout, User.findOne | integration| BB/ eq partitioning|
 |   createGroup U1    | |unit       ||
 |   createGroup U2    | |unit       ||
 |   createGroup U3    | |unit       ||

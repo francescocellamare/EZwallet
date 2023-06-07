@@ -65,7 +65,7 @@ describe('register', () => {
 
   })
 
-  test('T3: one field is missing -> return 400 and error message', async()=>{
+  test('I3: one field is missing -> return 400 and error message', async()=>{
     const newUser = {
       email: 'test@example.com',
       password: '123'
@@ -83,7 +83,7 @@ describe('register', () => {
   })
 
   
-  test('T4: invalid email-> return 400 and error message', async()=>{
+  test('I4: invalid email-> return 400 and error message', async()=>{
     const newUser = {
       username: 'user',
       email: 'testexample.com',
@@ -101,7 +101,7 @@ describe('register', () => {
 
   })
 
-  test('T5: user already in db-> return 400 and error message', async()=>{
+  test('I5: user already in db-> return 400 and error message', async()=>{
     const user = {
       username: 'user',
       email: 'testexample.com',
@@ -130,7 +130,7 @@ describe("registerAdmin", () => {
     await User.deleteMany({})
   })
 
-  test('T1: register new admin -> return 200 and message: admin added succesfully', async()=>{
+  test('I1: register new admin -> return 200 and message: admin added succesfully', async()=>{
     const newAdmin = {
       username : 'user',
       email: 'test@example.com',
@@ -166,7 +166,7 @@ describe("registerAdmin", () => {
 
   })
 
-  test('T3: one field is missing -> return 400 and error message', async()=>{
+  test('I3: one field is missing -> return 400 and error message', async()=>{
     const newAdmin = {
       email: 'test@example.com',
       password: '123'
@@ -184,7 +184,7 @@ describe("registerAdmin", () => {
   })
 
   
-  test('T4: invalid email-> return 400 and error message', async()=>{
+  test('I4: invalid email-> return 400 and error message', async()=>{
     const newAdmin = {
       username: 'user',
       email: 'testexample.com',
@@ -202,7 +202,7 @@ describe("registerAdmin", () => {
 
   })
 
-  test('T5: admin already in db-> return 400 and error message', async()=>{
+  test('I5: admin already in db-> return 400 and error message', async()=>{
     const admin = {
       username: 'user',
       email: 'testexample.com',
@@ -229,7 +229,7 @@ describe('login', () => {
     await User.deleteMany({})
   })
 
-  test('T1: login a user -> return 200', async()=>{
+  test('I1: login a user -> return 200', async()=>{
     const user = {
      
       username : 'user',
@@ -332,7 +332,7 @@ describe('login', () => {
 
   })
 
-    test('T2: user does not exist in db -> return 400 and error message', async()=>{
+    test('I2: user does not exist in db -> return 400 and error message', async()=>{
     const newUser = {
       username : '',
       email: 'test@example.com',
@@ -350,7 +350,7 @@ describe('login', () => {
 
   })
 
-  test('T3: one field is empty -> return 400 and error message', async()=>{
+  test('I3: one field is empty -> return 400 and error message', async()=>{
     const user = {
       username : 'user',
       email: 'test@example.com',
@@ -383,7 +383,7 @@ describe('login', () => {
   })
 
   
-  test('T4: some fields are missing-> return 400 and error message', async()=>{
+  test('I4: some fields are missing-> return 400 and error message', async()=>{
     const user = {
       username : 'user',
       email: 'test@example.com',
@@ -416,7 +416,7 @@ describe('login', () => {
 
   })
 
-  test('T5: invalid email-> return 400 and error message', async()=>{
+  test('I5: invalid email-> return 400 and error message', async()=>{
     const user = {
       username : 'user',
       email: 'test@example.com',
@@ -449,7 +449,7 @@ describe('login', () => {
 
 
   })
-  test('T6: wrong password-> return 400 and error message', async()=>{
+  test('I6: wrong password-> return 400 and error message', async()=>{
     const user = {
       username : "user",
       email: "test@example.com",
@@ -490,7 +490,7 @@ describe('logout', () => {
     await User.deleteMany({})
   })
 
-  test('T1: logout the user -> return 200 and message: logged out', async()=>{
+  test('I1: logout the user -> return 200 and message: logged out', async()=>{
         const user = {
           username : 'user',
           email: 'test@example.com',
@@ -516,7 +516,7 @@ describe('logout', () => {
 
   })
 
-  test('T2: no refresh token in the cookies -> return 400 and error message', async()=>{
+  test('I2: no refresh token in the cookies -> return 400 and error message', async()=>{
     const user = {
       username : 'user',
       email: 'test@example.com',
@@ -543,7 +543,7 @@ expect(resp.body.error).toEqual('no refresh token');
 
 
 
-test('T3: wrong refresh token -> return 400 and error message', async()=>{
+test('I3: wrong refresh token -> return 400 and error message', async()=>{
   const user = {
     username : 'user',
     email: 'test@example.com',
