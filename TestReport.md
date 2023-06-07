@@ -43,12 +43,22 @@
 |   register    U4    | register    | unit| WB statement coverage|
 |   register    U5    | register    | unit|WB statement coverage|
 |   register    U6    | register    | unit| WB statement coverage|
+|   register    I1    | register, User.findOne User.create  | integration|BB/ eq partitioning|
+|   register    I2    | register, User.findOne    | integration|BB/ eq partitioning|
+|   register    I3    | register, User.findOne    | integration|BB/ eq partitioning|
+|   register    I4    | register, User.findOne   | integration|BB/ eq partitioning|
+|   register    I5    | register, User.findOne    | integration|BB/ eq partitioning|
 |   registerAdmin    U1    | registerAdmin    | unit|WB statement coverage|
 |   registerAdmin    U2    | registerAdmin    | unit| WB statement coverage|
 |   registerAdmin    U3    | registerAdmin    | unit|WB statement coverage|
 |   registerAdmin    U4    | registerAdmin    | unit| WB statement coverage|
 |   registerAdmin    U5    | registerAdmin    | unit|WB statement coverage|
 |   registerAdmin    U6    | registerAdmin    | unit| WB statement coverage|
+|   registerAdmin    I1    | registerAdmin, User.findOne User.create  | integration|BB/ eq partitioning|
+|   registerAdmin    I2    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
+|   registerAdmin    I3    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
+|   registerAdmin    I4    | registerAdmin, User.findOne   | integration|BB/ eq partitioning|
+|   registerAdmin    I5    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
 |   login    U1    | login    | unit| WB statement coverage|
 |   login    U2    | login    | unit| WB statement coverage|
 |   login    U3    | login    | unit| WB statement coverage|
@@ -56,30 +66,29 @@
 |   login    U5    | login    | unit| WB statement coverage|
 |   login    U6    | login    | unit| WB statement coverage|
 |   login    U7    | login    | unit| WB statement coverage|
-|   logout   U1   |  logout   | unit| WB statement coverage|
-|   logout   U2   |  logout   | unit| WB statement coverage|
-|   logout   U3   |  logout   | unit| WB statement coverage|
-|   logout   U4   |  logout   | unit| WB statement coverage|
-|   register    I1    | register, User.findOne User.create  | integration|BB/ eq partitioning|
-|   register    I2    | register, User.findOne    | integration|BB/ eq partitioning|
-|   register    I3    | register, User.findOne    | integration|BB/ eq partitioning|
-|   register    I4    | register, User.findOne   | integration|BB/ eq partitioning|
-|   register    I5    | register, User.findOne    | integration|BB/ eq partitioning|
-|   registerAdmin    I1    | registerAdmin, User.findOne User.create  | integration|BB/ eq partitioning|
-|   registerAdmin    I2    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
-|   registerAdmin    I3    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
-|   registerAdmin    I4    | registerAdmin, User.findOne   | integration|BB/ eq partitioning|
-|   registerAdmin    I5    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
 |   login    I1    | login, User.findOne, bcrypt.compare, jwt.sign, jwt.sign   | integration| BB/ eq partitioning|
 |   login    I2    | login, User.findOne  | integration| BB/ eq partitioning|
 |   login    I3    | login, User.findOne  | integration| BB/ eq partitioning|
 |   login    I4    | login | integration| BB/ eq partitioning|
 |   login    I5    | login | integration| BB/ eq partitioning|
 |   login    I6    | login, User.findOne, bcrypt.compare | integration| BB/ eq partitioning|
+|   logout   U1   |  logout   | unit| WB statement coverage|
+|   logout   U2   |  logout   | unit| WB statement coverage|
+|   logout   U3   |  logout   | unit| WB statement coverage|
+|   logout   U4   |  logout   | unit| WB statement coverage|
 |   logout    I1    | logout, User.findOne, user.save | integration| BB/ eq partitioning|
 |   logout    I2    | logout | integration| BB/ eq partitioning|
 |   logout    I3    | logout, User.findOne | integration| BB/ eq partitioning|
-| 
+|  getUsers U1| getUsers | unit | WB statement coverage|
+|  getUsers U2| getUsers | unit | WB statement coverage|
+|  getUsers U3| getUsers | unit | WB statement coverage|
+|  getUsers U4| getUsers | unit | WB statement coverage|
+|  getUsers I1|  getUsers, verifyAuthAdmin,User.find | unit | WB statement coverage|
+|  getUser I2| getUsers, verifyAuthAdmin,User.find | unit | WB statement coverage|
+|  getUser I3| getUsers, verifyAuthAdmin | unit | WB statement coverage|
+|  getUser U2| getUser | unit | WB statement coverage|
+|  getUser U3| getUser | unit | WB statement coverage|
+|  getUser U4| getUser | unit | WB statement coverage|
 |   createGroup U1    | |unit       ||
 |   createGroup U2    | |unit       ||
 |   createGroup U3    | |unit       ||
