@@ -152,14 +152,14 @@
 |   getAllTransactions I1||integration||
 |   getAllTransactions I2||integration||
 |   getAllTransactions I3||integration||
-|   createCategory U1| getAllTransactions |unit|WB/ statement coverage|
-|   createCategory U2| getAllTransactions |unit|WB/ statement coverage|
-|   createCategory U3| getAllTransactions |unit|WB/ statement coverage|
-|   createCategory U4| getAllTransactions |unit|WB/ statement coverage|
-|   createCategory U5| getAllTransactions |unit|WB/ statement coverage|
-|   createCategory U6| getAllTransactions |unit|WB/ statement coverage|
-|   createCategory U7| getAllTransactions |unit|WB/ statement coverage|
-|   createCategory U8| getAllTransactions |unit|WB/ statement coverage|
+|   createCategory U1| createCategory |unit|WB/ statement coverage|
+|   createCategory U2| createCategory |unit|WB/ statement coverage|
+|   createCategory U3| createCategory |unit|WB/ statement coverage|
+|   createCategory U4| createCategory |unit|WB/ statement coverage|
+|   createCategory U5| createCategory |unit|WB/ statement coverage|
+|   createCategory U6| createCategory |unit|WB/ statement coverage|
+|   createCategory U7| createCategory |unit|WB/ statement coverage|
+|   createCategory U8| createCategory |unit|WB/ statement coverage|
 |   createCategory I1| createCategory, verifyAuthAdmin, categories.countDocuments, categories.save |integration|BB/ eq partitioning|
 |   createCategory I2| createCategory, verifyAuthAdmin |integration|BB/ eq partitioning|
 |   createCategory I3|createCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
