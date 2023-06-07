@@ -43,22 +43,12 @@
 |   register    U4    | register    | unit| WB statement coverage|
 |   register    U5    | register    | unit|WB statement coverage|
 |   register    U6    | register    | unit| WB statement coverage|
-|   register    I1    | register, User.findOne User.create  | integration|BB/ eq partitioning|
-|   register    I2    | register, User.findOne    | integration|BB/ eq partitioning|
-|   register    I3    | register, User.findOne    | integration|BB/ eq partitioning|
-|   register    I4    | register, User.findOne   | integration|BB/ eq partitioning|
-|   register    I5    | register, User.findOne    | integration|BB/ eq partitioning|
 |   registerAdmin    U1    | registerAdmin    | unit|WB statement coverage|
 |   registerAdmin    U2    | registerAdmin    | unit| WB statement coverage|
 |   registerAdmin    U3    | registerAdmin    | unit|WB statement coverage|
 |   registerAdmin    U4    | registerAdmin    | unit| WB statement coverage|
 |   registerAdmin    U5    | registerAdmin    | unit|WB statement coverage|
 |   registerAdmin    U6    | registerAdmin    | unit| WB statement coverage|
-|   registerAdmin    I1    | registerAdmin, User.findOne User.create  | integration|BB/ eq partitioning|
-|   registerAdmin    I2    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
-|   registerAdmin    I3    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
-|   registerAdmin    I4    | registerAdmin, User.findOne   | integration|BB/ eq partitioning|
-|   registerAdmin    I5    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
 |   login    U1    | login    | unit| WB statement coverage|
 |   login    U2    | login    | unit| WB statement coverage|
 |   login    U3    | login    | unit| WB statement coverage|
@@ -66,16 +56,26 @@
 |   login    U5    | login    | unit| WB statement coverage|
 |   login    U6    | login    | unit| WB statement coverage|
 |   login    U7    | login    | unit| WB statement coverage|
+|   logout   U1   |  logout   | unit| WB statement coverage|
+|   logout   U2   |  logout   | unit| WB statement coverage|
+|   logout   U3   |  logout   | unit| WB statement coverage|
+|   logout   U4   |  logout   | unit| WB statement coverage|
+|   register    I1    | register, User.findOne User.create  | integration|BB/ eq partitioning|
+|   register    I2    | register, User.findOne    | integration|BB/ eq partitioning|
+|   register    I3    | register, User.findOne    | integration|BB/ eq partitioning|
+|   register    I4    | register, User.findOne   | integration|BB/ eq partitioning|
+|   register    I5    | register, User.findOne    | integration|BB/ eq partitioning|
+|   registerAdmin    I1    | registerAdmin, User.findOne User.create  | integration|BB/ eq partitioning|
+|   registerAdmin    I2    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
+|   registerAdmin    I3    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
+|   registerAdmin    I4    | registerAdmin, User.findOne   | integration|BB/ eq partitioning|
+|   registerAdmin    I5    | registerAdmin, User.findOne    | integration|BB/ eq partitioning|
 |   login    I1    | login, User.findOne, bcrypt.compare, jwt.sign, jwt.sign   | integration| BB/ eq partitioning|
 |   login    I2    | login, User.findOne  | integration| BB/ eq partitioning|
 |   login    I3    | login, User.findOne  | integration| BB/ eq partitioning|
 |   login    I4    | login | integration| BB/ eq partitioning|
 |   login    I5    | login | integration| BB/ eq partitioning|
 |   login    I6    | login, User.findOne, bcrypt.compare | integration| BB/ eq partitioning|
-|   logout   U1   |  logout   | unit| WB statement coverage|
-|   logout   U2   |  logout   | unit| WB statement coverage|
-|   logout   U3   |  logout   | unit| WB statement coverage|
-|   logout   U4   |  logout   | unit| WB statement coverage|
 |   logout    I1    | logout, User.findOne, user.save | integration| BB/ eq partitioning|
 |   logout    I2    | logout | integration| BB/ eq partitioning|
 |   logout    I3    | logout, User.findOne | integration| BB/ eq partitioning|
@@ -83,9 +83,7 @@
 |  getUsers U2| getUsers | unit | WB statement coverage|
 |  getUsers U3| getUsers | unit | WB statement coverage|
 |  getUsers U4| getUsers | unit | WB statement coverage|
-|  getUsers I1|  getUsers, verifyAuthAdmin,User.find | unit | WB statement coverage|
-|  getUser I2| getUsers, verifyAuthAdmin,User.find | unit | WB statement coverage|
-|  getUser I3| getUsers, verifyAuthAdmin | unit | WB statement coverage|
+|  getUser U1| getUser | unit | WB statement coverage|
 |  getUser U2| getUser | unit | WB statement coverage|
 |  getUser U3| getUser | unit | WB statement coverage|
 |  getUser U4| getUser | unit | WB statement coverage|
@@ -102,6 +100,14 @@
 |   createGroup U11   | |unit       ||
 |   createGroup U12   | |unit       ||
 |   createGroup U13   | |unit       ||
+| getGroups U1 | getGroups | unit | WB statement coverage|
+| getGroups U2 | getGroups | unit | WB statement coverage|
+| getGroups U3 | getGroups | unit | WB statement coverage|
+| getGroups U4 | getGroups | unit | WB statement coverage|
+| getGroup U1 | getGroup | unit | WB statement coverage|
+| getGroup U2 | getGroup | unit | WB statement coverage|
+| getGroup U3 | getGroup | unit | WB statement coverage|
+| getGroup U4 | getGroup | unit | WB statement coverage|
 |   addToGroup U1     | |unit       ||
 |   addToGroup U2     | |unit       ||
 |   addToGroup U3     | |unit       ||
@@ -122,6 +128,59 @@
 |   addToGroup I8     | |integration||
 |   addToGroup I9     | |integration||
 |   addToGroup I10    | |integration||
+|removeFromGroup U1| removeFromGroup | unit | WB statement coverage|
+|removeFromGroup U2| removeFromGroup | unit | WB statement coverage|
+|removeFromGroup U3| removeFromGroup | unit | WB statement coverage|
+|removeFromGroup U4| removeFromGroup | unit | WB statement coverage|
+|removeFromGroup U5| removeFromGroup | unit | WB statement coverage|
+|removeFromGroup U6| removeFromGroup | unit | WB statement coverage|
+|removeFromGroup U7| removeFromGroup | unit | WB statement coverage|
+|removeFromGroup U8| removeFromGroup | unit | WB statement coverage|
+|removeFromGroup U9| removeFromGroup | unit | WB statement coverage|
+|removeFromGroup U10| removeFromGroup | unit | WB statement coverage|
+| deleteUser U1| deleteUser | unit |  WB statement coverage|
+| deleteUser U2| deleteUser | unit |  WB statement coverage|
+| deleteUser U3| deleteUser | unit |  WB statement coverage|
+| deleteUser U4| deleteUser | unit |  WB statement coverage|
+| deleteUser U5| deleteUser | unit |  WB statement coverage|
+| deleteUser U6| deleteUser | unit |  WB statement coverage|
+| deleteUser U7| deleteUser | unit |  WB statement coverage|
+| deleteUser U8| deleteUser | unit |  WB statement coverage|
+| deleteUser U9| deleteUser | unit |  WB statement coverage|
+| deleteUser U10| deleteUser | unit |  WB statement coverage|
+| deleteGroup U1| deleteGroup | unit |  WB statement coverage|
+| deleteGroup U2| deleteGroup | unit |  WB statement coverage|
+| deleteGroup U3| deleteGroup | unit |  WB statement coverage|
+| deleteGroup U4| deleteGroup | unit |  WB statement coverage|
+| deleteGroup U5| deleteGroup | unit |  WB statement coverage|
+| deleteGroup U6| deleteGroup | unit |  WB statement coverage|
+|  getUsers I1|  getUsers, verifyAuthAdmin,User.find | unit | WB statement coverage|
+|  getUsers I2| getUsers, verifyAuthAdmin,User.find | unit | WB statement coverage|
+|  getUsers I3| getUsers, verifyAuthAdmin | unit | WB statement coverage|
+|  getUser I1| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne,   | unit | WB statement coverage|
+|  getUser I2| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne  | unit | WB statement coverage|
+|  getUser I3| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne | unit | WB statement coverage|
+|  getUser I4| getUsers, User.findOne | unit | WB statement coverage|
+| getGroups I1 | getGroups,verifyAuthAdmin Groups.find | integration | BB/ eq partitioning|
+| getGroups I2 | getGroups, verifyAuthAdmin | integration | BB/ eq partitioning|
+| getGroup I1 | getGroup, verifyAuthAdmin, verifyAuthGroup, Group.findOne | integration | BB/ eq partitioning| 
+| getGroup I2 | getGroup, verifyAuthAdmin, verifyAuthGroup, Group.findOne | integration | BB/ eq partitioning| 
+| getGroup I3 | getGroup, verifyAuthAdmin, verifyAuthGroup | integration | BB/ eq partitioning| 
+| getGroup I1 | getGroup, verifyAuthAdmin, verifyAuthGroup, Group.findOne | integration | BB/ eq partitioning| 
+|deleteUser I1| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne| integration | BB/ eq partitioning|
+|deleteUser I2| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne, Group.deleteOne, group.save | integration | BB/ eq partitioning|
+|deleteUser I3| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne | integration | BB/ eq partitioning|
+|deleteUser I4| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
+|deleteUser I5| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
+|deleteUser I6| deleteUser, verifyAuthAdmin, User.findOne | integration | BB/ eq partitioning|
+|deleteUser I7| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
+|deleteUser I8| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
+|deleteUser I9| deleteUser, verifyAuthAdmin, User.findOne | integration | BB/ eq partitioning|
+| deleteGroup I1 | deleteGroup, verifyAuthAdmin, Group.findOne, Group.deleteOne  | integration |BB/ eq partitioning|
+| deleteGroup I2 | deleteGroup, verifyAuthAdmin | integration |BB/ eq partitioning|
+| deleteGroup I3 | deleteGroup, verifyAuthAdmin | integration |BB/ eq partitioning|
+| deleteGroup I4 | deleteGroup, verifyAuthAdmin, Group.findOne  | integration |BB/ eq partitioning|
+| deleteGroup I5 | deleteGroup, verifyAuthAdmin | integration |BB/ eq partitioning|
 |   removeFromGroup I1| removeFromGroup, verifyAuthAdmin, Group.findOne, User.findOne, Group.updateOne  |integration|BB/ eq partitioning|integration|BB/ eq partitioning|
 |   removeFromGroup I2| removeFromGroup, verifyAuthAdmin |integration|BB/ eq partitioning|
 |   removeFromGroup I3| removeFromGroup, verifyAuthAdmin  |integration|BB/ eq partitioning||   removeFromGroup I4| |integration|BB/ eq partitioning|
