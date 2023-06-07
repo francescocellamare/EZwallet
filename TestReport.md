@@ -87,19 +87,20 @@
 |  getUser U2| getUser | unit | WB statement coverage|
 |  getUser U3| getUser | unit | WB statement coverage|
 |  getUser U4| getUser | unit | WB statement coverage|
-|   createGroup U1    | |unit       ||
-|   createGroup U2    | |unit       ||
-|   createGroup U3    | |unit       ||
-|   createGroup U4    | |unit       ||
-|   createGroup U5    | |unit       ||
-|   createGroup U6    | |unit       ||
-|   createGroup U7    | |unit       ||
-|   createGroup U8    | |unit       ||
-|   createGroup U9    | |unit       ||
-|   createGroup U10   | |unit       ||
-|   createGroup U11   | |unit       ||
-|   createGroup U12   | |unit       ||
-|   createGroup U13   | |unit       ||
+|   createGroup U1             | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U2             | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U3             | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U4             | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U5             | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U6             | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U7             | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U8             | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U9             | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U10            | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U11            | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U12            | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U13            | createGroup                                           |unit       |WB statement coverage|
+|   createGroup U14            | createGroup                                           |unit       |WB statement coverage|
 | getGroups U1 | getGroups | unit | WB statement coverage|
 | getGroups U2 | getGroups | unit | WB statement coverage|
 | getGroups U3 | getGroups | unit | WB statement coverage|
@@ -108,26 +109,17 @@
 | getGroup U2 | getGroup | unit | WB statement coverage|
 | getGroup U3 | getGroup | unit | WB statement coverage|
 | getGroup U4 | getGroup | unit | WB statement coverage|
-|   addToGroup U1     | |unit       ||
-|   addToGroup U2     | |unit       ||
-|   addToGroup U3     | |unit       ||
-|   addToGroup U4     | |unit       ||
-|   addToGroup U5     | |unit       ||
-|   addToGroup U6     | |unit       ||
-|   addToGroup U7     | |unit       ||
-|   addToGroup U8     | |unit       ||
-|   addToGroup U9     | |unit       ||
-|   addToGroup U10    | |unit       ||
-|   addToGroup I1     | |integration||
-|   addToGroup I2     | |integration||
-|   addToGroup I3     | |integration||
-|   addToGroup I4     | |integration||
-|   addToGroup I5     | |integration||
-|   addToGroup I6     | |integration||
-|   addToGroup I7     | |integration||
-|   addToGroup I8     | |integration||
-|   addToGroup I9     | |integration||
-|   addToGroup I10    | |integration||
+|   addToGroup U1              | addToGroup                                            |unit       |WB statement coverage|
+|   addToGroup U2              | addToGroup                                            |unit       |WB statement coverage|
+|   addToGroup U3              | addToGroup                                            |unit       |WB statement coverage|
+|   addToGroup U4              | addToGroup                                            |unit       |WB statement coverage|
+|   addToGroup U5              | addToGroup                                            |unit       |WB statement coverage|
+|   addToGroup U6              | addToGroup                                            |unit       |WB statement coverage|
+|   addToGroup U7              | addToGroup                                            |unit       |WB statement coverage|
+|   addToGroup U8              | addToGroup                                            |unit       |WB statement coverage|
+|   addToGroup U9              | addToGroup                                            |unit       |WB statement coverage|
+|   addToGroup U10             | addToGroup                                            |unit       |WB statement coverage|
+|   addToGroup U11             | addToGroup                                            |unit       |WB statement coverage|
 |removeFromGroup U1| removeFromGroup | unit | WB statement coverage|
 |removeFromGroup U2| removeFromGroup | unit | WB statement coverage|
 |removeFromGroup U3| removeFromGroup | unit | WB statement coverage|
@@ -161,6 +153,16 @@
 |  getUser I2| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne  | unit | WB statement coverage|
 |  getUser I3| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne | unit | WB statement coverage|
 |  getUser I4| getUsers, User.findOne | unit | WB statement coverage|
+|   createGroup I1             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
+|   createGroup I2             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
+|   createGroup I3             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
+|   createGroup I4             | createGroup, verifyAuth, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
+|   createGroup I5             | createGroup, verifyAuth, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
+|   createGroup I6             | createGroup, verifyAuth, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
+|   createGroup I7             | createGroup, verifyAuth, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
+|   createGroup I8             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
+|   createGroup I9             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
+|   createGroup I10            | createGroup, verifyAuth, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
 | getGroups I1 | getGroups,verifyAuthAdmin Groups.find | integration | BB/ eq partitioning|
 | getGroups I2 | getGroups, verifyAuthAdmin | integration | BB/ eq partitioning|
 | getGroup I1 | getGroup, verifyAuthAdmin, verifyAuthGroup, Group.findOne | integration | BB/ eq partitioning| 
@@ -181,6 +183,16 @@
 | deleteGroup I3 | deleteGroup, verifyAuthAdmin | integration |BB/ eq partitioning|
 | deleteGroup I4 | deleteGroup, verifyAuthAdmin, Group.findOne  | integration |BB/ eq partitioning|
 | deleteGroup I5 | deleteGroup, verifyAuthAdmin | integration |BB/ eq partitioning|
+|   addToGroup I1              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
+|   addToGroup I2              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
+|   addToGroup I3              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
+|   addToGroup I4              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
+|   addToGroup I5              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
+|   addToGroup I6              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
+|   addToGroup I7              | addToGroup, verifyAuth, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
+|   addToGroup I8              | addToGroup, verifyAuth, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
+|   addToGroup I9              | addToGroup, verifyAuth, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
+|   addToGroup I10             | addToGroup, verifyAuth, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
 |   removeFromGroup I1| removeFromGroup, verifyAuthAdmin, Group.findOne, User.findOne, Group.updateOne  |integration|BB/ eq partitioning|integration|BB/ eq partitioning|
 |   removeFromGroup I2| removeFromGroup, verifyAuthAdmin |integration|BB/ eq partitioning|
 |   removeFromGroup I3| removeFromGroup, verifyAuthAdmin  |integration|BB/ eq partitioning||   removeFromGroup I4| |integration|BB/ eq partitioning|
@@ -210,6 +222,10 @@
 |   createTransaction U11| createTransaction |unit|WB/ statement coverage|
 |   createTransaction U12| createTransaction |unit|WB/ statement coverage|
 |   createTransaction U13| createTransaction |unit|WB/ statement coverage|
+|   getAllTransactions U1      | getAllTransactions                                    |unit       |WB statement coverage|
+|   getAllTransactions U2      | getAllTransactions                                    |unit       |WB statement coverage|
+|   getAllTransactions U3      | getAllTransactions                                    |unit       |WB statement coverage|
+|   getAllTransactions U4      | getAllTransactions                                    |unit       |WB statement coverage|
 |   createTransaction I1|createTransaction, verifyAuthUser, categories.countDocuments, User.countDocuments, transactions.save |integration|BB/ eq partitioning|
 |   createTransaction I2|createTransaction, verifyAuthUser |integration|BB/ eq partitioning|
 |   createTransaction I3|createTransaction, verifyAuthUser |integration|BB/ eq partitioning|
@@ -222,13 +238,9 @@
 |   createTransaction I10|createTransaction, verifyAuthUser |integration|BB/ eq partitioning|
 |   createTransaction I11|createTransaction, verifyAuthUser, categories.countDocuments |integration|BB/ eq partitioning|
 |   createTransaction I12|createTransaction, verifyAuthUser, categories.countDocuments, User.countDocuments  |integration|BB/ eq partitioning|
-|   getAllTransactions U1||unit||
-|   getAllTransactions U2||unit||
-|   getAllTransactions U3||unit||
-|   getAllTransactions U4||unit||
-|   getAllTransactions I1||integration||
-|   getAllTransactions I2||integration||
-|   getAllTransactions I3||integration||
+|   getAllTransactions I1      | getAllTransactions, verifyAuth, transactions.aggregate|integration|WB statement coverage|
+|   getAllTransactions I2      | getAllTransactions, verifyAuth, transactions.aggregate|integration|WB statement coverage|
+|   getAllTransactions I3      | getAllTransactions, verifyAuth                        |integration|WB statement coverage|
 |   createCategory U1| createCategory |unit|WB/ statement coverage|
 |   createCategory U2| createCategory |unit|WB/ statement coverage|
 |   createCategory U3| createCategory |unit|WB/ statement coverage|
@@ -280,62 +292,62 @@
 |   getCategories U3| getCategories |unit|WB/ statement coverage|
 |   getCategories I1|getCategories, verifyAuthSimple, categories.find|integration|BB/ eq partitioning|
 |   getCategories I2|getCategories, verifyAuthSimple|integration|BB/ eq partitioning|
-|   verifyAuth U1        ||unit       ||
-|   verifyAuth U2        ||unit       ||
-|   verifyAuth U3        ||unit       ||
-|   verifyAuth U4        ||unit       ||
-|   verifyAuth U5        ||unit       ||
-|   verifyAuth U6        ||unit       ||
-|   verifyAuth U7        ||unit       ||
-|   verifyAuth U8        ||unit       ||
-|   verifyAuth U9        ||unit       ||
-|   verifyAuth U10       ||unit       ||
-|   verifyAuth U11       ||unit       ||
-|   verifyAuth U12       ||unit       ||
-|   verifyAuth U13       ||unit       ||
-|   verifyAuth U14       ||unit       ||
-|   verifyAuth U15       ||unit       ||
-|   verifyAuth U16       ||unit       ||
-|   verifyAuth U17       ||unit       ||
-|   verifyAuth U18       ||unit       ||
-|   verifyAuth U19       ||unit       ||
-|   verifyAuth U20       ||unit       ||
-|   verifyAuth U21       ||unit       ||
-|   verifyAuth U22       ||unit       ||
-|   verifyAuth U23       ||unit       ||
-|   verifyAuth U24       ||unit       ||
-|   verifyAuth I1        ||integration||
-|   verifyAuth I2        ||integration||
-|   verifyAuth I3        ||integration||
-|   verifyAuth I4        ||integration||
-|   verifyAuth I5        ||integration||
-|   verifyAuth I6        ||integration||
-|   verifyAuth I7        ||integration||
-|   verifyAuth I8        ||integration||
-|   verifyAuth I9        ||integration||
-|   verifyAuth I10       ||integration||
-|   verifyAuth I11       ||integration||
-|   verifyAuth I12       ||integration||
-|   verifyAuth I13       ||integration||
-|   verifyAuth I14       ||integration||
-|   verifyAuth I15       ||integration||
-|   verifyAuth I16       ||integration||
-|   verifyAuth I17       ||integration||
-|   handleDateFilterParams U1 ||unit ||
-|   handleDateFilterParams U2 ||unit ||
-|   handleDateFilterParams U3 ||unit ||
-|   handleDateFilterParams U4 ||unit ||
-|   handleDateFilterParams U5 ||unit ||
-|   handleDateFilterParams U6 ||unit ||
-|   handleDateFilterParams U7 ||unit ||
-|   handleDateFilterParams U8 ||unit ||
-|   handleDateFilterParams U9 ||unit ||
-|   handleDateFilterParams U10 ||unit||
-|   handleAmountFilterParams U1||unit||
-|   handleAmountFilterParams U2||unit||
-|   handleAmountFilterParams U3||unit||
-|   handleAmountFilterParams U4||unit||
-|   handleAmountFilterParams U5||unit||
+|   verifyAuth U1              | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U2              | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U3              | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U4              | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U5              | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U6              | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U7              | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U8              | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U9              | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U10             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U11             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U12             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U13             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U14             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U15             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U16             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U17             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U18             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U19             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U20             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U21             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U22             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U23             | verifyAuth                                            |unit       |WB statement coverage|
+|   verifyAuth U24             | verifyAuth                                            |unit       |WB statement coverage|
+|   handleDateFilterParams U1  |handleDateFilterParams                                 |unit       |WB statement coverage|
+|   handleDateFilterParams U2  |handleDateFilterParams                                 |unit       |WB statement coverage|
+|   handleDateFilterParams U3  |handleDateFilterParams                                 |unit       |WB statement coverage|
+|   handleDateFilterParams U4  |handleDateFilterParams                                 |unit       |WB statement coverage|
+|   handleDateFilterParams U5  |handleDateFilterParams                                 |unit       |WB statement coverage|
+|   handleDateFilterParams U6  |handleDateFilterParams                                 |unit       |WB statement coverage|
+|   handleDateFilterParams U7  |handleDateFilterParams                                 |unit       |WB statement coverage|
+|   handleDateFilterParams U8  |handleDateFilterParams                                 |unit       |WB statement coverage|
+|   handleDateFilterParams U9  |handleDateFilterParams                                 |unit       |WB statement coverage|
+|   handleDateFilterParams U10 |handleDateFilterParams                                 |unit       |WB statement coverage|
+|   handleAmountFilterParams U1|handleAmountFilterParams                               |unit       |WB statement coverage|
+|   handleAmountFilterParams U2|handleAmountFilterParams                               |unit       |WB statement coverage|
+|   handleAmountFilterParams U3|handleAmountFilterParams                               |unit       |WB statement coverage|
+|   handleAmountFilterParams U4|handleAmountFilterParams                               |unit       |WB statement coverage|
+|   handleAmountFilterParams U5|handleAmountFilterParams                               |unit       |WB statement coverage|
+|   verifyAuth I1              | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I2              | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I3              | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I4              | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I5              | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I6              | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I7              | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I8              | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I9              | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I10             | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I11             | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I12             | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I13             | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I14             | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I15             | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I16             | verifyAuth                                            |integration|BB/ eq partitioning  |
+|   verifyAuth I17             | verifyAuth                                            |integration|BB/ eq partitioning  |
 | getTransactionsByUser U1   ||unit||
 | getTransactionsByUser U2   ||unit||
 | getTransactionsByUser U3   ||unit||
@@ -406,10 +418,10 @@
 |FR16 getUser | getUser U1-U4 , getUser I1-I4|
 |FR17 deleteUser | deleteUser U1-U10 , deleteUser I1-I9|
 |FR2 Manage groups |
-|FR21 createGroup |createGroup U1-U13 , createGroup I1-I9|
+|FR21 createGroup |createGroup U1-U14 , createGroup I1-I9|
 |FR22 getGroups| getGroups U1-U4 , getGroups I1-I2|
 |FR23 getGroup | getGroup U1-U4, getGroup I1-I4|
-|FR24 addToGroup| addToGroup U1-U10 , addToGroup I1-I10|
+|FR24 addToGroup| addToGroup U1-U11 , addToGroup I1-I10|
 |FR26 removeFromGroup| removeFromGroup U1-U11 , I1-I16|
 |FR28 deleteGroup | deleteGroup deleteGroup U1-U6 , I1-I5|   
 |FR3  Manage transactions |
