@@ -79,6 +79,7 @@
 |   logout    I1    | logout, User.findOne, user.save | integration| BB/ eq partitioning|
 |   logout    I2    | logout | integration| BB/ eq partitioning|
 |   logout    I3    | logout, User.findOne | integration| BB/ eq partitioning|
+| 
 |   createGroup U1    | |unit       ||
 |   createGroup U2    | |unit       ||
 |   createGroup U3    | |unit       ||

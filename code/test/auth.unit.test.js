@@ -184,7 +184,7 @@ describe("registerAdmin", () => {
 
 
 
-    test("T1: register admin -> return 200 and message: admin added succesfully ", async () => {
+    test("U1: register admin -> return 200 and message: admin added succesfully ", async () => {
      jest.spyOn(User, "findOne").mockImplementation(()=>null) //no user is found with same username or/and password
      jest.spyOn(bcrypt, "hash").mockImplementation(()=>"hashedPassowrd")
      jest.spyOn(User, "create").mockImplementation(()=>({username:'test', email:'test@example.com', password:'hashedPassword', role:"Admin"}))
@@ -202,7 +202,7 @@ describe("registerAdmin", () => {
 
     });
 
-    test("T2: admin exists -> return 400 and message: you are already registered ", async () =>{
+    test("U2: admin exists -> return 400 and message: you are already registered ", async () =>{
         jest.spyOn(User, "findOne").mockImplementation(()=>({username:'user', email:"test@example.com"}))
         await registerAdmin(mockReq, mockResp);
 
@@ -216,7 +216,7 @@ describe("registerAdmin", () => {
     });
 
 
-    test("T3: invalid email -> return 400 and message: invalid email ", async () =>{
+    test("U3: invalid email -> return 400 and message: invalid email ", async () =>{
         let mockReqInvalidEmail;
         mockReqInvalidEmail = {
             body:{
@@ -235,7 +235,7 @@ describe("registerAdmin", () => {
         // Check the value of data.message
         expect(jsonResponse.error).toBe('invalid email');
     })
-    test("T4: missing fields -> return 400 and message: some fields are missing ", async () =>{
+    test("U4: missing fields -> return 400 and message: some fields are missing ", async () =>{
         let mockReqIncomplete;
         mockReqIncomplete = {
             body:{
@@ -253,7 +253,7 @@ describe("registerAdmin", () => {
         expect(jsonResponse.error).toBe('some fields are missing');
     })
 
-    test("T5: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
+    test("U5: field with empty string -> return 400 and message: empty fields are not allowed ", async () =>{
         let mockReqIncomplete;
         mockReqIncomplete = {
             body:{
@@ -272,7 +272,7 @@ describe("registerAdmin", () => {
         expect(jsonResponse.error).toBe('empty fields are not allowed');
     })
 
-    test("T6:Network error -> return 500 and error message", async()=>{
+    test("U6:Network error -> return 500 and error message", async()=>{
        
         jest.spyOn(User, "findOne").mockImplementationOnce(() => {throw new Error('server crash');});
         
