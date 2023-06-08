@@ -1448,7 +1448,7 @@ describe("deleteUser", () => {
       .delete("/api/users")
       .set("Cookie", `refreshToken=${refreshToken};  accessToken=${refreshToken}`)
       .send(requestBody)
-    await expect(response.status).toBe(401)
+    await expect(response.status).toBe(400)
     await expect(response.body.error).toBe("The email represents an admin");
   })
 

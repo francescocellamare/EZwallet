@@ -78,19 +78,19 @@ describe("getUsers", () => {
   })
 
   test("U2: at least one user exists -> return 200 and list of retrieved users", async () => {
-	const retrievedUsers = [{ username: 'test1', email: 'test1@example.com', password: 'hashedPassword1' }, { username: 'test2', email: 'test2@example.com', password: 'hashedPassword2' }]
-	jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(() => (
-	  {
-		authorized: true,
-		cause: "Authorized"
-	  }
-	))
-	jest.spyOn(User, "find").mockImplementation(() => [...retrievedUsers]);
+    const retrievedUsers = [{ username: 'test1', email: 'test1@example.com', password: 'hashedPassword1', role: 'Regular' }, { username: 'test2', email: 'test2@example.com', password: 'hashedPassword2', role: 'Regular' }]
+    jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(() => (
+      {
+        authorized: true,
+        cause: "Authorized"
+      }
+    ))
+    jest.spyOn(User, "find").mockImplementation(() => [...retrievedUsers]);
 
-	await getUsers(mockReq, mockResp);
-	expect(mockResp.status).toHaveBeenCalledWith(200);
-	expect(mockResp.json.mock.calls[0][0].data).toEqual(retrievedUsers);
-	expect(mockResp.locals).toEqual({ refreshTokenMessage: "dummy message" });
+    await getUsers(mockReq, mockResp);
+    expect(mockResp.status).toHaveBeenCalledWith(200);
+    expect(mockResp.json.mock.calls[0][0].data).toEqual(retrievedUsers.map( user => { return {username: user.username, email: user.email, role: user.role} }));
+    expect(mockResp.locals).toEqual({ refreshTokenMessage: "dummy message" });
   })
 
   test("U3:not authentified -> return 401", async () => {
@@ -154,32 +154,32 @@ describe("getUser", () => {
 
 
   test('U1: user exists -> return 200 and user info', async () => {
-	const user = {
-	  username: 'user',
-	  email: 'test@example.com',
-	  role: 'role',
-	  refreshToken: 'refreshToken'
-	}
-	jest.spyOn(User, "findOne").mockImplementation(() => user);
-	jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(() => (
-	  {
-		authorized: true,
-		cause: "Authorized"
-	  }
-	))
-	jest.spyOn(utils, "verifyAuthUser").mockImplementation(() => (
-	  {
-		authorized: true,
-		cause: "Authorized"
-	  }
-	))
-	await getUser(mockReq, mockResp);
-	expect(mockResp.status).toHaveBeenCalledWith(200);
-	const jsonResp = mockResp.json.mock.calls[0][0];
-	expect(mockResp.json).toHaveBeenCalledWith({
-	  data: user,
-	  refreshTokenMessage: mockResp.locals.refreshTokenMessage,
-	});
+    const user = {
+      username: 'user',
+      email: 'test@example.com',
+      role: 'role',
+      refreshToken: 'refreshToken'
+    }
+    jest.spyOn(User, "findOne").mockImplementation(() => user);
+    jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(() => (
+      {
+        authorized: true,
+        cause: "Authorized"
+      }
+    ))
+    jest.spyOn(utils, "verifyAuthUser").mockImplementation(() => (
+      {
+        authorized: true,
+        cause: "Authorized"
+      }
+    ))
+    await getUser(mockReq, mockResp);
+    expect(mockResp.status).toHaveBeenCalledWith(200);
+    const jsonResp = mockResp.json.mock.calls[0][0];
+    expect(mockResp.json).toHaveBeenCalledWith({
+      data: { username: user.username, email: user.email, role: user.role },
+      refreshTokenMessage: mockResp.locals.refreshTokenMessage,
+    });
 
 
   })
@@ -1224,27 +1224,38 @@ describe("getGroups", () => {
   })
 
   test("U2: at least one group exists -> return 200 and list of retrieved groups", async () => {
-	const retrievedGroups = '[{name: "Family", members: [{email: "mario.red@email.com"}, {email: "luigi.red@email.com"}]';
-	jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(() => (
-	  {
-		authorized: true,
-		cause: "Authorized"
-	  }
-	))
-	jest.spyOn(utils, "verifyAuthGroup").mockImplementation(() => (
-	  {
-		authorized: true,
-		cause: "Authorized"
-	  }
-	))
-	jest.spyOn(User, "find").mockImplementation(() => retrievedGroups);
+    const retrievedGroups = [{name: "Family", members: [{email: "mario.red@email.com", user: 123}, {email: "luigi.red@email.com", user: 123456}] }];
+    jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(() => (
+      {
+        authorized: true,
+        cause: "Authorized"
+      }
+    ))
+    jest.spyOn(utils, "verifyAuthGroup").mockImplementation(() => (
+      {
+        authorized: true,
+        cause: "Authorized"
+      }
+    ))
+    jest.spyOn(Group, "find").mockImplementation(() => retrievedGroups);
 
-	await getGroups(mockReq, mockResp);
-	expect(mockResp.status).toHaveBeenCalledWith(200);
-	expect(mockResp.json).toHaveBeenCalledWith({
-	  data: retrievedGroups,
-	  refreshedTokenMessage: mockResp.locals.refreshedTokenMessage,
-	});
+    await getGroups(mockReq, mockResp);
+    const expectedRespone = 
+      [
+        {
+          name: 'Family',
+          members: [
+            {email: "mario.red@email.com"},
+            {email: "luigi.red@email.com"}
+          ]
+        }
+      ]
+    
+    expect(mockResp.status).toHaveBeenCalledWith(200);
+    expect(mockResp.json).toHaveBeenCalledWith({
+      data: expectedRespone,
+      refreshedTokenMessage: mockResp.locals.refreshedTokenMessage,
+    });
 
   })
 
@@ -1332,10 +1343,10 @@ describe("getGroup", () => {
 	))
 
 
-	jest.spyOn(Group, "findOne").mockResolvedValueOnce(group_r);
-	await getGroup(mockReq, mockResp);
-	expect(mockResp.status).toHaveBeenCalledWith(200);
-	expect(mockResp.json).toHaveBeenCalledWith({ data: { group: group_r, refreshedTokenMessage: mockResp.locals.refreshedTokenMessage } })
+    jest.spyOn(Group, "findOne").mockResolvedValueOnce(group_r);
+    await getGroup(mockReq, mockResp);
+    expect(mockResp.status).toHaveBeenCalledWith(200);
+    expect(mockResp.json).toHaveBeenCalledWith({ data: { group: group_r }, refreshedTokenMessage: mockResp.locals.refreshedTokenMessage  })
 
   })
 
@@ -2640,22 +2651,22 @@ describe("deleteUser", () => {
   })
 
   test('U9: the target user is an admin -> return 401', async () => {
-	let mockReq = {
-	  body: {
-		email: 'test@example.com'
-	  }
-	};
-	jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(() => (
-	  {
-		authorized: true,
-		cause: "Authorized"
-	  }
-	))
-	const user = { email: 'test@example.com', role: "Admin" };
-	jest.spyOn(User, "findOne").mockImplementationOnce(() => user);
-	await deleteUser(mockReq, mockResp)
-	expect(mockResp.status).toHaveBeenCalledWith(401);
-	expect(mockResp.json).toHaveBeenCalledWith({ error: "The email represents an admin" });
+    let mockReq = {
+      body: {
+        email: 'test@example.com'
+      }
+    };
+    jest.spyOn(utils, "verifyAuthAdmin").mockImplementation(() => (
+      {
+        authorized: true,
+        cause: "Authorized"
+      }
+    ))
+    const user = { email: 'test@example.com', role: "Admin" };
+    jest.spyOn(User, "findOne").mockImplementationOnce(() => user);
+    await deleteUser(mockReq, mockResp)
+    expect(mockResp.status).toHaveBeenCalledWith(400);
+    expect(mockResp.json).toHaveBeenCalledWith({ error: "The email represents an admin" });
 
 
 
