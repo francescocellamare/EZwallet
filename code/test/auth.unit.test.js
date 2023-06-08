@@ -10,6 +10,12 @@ jest.mock("bcryptjs")
 jest.mock("jsonwebtoken");
 jest.mock('../models/User.js');
 
+beforeEach(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
+
+
 describe('register', () => {
     
     let mockReq;

@@ -9,13 +9,9 @@ jest.mock('../models/model');
 
 
 beforeEach(() => {
-    categories.find.mockClear();
-    categories.prototype.save.mockClear();
-    transactions.find.mockClear();
-    transactions.deleteOne.mockClear();
-    transactions.aggregate.mockClear();
-    transactions.prototype.save.mockClear();
-});
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
 
 describe('createCategory', () => {
     let mockReq;

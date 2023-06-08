@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 import { response } from 'express';
 const bcrypt = require("bcryptjs");
 
+
 /**
  * Necessary setup in order to create a new database for testing purposes before starting the execution of test cases.
  * Each test suite has its own database in order to avoid different tests accessing the same database at the same time and expecting different data.
@@ -33,12 +34,23 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
+afterEach(async () => {
+  jest.clearAllMocks(); 
+  jest.resetAllMocks(); 
+
+  await User.deleteMany();
+  await Group.deleteMany();
+  await transactions.deleteMany();
+  await categories.deleteMany();
+})
+
 describe("getUsers", () => {
   /**
    * Database is cleared before each test case, in order to allow insertion of data tailored for each specific test case.
    */
   beforeEach(async () => {
-    await User.deleteMany({})
+    await User.deleteMany({});
+   
   })
 
   test("I1: at least one user exists -> return 200 and list of users", async () => {
@@ -864,8 +876,18 @@ describe("removeFromGroup", () => {
     expect(response.body.data).toHaveProperty("group")
 
   });
+  test("I2: remove from group -> return 200 status, the remaining, not found and not in group members, with the refreshed token", async () => {
+    const response = await request(app)
+      .patch("/api/groups/family/pull")
+      .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
+      .send({ emails: ["user1@test.com", "user2@test.com"] })
 
-  test('I2: not an admin request -> return a 401 status with the error message', async () => {
+    expect(response.status).toBe(200)
+    expect(response.body.data).toHaveProperty("group")
+
+  });
+
+  test('I3: not an admin request -> return a 401 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -876,7 +898,7 @@ describe("removeFromGroup", () => {
     expect(errorMessage).toBe(true)
   });
 
-  test('I3: empty emails -> return a 400 status with the error message', async () => {
+  test('I4: empty emails -> return a 400 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -886,7 +908,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("One or more emails are empty strings")
   });
 
-  test('I4: missing emails -> return a 400 status with the error message', async () => {
+  test('I5: missing emails -> return a 400 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -896,7 +918,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("The request body does not contain all the necessary attributes")
   });
 
-  test("I5: no valid emails  -> return 400 status with the error message", async () => {
+  test("I6: no valid emails  -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -906,7 +928,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("One or more emails are not in a valid format")
   });
 
-  test("I6: group not found -> return 400 status with the error message", async () => {
+  test("I7: group not found -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/a/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -916,7 +938,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("Group name passed as a route parameter does not represent a group in the database")
   });
 
-  test("I7: only one member in the group -> return 400 status with the error message", async () => {
+  test("I8: only one member in the group -> return 400 status with the error message", async () => {
     await Group.deleteMany({})
 
     await Group.insertMany({
@@ -935,7 +957,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("The group contains only one member")
   });
 
-  test("I8: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
+  test("I9: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/family/pull")
       .set("Cookie", `accessToken=${refreshTokenAdmin}; refreshToken=${refreshTokenAdmin}`)
@@ -945,7 +967,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("All the members' email either do not exist or are not in the group")
   });
 
-  test("I9: remove from group -> return 200 status, the remaining, not found and not in group members, with the refreshed token", async () => {
+  test("I10: remove from group -> return 200 status, the remaining, not found and not in group members, with the refreshed token", async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -956,7 +978,7 @@ describe("removeFromGroup", () => {
 
   });
 
-  test('I10: not member of the group request -> return a 401 status with the error message', async () => {
+  test('I11: not member of the group request -> return a 401 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser3}; refreshToken=${refreshTokenUser3}`)
@@ -967,7 +989,7 @@ describe("removeFromGroup", () => {
     expect(errorMessage).toBe(true)
   });
 
-  test('I11: empty emails -> return a 400 status with the error message', async () => {
+  test('I12: empty emails -> return a 400 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -977,7 +999,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("One or more emails are empty strings")
   });
 
-  test('I12: missing emails -> return a 400 status with the error message', async () => {
+  test('I13: missing emails -> return a 400 status with the error message', async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -987,7 +1009,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("The request body does not contain all the necessary attributes")
   });
 
-  test("I13: no valid emails  -> return 400 status with the error message", async () => {
+  test("I14: no valid emails  -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -997,7 +1019,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("One or more emails are not in a valid format")
   });
 
-  test("I14: group not found -> return 400 status with the error message", async () => {
+  test("I15: group not found -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/a/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
@@ -1006,7 +1028,7 @@ describe("removeFromGroup", () => {
     expect(response.status).toBe(401)
   });
 
-  test("I15: only one member in the group -> return 400 status with the error message", async () => {
+  test("I16: only one member in the group -> return 400 status with the error message", async () => {
     await Group.deleteMany({})
 
     await Group.insertMany({
@@ -1025,7 +1047,7 @@ describe("removeFromGroup", () => {
     expect(response.body.error).toBe("The group contains only one member")
   });
 
-  test("I16: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
+  test("I17: all the members' email either do not exist or are not in the group -> return 400 status with the error message", async () => {
     const response = await request(app)
       .patch("/api/groups/family/remove")
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)

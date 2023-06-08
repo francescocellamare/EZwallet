@@ -5,8 +5,21 @@ import jwt from 'jsonwebtoken';
 const bcrypt = require("bcryptjs")
 import mongoose, { Model } from 'mongoose';
 import dotenv from 'dotenv';
+import { Group } from '../models/User.js';
+import { transactions } from '../models/model';
+import { categories } from '../models/model';
 
 dotenv.config();
+
+afterEach(async () => {
+  jest.clearAllMocks(); 
+  jest.resetAllMocks(); 
+
+  await User.deleteMany();
+  await Group.deleteMany();
+  await transactions.deleteMany();
+  await categories.deleteMany();
+})
 
 beforeAll(async () => {
   const dbName = "testingDatabaseAuth";

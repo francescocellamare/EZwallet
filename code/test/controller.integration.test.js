@@ -7,6 +7,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+
+
+
+
+
 beforeAll(async () => {
 
     const dbName = "test";
@@ -24,8 +29,9 @@ afterAll(async () => {
     await mongoose.connection.close();
 });
 
-beforeEach(async () => {
+afterEach(async () => {
     jest.clearAllMocks(); 
+    jest.resetAllMocks(); 
 
     await User.deleteMany();
     await Group.deleteMany();

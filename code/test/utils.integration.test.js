@@ -3,6 +3,20 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import mongoose, { Model } from 'mongoose';
 import { User, Group } from '../models/User.js';
+import { transactions } from '../models/model';
+import { categories } from '../models/model';
+
+afterEach(async () => {
+    jest.clearAllMocks(); 
+    jest.resetAllMocks(); 
+
+    await User.deleteMany();
+    await Group.deleteMany();
+    await transactions.deleteMany();
+    await categories.deleteMany();
+})
+
+
 
 describe("verifyAuth", () => { 
     const adminAccessTokenValid = jwt.sign({

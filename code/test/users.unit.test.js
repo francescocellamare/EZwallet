@@ -19,14 +19,8 @@ jest.mock('../models/User.js');
 jest.mock('../models/model.js');
 
 beforeEach(() => {
-  User.find.mockClear();
-  User.prototype.save.mockClear();
-  transactions.find.mockClear();
-  transactions.deleteOne.mockClear();
-  transactions.aggregate.mockClear();
-  transactions.prototype.save.mockClear();
-
   jest.clearAllMocks();
+  jest.resetAllMocks();
 });
 
 
@@ -55,6 +49,7 @@ describe("getUsers", () => {
   );
   afterEach(() => {
 	jest.clearAllMocks();
+	
   })
 
 
@@ -150,6 +145,7 @@ describe("getUser", () => {
 
   afterEach(() => {
 	jest.clearAllMocks();
+	jest.resetAllMocks();
   })
 
 
@@ -191,11 +187,11 @@ describe("getUser", () => {
 	//     cause:"Authorized"
 	//   }
 	// ))
-	// jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
-	//   {authorized: true,
-	//     cause:"Authorized"
-	//   }
-	// ))
+	 jest.spyOn(utils, "verifyAuthUser").mockImplementation(()=>(
+	   {authorized: true,
+	     cause:"Authorized"
+	   }
+	 ))
 	// jest.spyOn(User, "findOne").mockImplementation(()=> null);
 
 	await getUser(mockReq, mockResp);
@@ -1190,7 +1186,8 @@ describe("getGroups", () => {
 	}
   );
   afterEach(() => {
-	jest.clearAllMocks();
+	
+	jest.resetAllMocks();
   })
 
 
@@ -1210,7 +1207,7 @@ describe("getGroups", () => {
 		cause: "Authorized"
 	  }
 	));
-	jest.spyOn(User, "find").mockImplementation(() => []);
+	jest.spyOn(Group, "find").mockImplementation(() => []);
 	await getGroups(mockReq, mockResp);
 
 	expect(mockResp.status).toHaveBeenCalledWith(200)
