@@ -153,32 +153,32 @@
 |  getUser I2| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne  | integration | WB statement coverage|
 |  getUser I3| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne | integration | WB statement coverage|
 |  getUser I4| getUsers, User.findOne | integration | WB statement coverage|
-|   createGroup I1             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
-|   createGroup I2             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
-|   createGroup I3             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
-|   createGroup I4             | createGroup, verifyAuth, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
-|   createGroup I5             | createGroup, verifyAuth, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
-|   createGroup I6             | createGroup, verifyAuth, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
-|   createGroup I7             | createGroup, verifyAuth, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
-|   createGroup I8             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
-|   createGroup I9             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
-|   createGroup I10            | createGroup, verifyAuth, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
+|   createGroup I1             | createGroup, verifyAuthSimple                               |integration|BB/ eq partitioning  |
+|   createGroup I2             | createGroup, verifyAuthSimple                               |integration|BB/ eq partitioning  |
+|   createGroup I3             | createGroup, verifyAuthSimple                               |integration|BB/ eq partitioning  |
+|   createGroup I4             | createGroup, verifyAuthSimple, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
+|   createGroup I5             | createGroup, verifyAuthSimple, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
+|   createGroup I6             | createGroup, verifyAuthSimple, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
+|   createGroup I7             | createGroup, verifyAuthSimple, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
+|   createGroup I8             | createGroup, verifyAuthSimple                               |integration|BB/ eq partitioning  |
+|   createGroup I9             | createGroup, verifyAuthSimple                               |integration|BB/ eq partitioning  |
+|   createGroup I10            | createGroup, verifyAuthSimple, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
 | getGroups I1 | getGroups, verifyAuthAdmin, Groups.find | integration | BB/ eq partitioning|
 | getGroups I2 | getGroups, verifyAuthAdmin | integration | BB/ eq partitioning|
 | getGroup I1 | getGroup, verifyAuthAdmin, verifyAuthGroup, Group.findOne | integration | BB/ eq partitioning| 
 | getGroup I2 | getGroup, verifyAuthAdmin, verifyAuthGroup, Group.findOne | integration | BB/ eq partitioning| 
 | getGroup I3 | getGroup, verifyAuthAdmin, verifyAuthGroup | integration | BB/ eq partitioning| 
 | getGroup I4 | getGroup, verifyAuthAdmin, verifyAuthGroup, Group.findOne | integration | BB/ eq partitioning|
-|   addToGroup I1              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
-|   addToGroup I2              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
-|   addToGroup I3              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
-|   addToGroup I4              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
-|   addToGroup I5              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
-|   addToGroup I6              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
-|   addToGroup I7              | addToGroup, verifyAuth, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
-|   addToGroup I8              | addToGroup, verifyAuth, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
-|   addToGroup I9              | addToGroup, verifyAuth, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
-|   addToGroup I10             | addToGroup, verifyAuth, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
+|   addToGroup I1              | addToGroup, verifyAuthGroup, verifyAuthAdmin                                |integration|BB/ eq partitioning  |
+|   addToGroup I2              | addToGroup, verifyAuthGroup, verifyAuthAdmin                                |integration|BB/ eq partitioning  |
+|   addToGroup I3              | addToGroup, verifyAuthGroup, verifyAuthAdmin                                |integration|BB/ eq partitioning  |
+|   addToGroup I4              | addToGroup, verifyAuthGroup, verifyAuthAdmin                                |integration|BB/ eq partitioning  |
+|   addToGroup I5              | addToGroup, verifyAuthGroup, verifyAuthAdmin                                |integration|BB/ eq partitioning  |
+|   addToGroup I6              | addToGroup, verifyAuthGroup, verifyAuthAdmin                                |integration|BB/ eq partitioning  |
+|   addToGroup I7              | addToGroup, verifyAuthGroup, verifyAuthAdmin, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
+|   addToGroup I8              | addToGroup, verifyAuthGroup, verifyAuthAdmin, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
+|   addToGroup I9              | addToGroup, verifyAuthGroup, verifyAuthAdmin, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
+|   addToGroup I10             | addToGroup, verifyAuthGroup, verifyAuthAdmin, Group.findOne, User.findOne   |integration|BB/ eq partitioning  |
 |   removeFromGroup I1| removeFromGroup, verifyAuthAdmin, Group.findOne, User.findOne, Group.updateOne  |integration|BB/ eq partitioning|integration|BB/ eq partitioning|
 |   removeFromGroup I2| removeFromGroup, verifyAuthAdmin |integration|BB/ eq partitioning|
 |   removeFromGroup I3| removeFromGroup, verifyAuthAdmin  |integration|BB/ eq partitioning||   removeFromGroup I4| |integration|BB/ eq partitioning|
@@ -195,6 +195,7 @@
 |   removeFromGroup I14|  removeFromGroup, verifyAuthGroup, Group.findOne |integration|BB/ eq partitioning|
 |   removeFromGroup I15| removeFromGroup, verifyAuthGroup, Group.findOne |integration|BB/ eq partitioning|
 |   removeFromGroup I16| removeFromGroup, verifyAuthGroup, Group.findOne, User.findOne |integration|BB/ eq partitioning| 
+|   removeFromGroup I17| removeFromGroup, verifyAuthGroup, Group.findOne, User.findOne |integration|BB/ eq partitioning| 
 |deleteUser I1| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne| integration | BB/ eq partitioning|
 |deleteUser I2| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne, Group.deleteOne, group.save | integration | BB/ eq partitioning|
 |deleteUser I3| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne | integration | BB/ eq partitioning|
@@ -289,9 +290,9 @@
 |   createTransaction I10|createTransaction, verifyAuthUser |integration|BB/ eq partitioning|
 |   createTransaction I11|createTransaction, verifyAuthUser, categories.countDocuments |integration|BB/ eq partitioning|
 |   createTransaction I12|createTransaction, verifyAuthUser, categories.countDocuments, User.countDocuments  |integration|BB/ eq partitioning|
-|   getAllTransactions I1      | getAllTransactions, verifyAuth, transactions.aggregate|integration|WB statement coverage|
-|   getAllTransactions I2      | getAllTransactions, verifyAuth, transactions.aggregate|integration|WB statement coverage|
-|   getAllTransactions I3      | getAllTransactions, verifyAuth                        |integration|WB statement coverage|
+|   getAllTransactions I1      | getAllTransactions, verifyAuthAdmin, transactions.aggregate|integration|WB statement coverage|
+|   getAllTransactions I2      | getAllTransactions, verifyAuthAdmin, transactions.aggregate|integration|WB statement coverage|
+|   getAllTransactions I3      | getAllTransactions, verifyAuthAdmin                        |integration|WB statement coverage|
 |   verifyAuth U1              | verifyAuth                                            |unit       |WB statement coverage|
 |   verifyAuth U2              | verifyAuth                                            |unit       |WB statement coverage|
 |   verifyAuth U3              | verifyAuth                                            |unit       |WB statement coverage|
@@ -467,7 +468,7 @@
 |FR22 getGroups| getGroups U1-U4 , getGroups I1-I2|
 |FR23 getGroup | getGroup U1-U4, getGroup I1-I4|
 |FR24 addToGroup| addToGroup U1-U11 , addToGroup I1-I10|
-|FR26 removeFromGroup| removeFromGroup U1-U11 , I1-I16|
+|FR26 removeFromGroup| removeFromGroup U1-U11 , I1-I17|
 |FR28 deleteGroup | deleteGroup deleteGroup U1-U6 , I1-I5|   
 |FR3  Manage transactions |
 |   FR31 createTransaction| createTransaction U1-U13 , createTransaction I1-I12 |    
