@@ -1472,7 +1472,7 @@ describe("deleteTransactions", () => {
         expect(response.body.error).toBe("input _ids are not valid");
     });
 
-    test("I4 : Should return an error indicating that the request body does not contain all the necessary values", async () => {      
+    test("I4 : Should return an error indicating that at least one of the transactions don't exist", async () => {      
         const response = await request(app)
             .delete("/api/transactions")     
             .set("Cookie", `accessToken=${test_tokens[2]};refreshToken=${test_tokens[2]}`)

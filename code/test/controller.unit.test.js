@@ -1266,6 +1266,13 @@ describe("getTransactionsByUser", () => {
             cause: "Authorized"
         });
 
+        jest.spyOn(utils, "handleAmountFilterParams").mockReturnValue({
+            amount: { dummyOp: "dummyVal" }
+        });
+        jest.spyOn(utils, "handleDateFilterParams").mockReturnValue({
+            date: { dummyOp: "dummyVal" }
+        });
+
         jest.spyOn(User, "countDocuments").mockResolvedValue(1);
         jest.spyOn(transactions, "aggregate").mockResolvedValue([
             { username: "dummy_user_1", type: "testCategory", date: "test-date", amount: 0, category: [{ color: "blue" }] },
@@ -1275,6 +1282,8 @@ describe("getTransactionsByUser", () => {
         await getTransactionsByUser(req, res);
 
         expect(utils.verifyAuthUser).toHaveBeenCalled();
+        expect(utils.handleDateFilterParams).toHaveBeenCalled();
+        expect(utils.handleAmountFilterParams).toHaveBeenCalled();
         expect(User.countDocuments).toHaveBeenCalled();
         expect(transactions.aggregate).toHaveBeenCalledWith([
             { $match: { $and: [{ amount: { dummyOp: "dummyVal" } }, { date: { dummyOp: "dummyVal" } }, { username: "dummy_user_1" }] } },
@@ -1301,6 +1310,13 @@ describe("getTransactionsByUser", () => {
             cause: "Authorized"
         });
 
+        jest.spyOn(utils, "handleAmountFilterParams").mockReturnValue({
+            amount: { dummyOp: "dummyVal" }
+        });
+        jest.spyOn(utils, "handleDateFilterParams").mockReturnValue({
+            date: { dummyOp: "dummyVal" }
+        });
+
         jest.spyOn(User, "countDocuments").mockResolvedValue(1);
         jest.spyOn(transactions, "aggregate").mockResolvedValue([]);
 
@@ -1308,6 +1324,8 @@ describe("getTransactionsByUser", () => {
 
         expect(utils.verifyAuthUser).toHaveBeenCalled();
         expect(User.countDocuments).toHaveBeenCalled();
+        expect(utils.handleDateFilterParams).toHaveBeenCalled();
+        expect(utils.handleAmountFilterParams).toHaveBeenCalled();
         expect(transactions.aggregate).toHaveBeenCalledWith([
             { $match: { $and: [{ amount: { dummyOp: "dummyVal" } }, { date: { dummyOp: "dummyVal" } }, { username: "dummy_user_1" }] } },
             { $lookup: { from: "categories", localField: "type", foreignField: "type", as: "category" } },
