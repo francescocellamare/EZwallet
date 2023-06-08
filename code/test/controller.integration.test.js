@@ -570,7 +570,7 @@ describe("createTransaction", () => {
     });
 })
 
-describe.only("getAllTransactions", () => { 
+describe("getAllTransactions", () => { 
     const admin = {
         username : 'admin',
         email: 'admin@example.com',
