@@ -490,7 +490,7 @@
 
 ## Coverage white box
 
-![Login page](code/images/Log%20in%20Page.png "login Page")
+![coverage](images/coverage.png "coverage")
 
 
 
