@@ -19,7 +19,7 @@
 
 # Dependency graph 
 
-     <report the here the dependency graph of EzWallet>
+![DependencyGraph](./images/dependencyGraph.jpg)
      
 # Integration approach
 
