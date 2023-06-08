@@ -39,7 +39,7 @@ describe("verifyAuth", () => {
     const testerRefreshTokenExpired = testerAccessTokenExpired
     const adminRefreshTokenExpired = adminAccessTokenExpired
 
-    test('T1: no cookies added to the request', () => {  
+    test('I1: no cookies added to the request', () => {  
         const req = {
             cookies: {
                 accessToken: undefined,
@@ -55,7 +55,7 @@ describe("verifyAuth", () => {
 
     });
 
-    test('T2: verify given accessToken but some informations are missing (ex: role)', () => {
+    test('I2: verify given accessToken but some informations are missing (ex: role)', () => {
         const testerAccessTokenNotValid = jwt.sign({
             email: "tester@test.com",
             username: "tester"
@@ -78,7 +78,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(false)).toBe(true)
     }) 
 
-    test('T3: verify given accessToken but some informations are missing (ex: role for accessToken)', () => {
+    test('I3: verify given accessToken but some informations are missing (ex: role for accessToken)', () => {
         const testerAccessTokenNotValid = jwt.sign({
             email: "tester@test.com",
             username: "tester"
@@ -105,7 +105,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(false)).toBe(true)
     }) 
 
-    test('T4: verify given accessToken and refreshToken does not match (email is different)', () => {
+    test('I4: verify given accessToken and refreshToken does not match (email is different)', () => {
         const testerAccessTokenNotValid = jwt.sign({
             email: "tester@test.com",
             username: "tester"
@@ -131,7 +131,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(false)).toBe(true)
     }) 
 
-    test('T5: verify given accessToken and refreshToken does not match (username is different)', () => {
+    test('I5: verify given accessToken and refreshToken does not match (username is different)', () => {
         const testerAccessTokenNotValid = jwt.sign({
             email: "tester@test.com",
             username: "tester"
@@ -157,7 +157,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(false)).toBe(true)
     }) 
 
-    test('T6: authentication as user and requested username matches', () => {
+    test('I6: authentication as user and requested username matches', () => {
 
         const req = {
             cookies: {
@@ -175,7 +175,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(true)).toBe(true)
     }) 
 
-    test('T7: authentication as user and requested username does not match', () => {
+    test('I7: authentication as user and requested username does not match', () => {
 
         const req = {
             cookies: {
@@ -193,7 +193,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(false)).toBe(true)
     }) 
 
-    test('T8: authentication as admin and user is an admin', () => {
+    test('I8: authentication as admin and user is an admin', () => {
 
         const req = {
             cookies: {
@@ -210,7 +210,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(true)).toBe(true)
     }) 
 
-    test('T9: authentication as admin and user is not an admin', () => {
+    test('I9: authentication as admin and user is not an admin', () => {
 
         const req = {
             cookies: {
@@ -227,7 +227,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(false)).toBe(true)
     }) 
 
-    test('T10: authentication as group and user is not into the group', () => {
+    test('I10: authentication as group and user is not into the group', () => {
 
         const req = {
             cookies: {
@@ -249,7 +249,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(false)).toBe(true)
     }) 
 
-    test('T11: authentication as group and user is into the group', () => {
+    test('I11: authentication as group and user is into the group', () => {
 
         const req = {
             cookies: {
@@ -272,7 +272,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(true)).toBe(true)
     }) 
 
-    test('T12: authentication as user and requested username matches but accessToken is expired', () => {
+    test('I12: authentication as user and requested username matches but accessToken is expired', () => {
 
         const req = {
             cookies: {
@@ -296,7 +296,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(true)).toBe(true)
     }) 
 
-    test('T13: authentication as user and requested username does not match but accessToken is expired', () => {
+    test('I13: authentication as user and requested username does not match but accessToken is expired', () => {
 
         const req = {
             cookies: {
@@ -320,7 +320,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(false)).toBe(true)
     }) 
 
-    test('T14: authentication as admin and user is an admin but the accessToken is expired', () => {
+    test('I14: authentication as admin and user is an admin but the accessToken is expired', () => {
 
         const req = {
             cookies: {
@@ -343,7 +343,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(true)).toBe(true)
     }) 
 
-    test('T14: authentication as admin and user is not an admin but the accessToken is expired', () => {
+    test('I14: authentication as admin and user is not an admin but the accessToken is expired', () => {
 
         const req = {
             cookies: {
@@ -366,7 +366,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(false)).toBe(true)
     }) 
 
-    test('T15: authentication as group and user is not into the group and the accessToken is expired', () => {
+    test('I15: authentication as group and user is not into the group and the accessToken is expired', () => {
 
         const req = {
             cookies: {
@@ -394,7 +394,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(false)).toBe(true)
     }) 
 
-    test('T16: authentication as group and user is into the group and the accessToken is expired', () => {
+    test('I16: authentication as group and user is into the group and the accessToken is expired', () => {
 
         const req = {
             cookies: {
@@ -423,7 +423,7 @@ describe("verifyAuth", () => {
         expect(Object.values(response).includes(true)).toBe(true)
     }) 
 
-    test('T17: accessToken and refreshToken are both expired', () => {
+    test('I17: accessToken and refreshToken are both expired', () => {
         const req = {
             cookies: {
                 accessToken: testerAccessTokenExpired,
@@ -456,7 +456,7 @@ describe('verifyAuthSimple', () => {
 
     const testerRefreshTokenValid = testerAccessTokenValid
 
-    test('T1: accessToken and/or refreshToken are not defined', () => {
+    test('I1: accessToken and/or refreshToken are not defined', () => {
         const req = {
             cookies: {
 
@@ -473,7 +473,7 @@ describe('verifyAuthSimple', () => {
         expect(Object.values(response).includes(false)).toBe(true)
     })
 
-    test('T2: accessToken and refreshToken are both defined', () => {
+    test('I2: accessToken and refreshToken are both defined', () => {
         
         const req = {
             cookies: {
@@ -503,7 +503,7 @@ describe('verifyAuthUser', () => {
 
     const testerRefreshTokenValid = testerAccessTokenValid
 
-    test('T1: accessToken and/or refreshToken are not defined', () => {
+    test('I1: accessToken and/or refreshToken are not defined', () => {
         const req = {
             cookies: {
 
@@ -520,7 +520,7 @@ describe('verifyAuthUser', () => {
         expect(Object.values(response).includes(false)).toBe(true)
     })
 
-    test('T2: username is not defined', () => {
+    test('I2: username is not defined', () => {
         const req = {
             cookies: {
 
@@ -537,7 +537,7 @@ describe('verifyAuthUser', () => {
         expect(Object.values(response).includes(false)).toBe(true)
     })
 
-    test('T3: accessToken and refreshToken are both defined as well the username', () => {
+    test('I3: accessToken and refreshToken are both defined as well the username', () => {
         
         const req = {
             cookies: {
@@ -567,7 +567,7 @@ describe('verifyAuthAdmin', () => {
 
     const adminRefreshTokenValid = adminAccessTokenValid
 
-    test('T1: accessToken and/or refreshToken are not defined', () => {
+    test('I1: accessToken and/or refreshToken are not defined', () => {
         const req = {
             cookies: {
 
@@ -584,7 +584,7 @@ describe('verifyAuthAdmin', () => {
         expect(Object.values(response).includes(false)).toBe(true)
     })
 
-    test('T2: accessToken and refreshToken are both defined', () => {
+    test('I2: accessToken and refreshToken are both defined', () => {
         const req = {
             cookies: {
                 accessToken: adminAccessTokenValid,
@@ -677,7 +677,7 @@ describe('verifyAuthGroup', () => {
 
 
 
-    test('T1: accessToken and/or refreshToken are not defined', async () => {
+    test('I1: accessToken and/or refreshToken are not defined', async () => {
         const req = {
             cookies: {
 
@@ -694,7 +694,7 @@ describe('verifyAuthGroup', () => {
         expect(Object.values(response).includes(false)).toBe(true)
     })
 
-    test('T2: group name is not defined', async () => {
+    test('I2: group name is not defined', async () => {
         const req = {
             cookies: {
                 accessToken: adminAccessTokenValid,
@@ -712,7 +712,7 @@ describe('verifyAuthGroup', () => {
         expect(Object.values(response).includes(false)).toBe(true)
     })
 
-    test('T3: group does not exist', async () => {
+    test('I3: group does not exist', async () => {
         const req = {
             cookies: {
                 accessToken: adminAccessTokenValid,
@@ -730,7 +730,7 @@ describe('verifyAuthGroup', () => {
         expect(Object.values(response).includes(false)).toBe(true)
     })
 
-    test('T4: group does exist', async () => {
+    test('I4: group does exist', async () => {
         const req = {
             cookies: {
                 accessToken: adminAccessTokenValid,

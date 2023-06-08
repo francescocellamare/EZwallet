@@ -615,7 +615,7 @@ describe("getAllTransactions", () => {
         await categories.create(categoriesList)
     })
 
-    test('T1: admin is correctly authenticated and obtains the transactions', async () => {
+    test('I1: admin is correctly authenticated and obtains the transactions', async () => {
         const response = await request(app)
             .get("/api/transactions")
             .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
@@ -648,7 +648,7 @@ describe("getAllTransactions", () => {
         expect(response.body.data).toEqual(expectedData)
     });
 
-    test('T2: admin is correctly authenticated and obtains empty list of transactions', async () => {
+    test('I2: admin is correctly authenticated and obtains empty list of transactions', async () => {
         await transactions.deleteMany({})
         const response = await request(app)
             .get("/api/transactions")
@@ -658,7 +658,7 @@ describe("getAllTransactions", () => {
         expect(response.body.data.length).toBe(0)
     });
 
-    test('T3: admin is not correctly authenticated', async () => {
+    test('I3: admin is not correctly authenticated', async () => {
         refreshToken = 'thisIsAFakeRefreshToken'
         const response = await request(app)
             .get("/api/transactions")

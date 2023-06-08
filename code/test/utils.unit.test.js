@@ -9,7 +9,7 @@ beforeEach(()=>{
 
 
 describe("handleDateFilterParams", () => { 
-    test('T1: any parameter is defined', () => {
+    test('U1: any parameter is defined', () => {
         const mockReq = {
             query: {
                 
@@ -24,7 +24,7 @@ describe("handleDateFilterParams", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test.failing('T2: date and from are used together', () => {
+    test.failing('U2: date and from are used together', () => {
         const mockReq = {
             query: {
                 date: '2023-04-30',
@@ -38,7 +38,7 @@ describe("handleDateFilterParams", () => {
         const response = handleDateFilterParams(mockReq, mockRes)
     });
 
-    test.failing('T3: date and upTo are used together', () => {
+    test.failing('U3: date and upTo are used together', () => {
         const mockReq = {
             query: {
                 date: '2023-04-30',
@@ -52,7 +52,7 @@ describe("handleDateFilterParams", () => {
         const response = handleDateFilterParams(mockReq, mockRes)
     });
 
-    test.failing('T4: date invalid format', () => {
+    test.failing('U4: date invalid format', () => {
         const mockReq = {
             query: {
                 date: '30-04-2023'
@@ -65,7 +65,7 @@ describe("handleDateFilterParams", () => {
         const response = handleDateFilterParams(mockReq, mockRes)
     });
 
-    test.failing('T5: from invalid format', () => {
+    test.failing('U5: from invalid format', () => {
         const mockReq = {
             query: {
                 from: '30-04-2023'
@@ -78,7 +78,7 @@ describe("handleDateFilterParams", () => {
         const response = handleDateFilterParams(mockReq, mockRes)
     });
   
-    test.failing('T6: upTo invalid format', () => {
+    test.failing('U6: upTo invalid format', () => {
         const mockReq = {
             query: {
                 upTo: '30-04-2023'
@@ -91,7 +91,7 @@ describe("handleDateFilterParams", () => {
         const response = handleDateFilterParams(mockReq, mockRes)
     });
 
-    test('T7: date valid format without other parameters', () => {
+    test('U7: date valid format without other parameters', () => {
         const mockReq = {
             query: {
                 date: '2023-04-30'
@@ -111,7 +111,7 @@ describe("handleDateFilterParams", () => {
         expect(response).toEqual(expectedRespone)
     });
     
-    test('T8: from is the only defined parameter', () => {
+    test('U8: from is the only defined parameter', () => {
         const mockReq = {
             query: {
                 from: '2023-04-30'
@@ -130,7 +130,7 @@ describe("handleDateFilterParams", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T9: upTo is the only defined parameter', () => {
+    test('U9: upTo is the only defined parameter', () => {
         const mockReq = {
             query: {
                 upTo: '2023-04-30'
@@ -149,7 +149,7 @@ describe("handleDateFilterParams", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T10: from and upTo are the only defined parameters', () => {
+    test('U10: from and upTo are the only defined parameters', () => {
         const mockReq = {
             query: {
                 from: '2023-03-30',
@@ -172,7 +172,7 @@ describe("handleDateFilterParams", () => {
 })
 
 describe("verifyAuth", () => { 
-    test('T1: no cookies added to the request', () => {
+    test('U1: no cookies added to the request', () => {
         const mockReq = {
             cookies: {
                 refreshToken: null,
@@ -191,7 +191,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T2: verify given accessToken but some informations are missing (only one: role)', () => {
+    test('U2: verify given accessToken but some informations are missing (only one: role)', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -225,7 +225,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T3: verify given accessToken but some informations are missing (two of them: role, username)', () => {
+    test('U3: verify given accessToken but some informations are missing (two of them: role, username)', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -258,7 +258,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T4: verify given accessToken but some informations are missing (whole object)', () => {
+    test('U4: verify given accessToken but some informations are missing (whole object)', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -290,7 +290,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T5: verify given refreshToken but some informations are missing (whole object)', () => {
+    test('U5: verify given refreshToken but some informations are missing (whole object)', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -322,7 +322,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T6: verify given accessToken and refreshToken does not match (email is different)', () => {
+    test('U6: verify given accessToken and refreshToken does not match (email is different)', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -357,7 +357,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T7: verify given accessToken and refreshToken does not match (username is different)', () => {
+    test('U7: verify given accessToken and refreshToken does not match (username is different)', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -392,7 +392,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T8: verify given accessToken and refreshToken does not match (role is different)', () => {
+    test('U8: verify given accessToken and refreshToken does not match (role is different)', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -427,7 +427,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T9: authentication as user but requested username does not match', () => {
+    test('U9: authentication as user but requested username does not match', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -463,7 +463,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T10: authentication as user and requested username matches', () => {
+    test('U10: authentication as user and requested username matches', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -499,7 +499,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T11: authentication as admin and user is not an admin', () => {
+    test('U11: authentication as admin and user is not an admin', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -534,7 +534,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T12: authentication as group and user is not into the group', () => {
+    test('U12: authentication as group and user is not into the group', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -574,7 +574,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T13: authentication as group and user is into the group', () => {
+    test('U13: authentication as group and user is into the group', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -615,7 +615,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test.failing('T14: info object is not defined', () => {
+    test.failing('U14: info object is not defined', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -645,7 +645,7 @@ describe("verifyAuth", () => {
         verifyAuth(req, res, info).toThrow()
     });
     
-    test('T15: authentication as user but requested username does not match and accessToken is expired', () => {
+    test('U15: authentication as user but requested username does not match and accessToken is expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -681,7 +681,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T16: authentication as user and requested username does not matches and accessToken is expired', () => {
+    test('U16: authentication as user and requested username does not matches and accessToken is expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -719,7 +719,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T17: authentication as user and requested username does matches and accessToken is expired', () => {
+    test('U17: authentication as user and requested username does matches and accessToken is expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -757,7 +757,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T18: authentication as admin and user is not an admin and accessToken is expired', () => {
+    test('U18: authentication as admin and user is not an admin and accessToken is expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -793,7 +793,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T19: authentication as group and user is not into the group and accessToken is expired ', () => {
+    test('U19: authentication as group and user is not into the group and accessToken is expired ', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -834,7 +834,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T20: authentication as group and user is into the group and accessToken is expired', () => {
+    test('U20: authentication as group and user is into the group and accessToken is expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -876,7 +876,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T21: authentication as group and user is into the group and accessToken is expired', () => {
+    test('U21: authentication as group and user is into the group and accessToken is expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -918,7 +918,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T22: accessToken and refreshToken are both expired', () => {
+    test('U22: accessToken and refreshToken are both expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -952,7 +952,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T23: accessToken is expired and a generic error is thrown', () => {
+    test('U23: accessToken is expired and a generic error is thrown', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -986,7 +986,7 @@ describe("verifyAuth", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T24: generic error is thrown and accessToken is not expired', () => {
+    test('U24: generic error is thrown and accessToken is not expired', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken',
@@ -1017,7 +1017,7 @@ describe("verifyAuth", () => {
 })
 
 describe("handleAmountFilterParams", () => { 
-    test('T1: min and max are not defined', () => {
+    test('U1: min and max are not defined', () => {
         const mockReq = {
             query: {
                 min: undefined,
@@ -1033,7 +1033,7 @@ describe("handleAmountFilterParams", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T2: only max is defined', () => {
+    test('U2: only max is defined', () => {
         const mockReq = {
             query: {
                 max: 20
@@ -1052,7 +1052,7 @@ describe("handleAmountFilterParams", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test('T3: only min is defined', () => {
+    test('U3: only min is defined', () => {
         const mockReq = {
             query: {
                 min: 12
@@ -1071,7 +1071,7 @@ describe("handleAmountFilterParams", () => {
         expect(response).toEqual(expectedRespone)
     });
 
-    test.failing('T4: min is not a number', () => {
+    test.failing('U4: min is not a number', () => {
         const mockReq = {
             query: {
                 min: 'notAnumber',
@@ -1087,7 +1087,7 @@ describe("handleAmountFilterParams", () => {
         expect(response).toThrow(Error)
     });
 
-    test.failing('T5: max is not a number', () => {
+    test.failing('U5: max is not a number', () => {
         const mockReq = {
             query: {
                 min: 12,
@@ -1105,7 +1105,7 @@ describe("handleAmountFilterParams", () => {
 })
 
 describe("verifyAuthSimple", () => { 
-    test('T1: accessToken is not defined', () => {
+    test('U1: accessToken is not defined', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken'
@@ -1120,7 +1120,7 @@ describe("verifyAuthSimple", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T2: refreshToken is not defined', () => {
+    test('U2: refreshToken is not defined', () => {
         const mockReq = {
             cookies: {
                 accessToken: 'accesssToken'
@@ -1135,7 +1135,7 @@ describe("verifyAuthSimple", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T3: accessToken and refreshToken are not defined', () => {
+    test('U3: accessToken and refreshToken are not defined', () => {
         const mockReq = {
             cookies: {
             }
@@ -1149,7 +1149,7 @@ describe("verifyAuthSimple", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T4: both tokens are defined', () => {
+    test('U4: both tokens are defined', () => {
         const mockReq = {
             cookies: {
                 accessToken: 'accesssToken',
@@ -1166,7 +1166,7 @@ describe("verifyAuthSimple", () => {
 })
 
 describe("verifyAuthUser", () => { 
-    test('T1: accessToken is not defined', () => {
+    test('U1: accessToken is not defined', () => {
         const username = 'usertest'
         const mockReq = {
             cookies: {
@@ -1182,7 +1182,7 @@ describe("verifyAuthUser", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T2: refreshToken is not defined', () => {
+    test('U2: refreshToken is not defined', () => {
         const username = 'usertest'
         const mockReq = {
             cookies: {
@@ -1198,7 +1198,7 @@ describe("verifyAuthUser", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T3: accessToken and refreshToken are not defined', () => {
+    test('U3: accessToken and refreshToken are not defined', () => {
         const username = 'usertest'
         const mockReq = {
             cookies: {
@@ -1213,7 +1213,7 @@ describe("verifyAuthUser", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T4: both tokens are defined as well username', () => {
+    test('U4: both tokens are defined as well username', () => {
         const username = 'usertest'
         const mockReq = {
             cookies: {
@@ -1229,7 +1229,7 @@ describe("verifyAuthUser", () => {
         expect(response).toBeDefined()
     })
 
-    test('T5: both tokens are defined but username is not', () => {
+    test('U5: both tokens are defined but username is not', () => {
         const username = undefined
         const mockReq = {
             cookies: {
@@ -1248,7 +1248,7 @@ describe("verifyAuthUser", () => {
 })
 
 describe("verifyAuthAdmin", () => { 
-    test('T1: accessToken is not defined', () => {
+    test('U1: accessToken is not defined', () => {
         const mockReq = {
             cookies: {
                 refreshToken: 'refreshToken'
@@ -1263,7 +1263,7 @@ describe("verifyAuthAdmin", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T2: refreshToken is not defined', () => {
+    test('U2: refreshToken is not defined', () => {
         const mockReq = {
             cookies: {
                 accessToken: 'accesssToken'
@@ -1278,7 +1278,7 @@ describe("verifyAuthAdmin", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T3: accessToken and refreshToken are not defined', () => {
+    test('U3: accessToken and refreshToken are not defined', () => {
         const mockReq = {
             cookies: {
             }
@@ -1292,7 +1292,7 @@ describe("verifyAuthAdmin", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T4: both tokens are defined', () => {
+    test('U4: both tokens are defined', () => {
         const mockReq = {
             cookies: {
                 accessToken: 'accesssToken',
@@ -1309,7 +1309,7 @@ describe("verifyAuthAdmin", () => {
 })
 
 describe("verifyAuthGroup", () => { 
-    test('T1: accessToken is not defined', async () => {
+    test('U1: accessToken is not defined', async () => {
         const group = 'groupTest'
         const mockReq = {
             cookies: {
@@ -1325,7 +1325,7 @@ describe("verifyAuthGroup", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T2: refreshToken is not defined', async () => {
+    test('U2: refreshToken is not defined', async () => {
         const group = 'groupTest'
         const mockReq = {
             cookies: {
@@ -1341,7 +1341,7 @@ describe("verifyAuthGroup", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T3: accessToken and refreshToken are not defined', async () => {
+    test('U3: accessToken and refreshToken are not defined', async () => {
         const group = 'groupTest'
         const mockReq = {
             cookies: {
@@ -1356,7 +1356,7 @@ describe("verifyAuthGroup", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T4: both tokens are defined as well group', async () => {
+    test('U4: both tokens are defined as well group', async () => {
         const group = 'groupTest'
         const mockReq = {
             cookies: {
@@ -1381,7 +1381,7 @@ describe("verifyAuthGroup", () => {
         expect(response).toBeDefined()
     })
 
-    test('T5: both tokens are defined but group is not', async () => {
+    test('U5: both tokens are defined but group is not', async () => {
         const group = undefined
         const mockReq = {
             cookies: {
@@ -1398,7 +1398,7 @@ describe("verifyAuthGroup", () => {
         expect(response).toEqual(expectedRespone)
     })
 
-    test('T6: both tokens are defined as well group and any group is found', async () => {
+    test('U6: both tokens are defined as well group and any group is found', async () => {
         const group = 'groupTest'
         const mockReq = {
             cookies: {

@@ -912,7 +912,7 @@ describe("getAllTransactions", () => {
         jest.clearAllMocks()
     })
 
-    test('T1: get all transactions by all users but there are none -> should return an empty array', async () => {
+    test('U1: get all transactions by all users but there are none -> should return an empty array', async () => {
         const mockReq = {
             cookie: {
                 accessToken: 'accessoToken',
@@ -938,7 +938,7 @@ describe("getAllTransactions", () => {
         })
     });
 
-    test('T2: get all transactions by all users and there is at least one transaction -> should return a proper array of object', async () => {
+    test('U2: get all transactions by all users and there is at least one transaction -> should return a proper array of object', async () => {
         const mockReq = {}
         const mockRes = {
             status: jest.fn().mockReturnThis(),
@@ -1025,7 +1025,7 @@ describe("getAllTransactions", () => {
         })
     })
 
-    test('T3: transactions.aggregate() throws an error', async () => {
+    test('U3: transactions.aggregate() throws an error', async () => {
         const mockReq = {}
         const mockRes = {
             status: jest.fn().mockReturnThis(),
@@ -1046,7 +1046,7 @@ describe("getAllTransactions", () => {
         expect(mockRes.json).toHaveBeenCalledWith({ error: 'transactions aggregate error' })
     })
 
-    test('T4: admin is not authorized', async () => {
+    test('U4: admin is not authorized', async () => {
         const mockReq = {
             cookie: {
                 accessToken: 'accessoToken',
