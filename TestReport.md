@@ -431,16 +431,16 @@
 | getTransactionsByGroupByCategory I6 |verifyAuthGroup, Group.findOne, categories.findOne, transactions.aggregate|integration|BB/ eq partitioning|
 | getTransactionsByGroupByCategory I7 |verifyAuthGroup, Group.findOne, categories.findOne, transactions.aggregate|integration|BB/ eq partitioning|
 | deleteTransaction I1 |verifyAuthUser|integration|BB/ eq partitioning|
-| deleteTransaction I2 |verifyAuthUser, req.params.id, |integration|BB/ eq partitioning|
-| deleteTransaction I3 |verifyAuthUser, req.params.id, User.findOne|integration|BB/ eq partitioning|
-| deleteTransaction I4 |verifyAuthUser, req.params.id, User.findOne, transactions.findOne|integration|BB/ eq partitioning|
-| deleteTransaction I5 |verifyAuthUser, req.params.id, User.findOne, transactions.findOne, transactions.deleteOne|integration|BB/ eq partitioning|
-| deleteTransaction I6 |verifyAuthUser, req.params.id, User.findOne, transactions.findOne, transactions.deleteOne|integration|BB/ eq partitioning|
+| deleteTransaction I2 |verifyAuthUser, |integration|BB/ eq partitioning|
+| deleteTransaction I3 |verifyAuthUser, User.findOne|integration|BB/ eq partitioning|
+| deleteTransaction I4 |verifyAuthUser, User.findOne, transactions.findOne|integration|BB/ eq partitioning|
+| deleteTransaction I5 |verifyAuthUser, User.findOne, transactions.findOne, transactions.deleteOne|integration|BB/ eq partitioning|
+| deleteTransaction I6 |verifyAuthUser, User.findOne, transactions.findOne, transactions.deleteOne|integration|BB/ eq partitioning|
 | deleteTransactions I1 |verifyAuthAdmin|integration|BB/ eq partitioning|
-| deleteTransactions I2 |verifyAuthAdmin, req.params._id|integration|BB/ eq partitioning|
-| deleteTransactions I3 |verifyAuthAdmin, req.params._id|integration|BB/ eq partitioning|
-| deleteTransactions I4 |verifyAuthAdmin, req.params._id, transactions.find, result.map|integration|BB/ eq partitioning|
-| deleteTransactions I5 |verifyAuthAdmin, req.params._id, transactions.find, result.map, transactions.deleteMany|integration|BB/ eq partitioning|
+| deleteTransactions I2 |verifyAuthAdmin|integration|BB/ eq partitioning|
+| deleteTransactions I3 |verifyAuthAdmin|integration|BB/ eq partitioning|
+| deleteTransactions I4 |verifyAuthAdmin, transactions.find, result.map|integration|BB/ eq partitioning|
+| deleteTransactions I5 |verifyAuthAdmin, transactions.find, result.map, transactions.deleteMany|integration|BB/ eq partitioning|
 
 
 
@@ -489,7 +489,7 @@
 
 ## Coverage white box
 
-Report here the screenshot of coverage values obtained with jest-- coverage 
+![Login page](code/images/Log%20in%20Page.png "login Page")
 
 
 
