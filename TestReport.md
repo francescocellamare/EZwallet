@@ -23,17 +23,15 @@
      
 # Integration approach
 
-    <Write here the integration sequence you adopted, in general terms (top down, bottom up, mixed) and as sequence
-    (ex: step1: unit A, step 2: unit A+B, step 3: unit A+B+C, etc)> 
-    <Some steps may  correspond to unit testing (ex step1 in ex above)>
-    <One step will  correspond to API testing, or testing unit route.js>
-    
+    We adopted a bottom-up approach. We started by developing tests for infividual functions seperately (unit tests). Once we verified that all the tests run successfully, we moved to the integration testing phase to verify correct interaction between functions (correct arguments and return values). We followed the following steps :
 
+    step1 : unit tests for all functions, 
+    step2 : integration tests for utils functions (verifyAuthGroup/verifyAuthUser/verifyAuthAdmin + verifyAuth)
+    step3 : integration test for route + users/controllers/auth functions + utils functions
+
+    We skipped the step of testing integration between the route object and the controllers cause this part is handled by an external library (Express.js) so we expect it to function correctly. The same applies for database (mongooseJs) and jwt functions (jsonwebtoken)
 
 # Tests
-
-   <in the table below list the test cases defined For each test report the object tested, the test level (API, integration, unit) and the technique used to define the test case  (BB/ eq partitioning, BB/ boundary, WB/ statement coverage, etc)>   <split the table if needed>
-
 
 | Test case name | Object(s) tested | Test level | Technique used |
 |--|--|--|--|
