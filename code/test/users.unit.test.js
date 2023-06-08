@@ -1125,6 +1125,47 @@ describe("createGroup", () => {
 
     expect(mockRes.status).toHaveBeenCalledWith(400);
   });
+  test("U14: Network error -> return 500", async () => {
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      body: {
+        name: 'groupTest',
+        memberEmails: [
+          'mail1@mail.com',
+          'mail2@mail.com',
+          'alreadyInGroup@mail.com'
+        ]
+      }
+    }
+    const mockRes = {
+      locals: {
+        refreshedTokenMessage: "dummy message"
+      },
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    }
+    // authorized
+    const expectedResponeAuth = { authorized: true, cause: 'authorized' }
+    jest.spyOn(utils, "verifyAuthSimple").mockImplementation(() => expectedResponeAuth);
+
+    const myUserInfo = {
+      username: 'tester',
+      email: 'tester@mail.com',
+      role: 'Regular',
+      _id: 123
+    }
+
+    // user's email found
+    jest.spyOn(User, "findOne").mockImplementationOnce(()=> {throw new Error('server crash')});
+
+    await createGroup(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.json).toHaveBeenCalledWith({ error: 'server crash' });
+  })
 })
 
 
@@ -1856,6 +1897,53 @@ describe("addToGroup", () => {
       { email: 'mail1@mail.com' }
     ]
     expect(mockRes.json.mock.calls[0][0].data.group.members).toEqual(expectedDataRespone)
+  })
+
+  test('U11:  Network error ', async ()=>{
+    const mockReq = {
+      cookies: {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken'
+      },
+      params: {
+        name: 'testGroup'
+      },
+      body: {
+        emails: [
+          'mail1@mail.com',
+          'alreadyRegistered@mail.com'
+        ]
+      },
+      url: 'api/groups/testGroup/insert'
+    }
+    const mockRes = {
+      locals: {
+        refreshedTokenMessage: "dummy message"
+      },
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    }
+    const expectedResponeAuth = { authorized: true, cause: 'authorized' }
+    jest.spyOn(utils, 'verifyAuthAdmin').mockImplementation(() => expectedResponeAuth)
+
+    const fakeGroup = {
+      name: 'testGroup',
+      members: [
+        {
+          email: 'oldMember@mail.com',
+          _id: 123
+        },
+        {
+          email: 'anotherOldMember@mail.com',
+          _id: 321
+        }
+      ]
+    }
+    jest.spyOn(Group, 'findOne').mockImplementationOnce(()=>{throw new Error('server crash')})
+    await addToGroup(mockReq, mockRes)
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.json).toHaveBeenCalledWith({ error: 'server crash' });
+
   })
 })
 
