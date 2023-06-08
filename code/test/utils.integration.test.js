@@ -6,6 +6,23 @@ import { User, Group } from '../models/User.js';
 import { transactions } from '../models/model';
 import { categories } from '../models/model';
 
+dotenv.config();
+    beforeAll(async () => {
+    const dbName = "testingDatabaseUtils";
+    const url = `${process.env.MONGO_URI}/${dbName}`;
+
+    await mongoose.connect(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+    });
+
+    afterAll(async () => {
+        await mongoose.connection.db.dropDatabase();
+        await mongoose.connection.close();
+    });
+
+
 afterEach(async () => {
     jest.clearAllMocks(); 
     jest.resetAllMocks(); 
@@ -635,18 +652,7 @@ describe('verifyAuthGroup', () => {
         id: 123
     }, process.env.ACCESS_KEY, { expiresIn: '1y' })
 
-    const adminRefreshTokenValid = adminAccessTokenValid
-
-    dotenv.config();
-    beforeAll(async () => {
-    const dbName = "testingDatabaseUtils";
-    const url = `${process.env.MONGO_URI}/${dbName}`;
-
-    await mongoose.connect(url, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
-    });
+    const adminRefreshTokenValid = adminAccessTokenValid    
 
     beforeEach(async () => {
         const usersList = [
@@ -683,12 +689,6 @@ describe('verifyAuthGroup', () => {
         await User.create(usersList)
         await Group.create(fakeGroup)
     })
-
-    afterAll(async () => {
-        await mongoose.connection.db.dropDatabase();
-        await mongoose.connection.close();
-    });
-
 
 
     test('I1: accessToken and/or refreshToken are not defined', async () => {

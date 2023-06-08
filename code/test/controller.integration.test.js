@@ -570,16 +570,17 @@ describe("createTransaction", () => {
     });
 })
 
-describe("getAllTransactions", () => { 
+describe.only("getAllTransactions", () => { 
     const admin = {
         username : 'admin',
         email: 'admin@example.com',
         password: '123',
-        role: 'Admin'
+        role: 'Admin',
+        refreshToken : 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODYyNTM5NTUsImV4cCI6MTcxNzc4OTk1NywiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.vOPmYNFi8ZDTRIat2qgItBxkob4UWuAtjOHifBAYqSY'
     };
 
-    let refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU2MTQ0NTYsImV4cCI6MTcxNzE1MDQ1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpZCI6IjEyMyIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQWRtaW4ifQ.klwHb1h3VKeSDk6QtF8eJX6OWf6qvpa-zvZ4iy8W6aM'
-    let accessToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2ODU2MTQ0NTYsImV4cCI6MTcxNzE1MDQ1NiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpZCI6IjEyMyIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQWRtaW4ifQ.klwHb1h3VKeSDk6QtF8eJX6OWf6qvpa-zvZ4iy8W6aM'
+    let refreshToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODYyNTM5NTUsImV4cCI6MTcxNzc4OTk1NywiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.vOPmYNFi8ZDTRIat2qgItBxkob4UWuAtjOHifBAYqSY'
+    let accessToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIiLCJpYXQiOjE2ODYyNTM5NTUsImV4cCI6MTcxNzc4OTk1NywiYXVkIjoiIiwic3ViIjoiIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpZCI6ImR1bW15X2lkIiwicm9sZSI6IkFkbWluIn0.vOPmYNFi8ZDTRIat2qgItBxkob4UWuAtjOHifBAYqSY'
     
   
 
@@ -617,6 +618,7 @@ describe("getAllTransactions", () => {
             }
         ]
 
+        await User.create(admin)
         await transactions.create(transactionsList)
         await categories.create(categoriesList)
     })
@@ -624,7 +626,7 @@ describe("getAllTransactions", () => {
     test('I1: admin is correctly authenticated and obtains the transactions', async () => {
         const response = await request(app)
             .get("/api/transactions")
-            .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
+            .set("Cookie", `refreshToken=${refreshToken};accessToken=${accessToken}`)
 
         const expectedData = [
             {
@@ -650,6 +652,7 @@ describe("getAllTransactions", () => {
             }
         ]
         
+        console.log(response.body)
         expect(response.status).toBe(200)
         expect(response.body.data).toEqual(expectedData)
     });
@@ -658,7 +661,7 @@ describe("getAllTransactions", () => {
         await transactions.deleteMany({})
         const response = await request(app)
             .get("/api/transactions")
-            .set("Cookie", `refreshToken=${refreshToken};  accessToken=${accessToken}`)
+            .set("Cookie", `refreshToken=${refreshToken};accessToken=${accessToken}`)
 
         expect(response.status).toBe(200)
         expect(response.body.data.length).toBe(0)
