@@ -146,13 +146,13 @@
 | deleteGroup U4| deleteGroup | unit |  WB statement coverage|
 | deleteGroup U5| deleteGroup | unit |  WB statement coverage|
 | deleteGroup U6| deleteGroup | unit |  WB statement coverage|
-|  getUsers I1|  getUsers, verifyAuthAdmin,User.find | unit | WB statement coverage|
-|  getUsers I2| getUsers, verifyAuthAdmin,User.find | unit | WB statement coverage|
-|  getUsers I3| getUsers, verifyAuthAdmin | unit | WB statement coverage|
-|  getUser I1| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne,   | unit | WB statement coverage|
-|  getUser I2| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne  | unit | WB statement coverage|
-|  getUser I3| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne | unit | WB statement coverage|
-|  getUser I4| getUsers, User.findOne | unit | WB statement coverage|
+|  getUsers I1|  getUsers, verifyAuthAdmin,User.find | integration | WB statement coverage|
+|  getUsers I2| getUsers, verifyAuthAdmin,User.find | integration | WB statement coverage|
+|  getUsers I3| getUsers, verifyAuthAdmin | integration | WB statement coverage|
+|  getUser I1| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne,   | integration | WB statement coverage|
+|  getUser I2| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne  | integration | WB statement coverage|
+|  getUser I3| getUsers, verifyAuthUser, verifyAuthAdmin, User.findOne | integration | WB statement coverage|
+|  getUser I4| getUsers, User.findOne | integration | WB statement coverage|
 |   createGroup I1             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
 |   createGroup I2             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
 |   createGroup I3             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
@@ -163,26 +163,12 @@
 |   createGroup I8             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
 |   createGroup I9             | createGroup, verifyAuth                               |integration|BB/ eq partitioning  |
 |   createGroup I10            | createGroup, verifyAuth, User.findOne, Group.findOne  |integration|BB/ eq partitioning  |
-| getGroups I1 | getGroups,verifyAuthAdmin Groups.find | integration | BB/ eq partitioning|
+| getGroups I1 | getGroups, verifyAuthAdmin, Groups.find | integration | BB/ eq partitioning|
 | getGroups I2 | getGroups, verifyAuthAdmin | integration | BB/ eq partitioning|
 | getGroup I1 | getGroup, verifyAuthAdmin, verifyAuthGroup, Group.findOne | integration | BB/ eq partitioning| 
 | getGroup I2 | getGroup, verifyAuthAdmin, verifyAuthGroup, Group.findOne | integration | BB/ eq partitioning| 
 | getGroup I3 | getGroup, verifyAuthAdmin, verifyAuthGroup | integration | BB/ eq partitioning| 
-| getGroup I1 | getGroup, verifyAuthAdmin, verifyAuthGroup, Group.findOne | integration | BB/ eq partitioning| 
-|deleteUser I1| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne| integration | BB/ eq partitioning|
-|deleteUser I2| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne, Group.deleteOne, group.save | integration | BB/ eq partitioning|
-|deleteUser I3| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne | integration | BB/ eq partitioning|
-|deleteUser I4| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
-|deleteUser I5| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
-|deleteUser I6| deleteUser, verifyAuthAdmin, User.findOne | integration | BB/ eq partitioning|
-|deleteUser I7| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
-|deleteUser I8| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
-|deleteUser I9| deleteUser, verifyAuthAdmin, User.findOne | integration | BB/ eq partitioning|
-| deleteGroup I1 | deleteGroup, verifyAuthAdmin, Group.findOne, Group.deleteOne  | integration |BB/ eq partitioning|
-| deleteGroup I2 | deleteGroup, verifyAuthAdmin | integration |BB/ eq partitioning|
-| deleteGroup I3 | deleteGroup, verifyAuthAdmin | integration |BB/ eq partitioning|
-| deleteGroup I4 | deleteGroup, verifyAuthAdmin, Group.findOne  | integration |BB/ eq partitioning|
-| deleteGroup I5 | deleteGroup, verifyAuthAdmin | integration |BB/ eq partitioning|
+| getGroup I4 | getGroup, verifyAuthAdmin, verifyAuthGroup, Group.findOne | integration | BB/ eq partitioning|
 |   addToGroup I1              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
 |   addToGroup I2              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
 |   addToGroup I3              | addToGroup, verifyAuth                                |integration|BB/ eq partitioning  |
@@ -208,7 +194,49 @@
 |   removeFromGroup I13| removeFromGroup, verifyAuthGroup |integration|BB/ eq partitioning|
 |   removeFromGroup I14|  removeFromGroup, verifyAuthGroup, Group.findOne |integration|BB/ eq partitioning|
 |   removeFromGroup I15| removeFromGroup, verifyAuthGroup, Group.findOne |integration|BB/ eq partitioning|
-|   removeFromGroup I16| removeFromGroup, verifyAuthGroup, Group.findOne, User.findOne |integration|BB/ eq partitioning|
+|   removeFromGroup I16| removeFromGroup, verifyAuthGroup, Group.findOne, User.findOne |integration|BB/ eq partitioning| 
+|deleteUser I1| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne| integration | BB/ eq partitioning|
+|deleteUser I2| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne, Group.deleteOne, group.save | integration | BB/ eq partitioning|
+|deleteUser I3| deleteUser, verifyAuthAdmin, User.findOne, User.deleteOne, transations.deleteMany, Group.findOne | integration | BB/ eq partitioning|
+|deleteUser I4| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
+|deleteUser I5| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
+|deleteUser I6| deleteUser, verifyAuthAdmin, User.findOne | integration | BB/ eq partitioning|
+|deleteUser I7| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
+|deleteUser I8| deleteUser, verifyAuthAdmin | integration | BB/ eq partitioning|
+|deleteUser I9| deleteUser, verifyAuthAdmin, User.findOne | integration | BB/ eq partitioning|
+| deleteGroup I1 | deleteGroup, verifyAuthAdmin, Group.findOne, Group.deleteOne  | integration |BB/ eq partitioning|
+| deleteGroup I2 | deleteGroup, verifyAuthAdmin | integration |BB/ eq partitioning|
+| deleteGroup I3 | deleteGroup, verifyAuthAdmin | integration |BB/ eq partitioning|
+| deleteGroup I4 | deleteGroup, verifyAuthAdmin, Group.findOne  | integration |BB/ eq partitioning|
+| deleteGroup I5 | deleteGroup, verifyAuthAdmin | integration |BB/ eq partitioning|
+|   createCategory U1| createCategory |unit|WB/ statement coverage|
+|   createCategory U2| createCategory |unit|WB/ statement coverage|
+|   createCategory U3| createCategory |unit|WB/ statement coverage|
+|   createCategory U4| createCategory |unit|WB/ statement coverage|
+|   createCategory U5| createCategory |unit|WB/ statement coverage|
+|   createCategory U6| createCategory |unit|WB/ statement coverage|
+|   createCategory U7| createCategory |unit|WB/ statement coverage|
+|   createCategory U8| createCategory |unit|WB/ statement coverage|
+|   updateCategory U1| updateCategory |unit|WB/ statement coverage|
+|   updateCategory U2| updateCategory |unit|WB/ statement coverage|
+|   updateCategory U3| updateCategory |unit|WB/ statement coverage|
+|   updateCategory U4| updateCategory |unit|WB/ statement coverage|
+|   updateCategory U5| updateCategory |unit|WB/ statement coverage|
+|   updateCategory U6| updateCategory |unit|WB/ statement coverage|
+|   updateCategory U7| updateCategory |unit|WB/ statement coverage|
+|   updateCategory U8| updateCategory |unit|WB/ statement coverage|
+|   updateCategory U9| updateCategory |unit|WB/ statement coverage|
+|   deleteCategory U1| deleteCategory |unit|WB/ statement coverage|
+|   deleteCategory U2| deleteCategory |unit|WB/ statement coverage|
+|   deleteCategory U3| deleteCategory |unit|WB/ statement coverage|
+|   deleteCategory U4| deleteCategory |unit|WB/ statement coverage|
+|   deleteCategory U5| deleteCategory |unit|WB/ statement coverage|
+|   deleteCategory U6| deleteCategory |unit|WB/ statement coverage|
+|   deleteCategory U7| deleteCategory |unit|WB/ statement coverage|
+|   deleteCategory U8| deleteCategory |unit|WB/ statement coverage|
+|   getCategories U1| getCategories |unit|WB/ statement coverage|
+|   getCategories U2| getCategories |unit|WB/ statement coverage|
+|   getCategories U3| getCategories |unit|WB/ statement coverage|
 |   createTransaction U1| createTransaction |unit|WB/ statement coverage|
 |   createTransaction U2| createTransaction |unit|WB/ statement coverage|
 |   createTransaction U3| createTransaction |unit|WB/ statement coverage|
@@ -226,6 +254,29 @@
 |   getAllTransactions U2      | getAllTransactions                                    |unit       |WB statement coverage|
 |   getAllTransactions U3      | getAllTransactions                                    |unit       |WB statement coverage|
 |   getAllTransactions U4      | getAllTransactions                                    |unit       |WB statement coverage|
+|   createCategory I1| createCategory, verifyAuthAdmin, categories.countDocuments, categories.save |integration|BB/ eq partitioning|
+|   createCategory I2| createCategory, verifyAuthAdmin |integration|BB/ eq partitioning|
+|   createCategory I3|createCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
+|   createCategory I4|createCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
+|   createCategory I5|createCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
+|   createCategory I6|createCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
+|   createCategory I7|createCategory, verifyAuthAdmin, categories.countDocuments|integration|BB/ eq partitioning|
+|   updateCategory I1|updateCategory, verifyAuthAdmin, categories.countDocuments, categories.updateOne, transactions.updateMany  |integration|BB/ eq partitioning|
+|   updateCategory I2|updateCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
+|   updateCategory I3|updateCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
+|   updateCategory I4|updateCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
+|   updateCategory I5|updateCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
+|   updateCategory I6|updateCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
+|   updateCategory I7|updateCategory, verifyAuthAdmin, categories.countDocuments|integration|BB/ eq partitioning|
+|   updateCategory I8|updateCategory, verifyAuthAdmin, categories.countDocuments, categories.updateOne|integration|BB/ eq partitioning|
+|   deleteCategory I1|deleteCategory, verifyAuthAdmin, categories.countDocuments, categories.find, categories.deleteMany, transactions.updateMany  |integration|BB/ eq partitioning|
+|   deleteCategory I2| deleteCategory, verifyAuthAdmin |integration|BB/ eq partitioning|
+|   deleteCategory I3|deleteCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
+|   deleteCategory I4|deleteCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
+|   deleteCategory I5| deleteCategory, verifyAuthAdmin, categories.countDocuments|integration|BB/ eq partitioning|
+|   deleteCategory I6| deleteCategory, verifyAuthAdmin, categories.countDocuments, categories.find|integration|BB/ eq partitioning|
+|   getCategories I1|getCategories, verifyAuthSimple, categories.find|integration|BB/ eq partitioning|
+|   getCategories I2|getCategories, verifyAuthSimple|integration|BB/ eq partitioning|
 |   createTransaction I1|createTransaction, verifyAuthUser, categories.countDocuments, User.countDocuments, transactions.save |integration|BB/ eq partitioning|
 |   createTransaction I2|createTransaction, verifyAuthUser |integration|BB/ eq partitioning|
 |   createTransaction I3|createTransaction, verifyAuthUser |integration|BB/ eq partitioning|
@@ -241,57 +292,6 @@
 |   getAllTransactions I1      | getAllTransactions, verifyAuth, transactions.aggregate|integration|WB statement coverage|
 |   getAllTransactions I2      | getAllTransactions, verifyAuth, transactions.aggregate|integration|WB statement coverage|
 |   getAllTransactions I3      | getAllTransactions, verifyAuth                        |integration|WB statement coverage|
-|   createCategory U1| createCategory |unit|WB/ statement coverage|
-|   createCategory U2| createCategory |unit|WB/ statement coverage|
-|   createCategory U3| createCategory |unit|WB/ statement coverage|
-|   createCategory U4| createCategory |unit|WB/ statement coverage|
-|   createCategory U5| createCategory |unit|WB/ statement coverage|
-|   createCategory U6| createCategory |unit|WB/ statement coverage|
-|   createCategory U7| createCategory |unit|WB/ statement coverage|
-|   createCategory U8| createCategory |unit|WB/ statement coverage|
-|   createCategory I1| createCategory, verifyAuthAdmin, categories.countDocuments, categories.save |integration|BB/ eq partitioning|
-|   createCategory I2| createCategory, verifyAuthAdmin |integration|BB/ eq partitioning|
-|   createCategory I3|createCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
-|   createCategory I4|createCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
-|   createCategory I5|createCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
-|   createCategory I6|createCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
-|   createCategory I7|createCategory, verifyAuthAdmin, categories.countDocuments|integration|BB/ eq partitioning|
-|   updateCategory U1| updateCategory |unit|WB/ statement coverage|
-|   updateCategory U2| updateCategory |unit|WB/ statement coverage|
-|   updateCategory U3| updateCategory |unit|WB/ statement coverage|
-|   updateCategory U4| updateCategory |unit|WB/ statement coverage|
-|   updateCategory U5| updateCategory |unit|WB/ statement coverage|
-|   updateCategory U6| updateCategory |unit|WB/ statement coverage|
-|   updateCategory U7| updateCategory |unit|WB/ statement coverage|
-|   updateCategory U8| updateCategory |unit|WB/ statement coverage|
-|   updateCategory U9| updateCategory |unit|WB/ statement coverage|
-|   updateCategory I1|updateCategory, verifyAuthAdmin, categories.countDocuments, categories.updateOne, transactions.updateMany  |integration|BB/ eq partitioning|
-|   updateCategory I2|updateCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
-|   updateCategory I3|updateCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
-|   updateCategory I4|updateCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
-|   updateCategory I5|updateCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
-|   updateCategory I6|updateCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
-|   updateCategory I7|updateCategory, verifyAuthAdmin, categories.countDocuments|integration|BB/ eq partitioning|
-|   updateCategory I8|updateCategory, verifyAuthAdmin, categories.countDocuments, categories.updateOne|integration|BB/ eq partitioning|
-|   deleteCategory U1| deleteCategory |unit|WB/ statement coverage|
-|   deleteCategory U2| deleteCategory |unit|WB/ statement coverage|
-|   deleteCategory U3| deleteCategory |unit|WB/ statement coverage|
-|   deleteCategory U4| deleteCategory |unit|WB/ statement coverage|
-|   deleteCategory U5| deleteCategory |unit|WB/ statement coverage|
-|   deleteCategory U6| deleteCategory |unit|WB/ statement coverage|
-|   deleteCategory U7| deleteCategory |unit|WB/ statement coverage|
-|   deleteCategory U8| deleteCategory |unit|WB/ statement coverage|
-|   deleteCategory I1|deleteCategory, verifyAuthAdmin, categories.countDocuments, categories.find, categories.deleteMany, transactions.updateMany  |integration|BB/ eq partitioning|
-|   deleteCategory I2| deleteCategory, verifyAuthAdmin |integration|BB/ eq partitioning|
-|   deleteCategory I3|deleteCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
-|   deleteCategory I4|deleteCategory, verifyAuthAdmin|integration|BB/ eq partitioning|
-|   deleteCategory I5| deleteCategory, verifyAuthAdmin, categories.countDocuments|integration|BB/ eq partitioning|
-|   deleteCategory I6| deleteCategory, verifyAuthAdmin, categories.countDocuments, categories.find|integration|BB/ eq partitioning|
-|   getCategories U1| getCategories |unit|WB/ statement coverage|
-|   getCategories U2| getCategories |unit|WB/ statement coverage|
-|   getCategories U3| getCategories |unit|WB/ statement coverage|
-|   getCategories I1|getCategories, verifyAuthSimple, categories.find|integration|BB/ eq partitioning|
-|   getCategories I2|getCategories, verifyAuthSimple|integration|BB/ eq partitioning|
 |   verifyAuth U1              | verifyAuth                                            |unit       |WB statement coverage|
 |   verifyAuth U2              | verifyAuth                                            |unit       |WB statement coverage|
 |   verifyAuth U3              | verifyAuth                                            |unit       |WB statement coverage|
