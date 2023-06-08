@@ -348,54 +348,99 @@
 |   verifyAuth I15             | verifyAuth                                            |integration|BB/ eq partitioning  |
 |   verifyAuth I16             | verifyAuth                                            |integration|BB/ eq partitioning  |
 |   verifyAuth I17             | verifyAuth                                            |integration|BB/ eq partitioning  |
-| getTransactionsByUser U1   ||unit||
-| getTransactionsByUser U2   ||unit||
-| getTransactionsByUser U3   ||unit||
-| getTransactionsByUser U4   ||unit||
-| getTransactionsByUser U5   ||unit||
-| getTransactionsByUser U6   ||unit||
-| getTransactionsByUser U7   ||unit||
-| getTransactionsByUser U8   ||unit||
-| getTransactionsByUser U9   ||unit||
-| getTransactionsByUserByCategory U1   ||unit||
-| getTransactionsByUserByCategory U2   ||unit||
-| getTransactionsByUserByCategory U3   ||unit||
-| getTransactionsByUserByCategory U4   ||unit||
-| getTransactionsByUserByCategory U5   ||unit||
-| getTransactionsByUserByCategory U6   ||unit||
-| getTransactionsByUserByCategory U7   ||unit||
-| getTransactionsByGroup U1   ||unit||
-| getTransactionsByGroup U2   ||unit||
-| getTransactionsByGroup U3   ||unit||
-| getTransactionsByGroup U4   ||unit||
-| getTransactionsByGroup U5   ||unit||
-| getTransactionsByGroup U6   ||unit||
-| getTransactionsByGroupByCategory U1   ||unit||
-| getTransactionsByGroupByCategory U2   ||unit||
-| getTransactionsByGroupByCategory U3   ||unit||
-| getTransactionsByGroupByCategory U4   ||unit||
-| getTransactionsByGroupByCategory U5   ||unit||
-| getTransactionsByGroupByCategory U6   ||unit||
-| getTransactionsByGroupByCategory U7   ||unit||
-| getTransactionsByGroupByCategory U8   ||unit||
-| deleteTransaction U1   ||unit||
-| deleteTransaction U2   ||unit||
-| deleteTransaction U3   ||unit||
-| deleteTransaction U4   ||unit||
-| deleteTransaction U5   ||unit||
-| deleteTransaction U6   ||unit||
-| deleteTransaction U7   ||unit||
-| deleteTransaction U8   ||unit||
-| deleteTransactions U1   ||unit||
-| deleteTransactions U2   ||unit||
-| deleteTransactions U3   ||unit||
-| deleteTransactions U4   ||unit||
-| deleteTransactions U5   ||unit||
-| deleteTransactions U6   ||unit||
-| deleteTransactions U7   ||unit||
-
-
-
+| getTransactionsByUser U1   |getTransactionsByUser|unit|WB statement coverage|
+| getTransactionsByUser U2   |getTransactionsByUser|unit|WB statement coverage|
+| getTransactionsByUser U3   |getTransactionsByUser|unit|WB statement coverage|
+| getTransactionsByUser U4   |getTransactionsByUser|unit|WB statement coverage|
+| getTransactionsByUser U5   |getTransactionsByUser|unit|WB statement coverage|
+| getTransactionsByUser U6   |getTransactionsByUser|unit|WB statement coverage|
+| getTransactionsByUser U7   |getTransactionsByUser|unit|WB statement coverage|
+| getTransactionsByUser U8   |getTransactionsByUser|unit|WB statement coverage|
+| getTransactionsByUser U9   |getTransactionsByUser|unit|WB statement coverage|
+| getTransactionsByUserByCategory U1   |getTransactionsByUserByCategory|unit|WB statement coverage|
+| getTransactionsByUserByCategory U2   |getTransactionsByUserByCategory|unit|WB statement coverage|
+| getTransactionsByUserByCategory U3   |getTransactionsByUserByCategory|unit|WB statement coverage|
+| getTransactionsByUserByCategory U4   |getTransactionsByUserByCategory|unit|WB statement coverage|
+| getTransactionsByUserByCategory U5   |getTransactionsByUserByCategory|unit|WB statement coverage|
+| getTransactionsByUserByCategory U6   |getTransactionsByUserByCategory|unit|WB statement coverage|
+| getTransactionsByUserByCategory U7   |getTransactionsByUserByCategory|unit|WB statement coverage|
+| getTransactionsByGroup U1   |getTransactionsByGroup|unit|WB statement coverage|
+| getTransactionsByGroup U2   |getTransactionsByGroup|unit|WB statement coverage|
+| getTransactionsByGroup U3   |getTransactionsByGroup|unit|WB statement coverage|
+| getTransactionsByGroup U4   |getTransactionsByGroup|unit|WB statement coverage|
+| getTransactionsByGroup U5   |getTransactionsByGroup|unit|WB statement coverage|
+| getTransactionsByGroup U6   |getTransactionsByGroup|unit|WB statement coverage|
+| getTransactionsByGroupByCategory U1   |getTransactionsByGroupByCategory|unit|WB statement coverage|
+| getTransactionsByGroupByCategory U2   |getTransactionsByGroupByCategory|unit|WB statement coverage|
+| getTransactionsByGroupByCategory U3   |getTransactionsByGroupByCategory|unit|WB statement coverage|
+| getTransactionsByGroupByCategory U4   |getTransactionsByGroupByCategory|unit|WB statement coverage|
+| getTransactionsByGroupByCategory U5   |getTransactionsByGroupByCategory|unit|WB statement coverage|
+| getTransactionsByGroupByCategory U6   |getTransactionsByGroupByCategory|unit|WB statement coverage|
+| getTransactionsByGroupByCategory U7   |getTransactionsByGroupByCategory|unit|WB statement coverage|
+| getTransactionsByGroupByCategory U8   |getTransactionsByGroupByCategory|unit|WB statement coverage|
+| deleteTransaction U1   |deleteTransaction|unit|WB statement coverage|
+| deleteTransaction U2   |deleteTransaction|unit|WB statement coverage|
+| deleteTransaction U3   |deleteTransaction|unit|WB statement coverage|
+| deleteTransaction U4   |deleteTransaction|unit|WB statement coverage|
+| deleteTransaction U5   |deleteTransaction|unit|WB statement coverage|
+| deleteTransaction U6   |deleteTransaction|unit|WB statement coverage|
+| deleteTransaction U7   |deleteTransaction|unit|WB statement coverage|
+| deleteTransaction U8   |deleteTransaction|unit|WB statement coverage|
+| deleteTransactions U1   |deleteTransactions|unit|WB statement coverage|
+| deleteTransactions U2   |deleteTransactions|unit|WB statement coverage|
+| deleteTransactions U3   |deleteTransactions|unit|WB statement coverage|
+| deleteTransactions U4   |deleteTransactions|unit|WB statement coverage|
+| deleteTransactions U5   |deleteTransactions|unit|WB statement coverage|
+| deleteTransactions U6   |deleteTransactions|unit|WB statement coverage|
+| deleteTransactions U7   |deleteTransactions|unit|WB statement coverage|
+| getTransactionsByUser I1   |verifyAuthUser|integration|BB/ eq partitioning|
+| getTransactionsByUser I2   |verifyAuthUser, User.countDocuments|integration|BB/ eq partitioning|
+| getTransactionsByUser I3   |verifyAuthAdmin|integration|BB/ eq partitioning|
+| getTransactionsByUser I4   |verifyAuthAdmin, User.countDocuments|integration|BB/ eq partitioning|
+| getTransactionsByUser I5   |verifyAuthAdmin, User.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUser I6   |verifyAuthUser, handleAmountFilterParams, handleDateFilterParams, User.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUser I7   |verifyAuthUser, handleAmountFilterParams, handleDateFilterParams, User.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUser I8   |verifyAuthUser, handleAmountFilterParams, handleDateFilterParams, User.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUser I9   |verifyAuthUser, handleAmountFilterParams, handleDateFilterParams, User.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUser I10   |verifyAuthUser, handleAmountFilterParams, handleDateFilterParams, User.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUser I11  |verifyAuthUser, handleAmountFilterParams, handleDateFilterParams, User.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUser I12  |verifyAuthUser, handleAmountFilterParams, handleDateFilterParams, User.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUser I13  |verifyAuthUser, handleAmountFilterParams, handleDateFilterParams, User.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUser I14  |verifyAuthUser, handleAmountFilterParams, handleDateFilterParams, User.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUser I15  |verifyAuthUser, handleAmountFilterParams, handleDateFilterParams, User.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUserByCategory I1  |verifyAuthUser|integration|BB/ eq partitioning|
+| getTransactionsByUserByCategory I2  |verifyAuthAdmin|integration|BB/ eq partitioning|
+| getTransactionsByUserByCategory I3  |verifyAuthUser, User.countDocuments|integration|BB/ eq partitioning|
+| getTransactionsByUserByCategory I4  |verifyAuthAdmin, User.countDocuments|integration|BB/ eq partitioning|
+| getTransactionsByUserByCategory I5  |verifyAuthUser, User.countDocuments, categories.countDocuments|integration|BB/ eq partitioning|
+| getTransactionsByUserByCategory I6  |verifyAuthAdmin, User.countDocuments, categories.countDocuments|integration|BB/ eq partitioning|
+| getTransactionsByUserByCategory I7  |verifyAuthUser, User.countDocuments, categories.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUserByCategory I8  |verifyAuthAdmin, User.countDocuments, categories.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUserByCategory I9  |verifyAuthUser, User.countDocuments, categories.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByUserByCategory I10 |verifyAuthAdmin, User.countDocuments, categories.countDocuments, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByGroup I1 |verifyAuthGroup|integration|BB/ eq partitioning|
+| getTransactionsByGroup I2 |verifyAuthGroup|integration|BB/ eq partitioning|
+| getTransactionsByGroup I3 |verifyAuthAdmin|integration|BB/ eq partitioning|
+| getTransactionsByGroup I4 |verifyAuthAdmin, Group.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByGroup I5 |verifyAuthGroup, Group.aggregate, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByGroupByCategory I1 |verifyAuthGroup|integration|BB/ eq partitioning|
+| getTransactionsByGroupByCategory I2 |verifyAuthGroup|integration|BB/ eq partitioning|
+| getTransactionsByGroupByCategory I3 |verifyAuthAdmin|integration|BB/ eq partitioning|
+| getTransactionsByGroupByCategory I4 |verifyAuthAdmin, Group.findOne|integration|BB/ eq partitioning|
+| getTransactionsByGroupByCategory I5 |verifyAuthGroup, Group.findOne, categories.findOne|integration|BB/ eq partitioning|
+| getTransactionsByGroupByCategory I6 |verifyAuthGroup, Group.findOne, categories.findOne, transactions.aggregate|integration|BB/ eq partitioning|
+| getTransactionsByGroupByCategory I7 |verifyAuthGroup, Group.findOne, categories.findOne, transactions.aggregate|integration|BB/ eq partitioning|
+| deleteTransaction I1 |verifyAuthUser|integration|BB/ eq partitioning|
+| deleteTransaction I2 |verifyAuthUser, req.params.id, |integration|BB/ eq partitioning|
+| deleteTransaction I3 |verifyAuthUser, req.params.id, User.findOne|integration|BB/ eq partitioning|
+| deleteTransaction I4 |verifyAuthUser, req.params.id, User.findOne, transactions.findOne|integration|BB/ eq partitioning|
+| deleteTransaction I5 |verifyAuthUser, req.params.id, User.findOne, transactions.findOne, transactions.deleteOne|integration|BB/ eq partitioning|
+| deleteTransaction I6 |verifyAuthUser, req.params.id, User.findOne, transactions.findOne, transactions.deleteOne|integration|BB/ eq partitioning|
+| deleteTransactions I1 |verifyAuthAdmin|integration|BB/ eq partitioning|
+| deleteTransactions I2 |verifyAuthAdmin, req.params._id|integration|BB/ eq partitioning|
+| deleteTransactions I3 |verifyAuthAdmin, req.params._id|integration|BB/ eq partitioning|
+| deleteTransactions I4 |verifyAuthAdmin, req.params._id, transactions.find, result.map|integration|BB/ eq partitioning|
+| deleteTransactions I5 |verifyAuthAdmin, req.params._id, transactions.find, result.map, transactions.deleteMany|integration|BB/ eq partitioning|
 
 
 
