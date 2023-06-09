@@ -23,13 +23,13 @@
      
 # Integration approach
 
-    We adopted a bottom-up approach. We started by developing tests for infividual functions seperately (unit tests). Once we verified that all the tests run successfully, we moved to the integration testing phase to verify correct interaction between functions (correct arguments and return values). We followed the following steps :
+We adopted a bottom-up approach. We started by developing tests for infividual functions seperately (unit tests). Once we verified that all the tests run successfully, we moved to the integration testing phase to verify correct interaction between functions (correct arguments and return values). We followed the following steps :
 
-    step1 : unit tests for all functions, 
-    step2 : integration tests for utils functions (verifyAuthGroup/verifyAuthUser/verifyAuthAdmin + verifyAuth)
-    step3 : integration test for route + users/controllers/auth functions + utils functions
+step1 : unit tests for all functions, 
+step2 : integration tests for utils functions (verifyAuthGroup/verifyAuthUser/verifyAuthAdmin + verifyAuth)
+step3 : integration test for route + users/controllers/auth functions + utils functions
 
-    We skipped the step of testing integration between the route object and the controllers cause this part is handled by an external library (Express.js) so we expect it to function correctly. The same applies for database (mongooseJs) and jwt functions (jsonwebtoken)
+We skipped the step of testing integration between the route object and the controllers cause this part is handled by an external library (Express.js) so we expect it to function correctly. The same applies for database (mongooseJs) and jwt functions (jsonwebtoken)
 
 # Tests
 
@@ -449,7 +449,6 @@
 
 ## Coverage of FR
 
-<Report in the following table the coverage of  functional requirements (from official requirements) >
 
 | Functional Requirements covered |   Test(s) | 
 | ------------------------------- | ----------- | 
