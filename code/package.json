@@ -7,16 +7,10 @@
   "scripts": {
     "start": "npx nodemon server.js",
     "test": "jest",
-<<<<<<< HEAD
-    "test:coverage": "jest --coverage --colors",
-    "test:unit": "npx jest --coverage  --coverageDirectory=coverage/coverage_unit --colors auth.unit.test.js controller.unit.test.js users.unit.test.js utils.unit.test.js",
-    "test:integration": "npx jest --coverage  --coverageDirectory=coverage/coverage_integration --colors auth.integration.test.js controller.integration.test.js users.integration.test.js utils.integration.test.js"
-=======
     "test:coverage": "jest --runInBand --coverage --colors",
     "test:unit": "npx jest --runInBand --coverage --coverageDirectory=coverage/coverage_unit --colors auth.unit.test.js controller.unit.test.js users.unit.test.js utils.unit.test.js",
     "test:integration": "npx jest --runInBand --coverage --coverageDirectory=coverage/coverage_integration --colors auth.integration.test.js controller.integration.test.js users.integration.test.js utils.integration.test.js",
     "test:official": "npx jest --runInBand --coverage --colors --coverageDirectory=coverage/coverage_official --testPathPattern=test_official/.*\\.test\\.js$"
->>>>>>> upstream/main
   },
   "keywords": [],
   "author": "",
@@ -34,17 +28,12 @@
     "jest-extended": "^3.2.4",
     "js-cookie": "^3.0.1",
     "jsonwebtoken": "^8.5.1",
-<<<<<<< HEAD
-    "mongoose": "^6.11.2",
-    "npx": "^10.2.2"
-=======
     "mongoose": "^6.10.4",
     "npx": "^10.2.2",
     "lodash": "^4.17.21",
     "ramda": "^0.29.0",
     "validator": "^13.9.0",
     "yup": "^1.1.1"
->>>>>>> upstream/main
   },
   "devDependencies": {
     "@babel/core": "7.21.3",
@@ -58,15 +47,7 @@
   "jest": {
     "testTimeout": 30000,
     "setupFiles": [
-<<<<<<< HEAD
-      "./test/setEnv.js"
-    ]
-  },
-  "directories": {
-    "test": "test"
-=======
       "./test_official/setEnv.js"
     ]
->>>>>>> upstream/main
   }
 }
