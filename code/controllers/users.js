@@ -286,8 +286,11 @@ export const addToGroup = async (req, res) => {
     const groupName = req.params.name;
 
     if (!req.url.match(regexpAdmin)) {
-      const { authorized, cause } = await verifyAuthGroup(req, res, groupName);
-      if (!authorized) return res.status(401).json({ error: cause })
+      const { authorized, cause } = await verifyAuthGroup(req, res, groupName);                        
+            if (!authorized){
+                if(cause === "Group does not exist") return res.status(400).json({error : cause})
+                else return res.status(401).json({ error: cause })
+            }
     }
     else {
       const { authorized, cause } = verifyAuthAdmin(req, res);
@@ -398,8 +401,11 @@ export const removeFromGroup = async (req, res) => {
 
     if (!req.url.match(regexpAdmin)) {
 
-      const { authorized, cause } = await verifyAuthGroup(req, res, groupName);
-      if (!authorized) return res.status(401).json({ error: cause })
+      const { authorized, cause } = await verifyAuthGroup(req, res, groupName);                        
+            if (!authorized){
+                if(cause === "Group does not exist") return res.status(400).json({error : cause})
+                else return res.status(401).json({ error: cause })
+            }
     }
     else {
       const { authorized, cause } = verifyAuthAdmin(req, res);
