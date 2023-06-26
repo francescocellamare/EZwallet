@@ -281,11 +281,11 @@ export function verifyAuthAdmin(req, res) {
 }
 
 export async function verifyAuthGroup(req, res, group) {
+    if(!req.cookies.accessToken || !req.cookies.refreshToken || !group) 
+        return { authorized: false, cause: "Unauthorized"}
     const document = await Group.findOne({name: group}, {members: 1, _id: 0})
     if (!document)
         return { authorized: false, cause: "Group does not exist"}
-    if(!req.cookies.accessToken || !req.cookies.refreshToken || !group) 
-        return { authorized: false, cause: "Unauthorized"}
     const emails = document.members.map(member => member.email)
     return verifyAuth(req, res, {authType: 'Group', emails: emails})
 }
