@@ -1358,7 +1358,7 @@ describe("deleteTransaction", () => {
             .delete("/api/users/user4/transactions")  
             .set("Cookie", `accessToken=${test_tokens[3]};refreshToken=${test_tokens[3]}`)
             .send({
-                id : "dummy_id"
+                _id : "dummy_id"
             })                      
                         
         expect(response.status).toBe(400);
@@ -1370,7 +1370,7 @@ describe("deleteTransaction", () => {
             .delete("/api/users/user1/transactions")  
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
             .send({
-                id : "647bad3077bbc2edc8fd4110" // transaction id that does not exist
+                _id : "647bad3077bbc2edc8fd4110" // transaction id that does not exist
             })                                             
 
         expect(response.status).toBe(400);
@@ -1382,7 +1382,7 @@ describe("deleteTransaction", () => {
             .delete("/api/users/user1/transactions")  
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
             .send({
-                id : "647badcb3b639a04b00e68ea" // transaction id that does not exist
+                _id : "647badcb3b639a04b00e68ea" // transaction id that does not exist
             })                                             
 
         expect(response.status).toBe(400);
@@ -1394,7 +1394,7 @@ describe("deleteTransaction", () => {
             .delete("/api/users/user1/transactions")  
             .set("Cookie", `accessToken=${test_tokens[0]};refreshToken=${test_tokens[0]}`)
             .send({
-                id : "647bada0e696a4c148e708c9" // transaction id that does not exist
+                _id : "647bada0e696a4c148e708c9" // transaction id that does not exist
             })                                             
         
         expect(response.status).toBe(200);

@@ -2047,7 +2047,7 @@ describe("deleteTransaction", () => {
                 username: "dummy_user_1",
             },
             body: {
-                id: "dummy_id"
+                _id: "dummy_id"
             }
         }
 
@@ -2097,7 +2097,7 @@ describe("deleteTransaction", () => {
                 username: "dummy_user_1",
             },
             body: {
-                id: "dummy_id"
+                _id: "dummy_id"
             }
         }
 
@@ -2126,7 +2126,7 @@ describe("deleteTransaction", () => {
                 username: "dummy_user_1",
             },
             body: {
-                id: "dummy_id"
+                _id: "dummy_id"
             }
         }
 
@@ -2164,7 +2164,7 @@ describe("deleteTransaction", () => {
                 username: "dummy_user_1",
             },
             body: {
-                id: "dummy_id"
+                _id: "dummy_id"
             }
         }
 
@@ -2207,7 +2207,7 @@ describe("deleteTransaction", () => {
                 username: "dummy_user_1",
             },
             body: {
-                id: "dummy_id"
+                _id: "dummy_id"
             }
         }
 
@@ -2259,7 +2259,7 @@ describe("deleteTransaction", () => {
                 username: "dummy_user_1",
             },
             body: {
-                id: "dummy_id"
+                _id: "dummy_id"
             }
         }
 
@@ -2315,7 +2315,7 @@ describe("deleteTransaction", () => {
                 username: "dummy_user_1",
             },
             body: {
-                id: "dummy_id"
+                _id: "dummy_id"
             }
         }
 
