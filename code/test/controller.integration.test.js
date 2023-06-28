@@ -699,19 +699,19 @@ describe("getTransactionsByUser", () => {
     ]
 
     let test_transactions = [
-        {username : "user1", amount : 1131, type : "cat1", date : new Date(2023, 2, 14)},
-        {username : "user1", amount :  100, type : "cat1", date : new Date(2023, 3, 23)},
-        {username : "user1", amount :  402, type : "cat2", date : new Date(2023, 2, 27)},
-        {username : "user1", amount :  933, type : "cat3", date : new Date(2023, 2, 12)},
-        {username : "user2", amount :  643, type : "cat2", date : new Date(2023, 2,  8, 10)},
-        {username : "user2", amount :  124, type : "cat2", date : new Date(2023, 1,  5)},
-        {username : "user2", amount :  632, type : "cat3", date : new Date(2023, 5, 14)},
-        {username : "user2", amount :  123, type : "cat3", date : new Date(2023, 2, 20)},
-        {username : "user3", amount :  552, type : "cat1", date : new Date(2023, 3, 18)},
-        {username : "user3", amount :  612, type : "cat1", date : new Date(2023, 3,  1)},
-        {username : "user3", amount :  231, type : "cat2", date : new Date(2023, 3,  6)},
-        {username : "user3", amount :   12, type : "cat3", date : new Date(2023, 2, 26)},
-        {username : "user3", amount :   53, type : "cat3", date : new Date(2023, 2, 26)},
+        {username : "user1", amount : 1131, type : "cat1", date : new Date(Date.UTC(2023, 2, 14))},
+        {username : "user1", amount :  100, type : "cat1", date : new Date(Date.UTC(2023, 3, 23))},
+        {username : "user1", amount :  402, type : "cat2", date : new Date(Date.UTC(2023, 2, 27))},
+        {username : "user1", amount :  933, type : "cat3", date : new Date(Date.UTC(2023, 2, 12))},
+        {username : "user2", amount :  643, type : "cat2", date : new Date(Date.UTC(2023, 2,  8, 10))},
+        {username : "user2", amount :  124, type : "cat2", date : new Date(Date.UTC(2023, 1,  5))},
+        {username : "user2", amount :  632, type : "cat3", date : new Date(Date.UTC(2023, 5, 14))},
+        {username : "user2", amount :  123, type : "cat3", date : new Date(Date.UTC(2023, 2, 20))},
+        {username : "user3", amount :  552, type : "cat1", date : new Date(Date.UTC(2023, 3, 18))},
+        {username : "user3", amount :  612, type : "cat1", date : new Date(Date.UTC(2023, 3,  1))},
+        {username : "user3", amount :  231, type : "cat2", date : new Date(Date.UTC(2023, 3,  6))},
+        {username : "user3", amount :   12, type : "cat3", date : new Date(Date.UTC(2023, 2, 26))},
+        {username : "user3", amount :   53, type : "cat3", date : new Date(Date.UTC(2023, 2, 26))},
     ]
 
     beforeEach(async() => {
@@ -763,10 +763,10 @@ describe("getTransactionsByUser", () => {
 
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([
-            {username : "user2", color : "red", type : "cat2", amount :  643, date : (new Date(2023, 2,  8, 10)).toISOString()},
-            {username : "user2", color : "red", type : "cat2", amount :  124, date : (new Date(2023, 1,  5)).toISOString()},
-            {username : "user2", color : "green", type : "cat3", amount :  632, date : (new Date(2023, 5, 14)).toISOString()},
-            {username : "user2", color : "green", type : "cat3", amount :  123, date : (new Date(2023, 2, 20)).toISOString()},
+            {username : "user2", color : "red", type : "cat2", amount :  643, date : (new Date(Date.UTC(2023, 2,  8, 10))).toISOString()},
+            {username : "user2", color : "red", type : "cat2", amount :  124, date : (new Date(Date.UTC(2023, 1,  5))).toISOString()},
+            {username : "user2", color : "green", type : "cat3", amount :  632, date : (new Date(Date.UTC(2023, 5, 14))).toISOString()},
+            {username : "user2", color : "green", type : "cat3", amount :  123, date : (new Date(Date.UTC(2023, 2, 20))).toISOString()},
         ]);
     });
 
@@ -777,9 +777,9 @@ describe("getTransactionsByUser", () => {
                         
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([
-            {username : "user2", amount :  643, color : "red", type : "cat2", date : (new Date(2023, 2,  8, 10)).toISOString()},            
-            {username : "user2", amount :  632, color : "green", type : "cat3", date : (new Date(2023, 5, 14)).toISOString()},
-            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(2023, 2, 20)).toISOString()}
+            {username : "user2", amount :  643, color : "red", type : "cat2", date : (new Date(Date.UTC(2023, 2,  8, 10))).toISOString()},            
+            {username : "user2", amount :  632, color : "green", type : "cat3", date : (new Date(Date.UTC(2023, 5, 14))).toISOString()},
+            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(Date.UTC(2023, 2, 20))).toISOString()}
         ])
     });
 
@@ -790,9 +790,9 @@ describe("getTransactionsByUser", () => {
                         
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([     
-            {username : "user2", amount :  643, color : "red", type : "cat2", date : (new Date(2023, 2,  8, 10)).toISOString()},
-            {username : "user2", amount :  124, color : "red", type : "cat2", date : (new Date(2023, 1,  5)).toISOString()},            
-            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(2023, 2, 20)).toISOString()}
+            {username : "user2", amount :  643, color : "red", type : "cat2", date : (new Date(Date.UTC(2023, 2,  8, 10))).toISOString()},
+            {username : "user2", amount :  124, color : "red", type : "cat2", date : (new Date(Date.UTC(2023, 1,  5))).toISOString()},            
+            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(Date.UTC(2023, 2, 20))).toISOString()}
         ])
     });
 
@@ -803,8 +803,8 @@ describe("getTransactionsByUser", () => {
                         
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([
-            {username : "user2", amount :  643, color : "red",   type : "cat2", date : (new Date(2023, 2,  8, 10)).toISOString()},            
-            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(2023, 2, 20)).toISOString()}
+            {username : "user2", amount :  643, color : "red",   type : "cat2", date : (new Date(Date.UTC(2023, 2,  8, 10))).toISOString()},            
+            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(Date.UTC(2023, 2, 20))).toISOString()}
         ])
     });
 
@@ -815,8 +815,8 @@ describe("getTransactionsByUser", () => {
                         
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([
-            {username : "user2", amount :  643, color : "red", type : "cat2", date : (new Date(2023, 2,  8, 10)).toISOString()},            
-            {username : "user2", amount :  632, color : "green",type : "cat3", date : (new Date(2023, 5, 14)).toISOString()},            
+            {username : "user2", amount :  643, color : "red", type : "cat2", date : (new Date(Date.UTC(2023, 2,  8, 10))).toISOString()},            
+            {username : "user2", amount :  632, color : "green",type : "cat3", date : (new Date(Date.UTC(2023, 5, 14))).toISOString()},            
         ])
     });
 
@@ -827,8 +827,8 @@ describe("getTransactionsByUser", () => {
                         
         expect(response.status).toBe(200);        
         expect(response.body.data).toStrictEqual([              
-            {username : "user2", amount :  124, color : "red", type : "cat2", date : (new Date(2023, 1,  5)).toISOString()},            
-            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(2023, 2, 20)).toISOString()},          
+            {username : "user2", amount :  124, color : "red", type : "cat2", date : (new Date(Date.UTC(2023, 1,  5))).toISOString()},            
+            {username : "user2", amount :  123, color : "green", type : "cat3", date : (new Date(Date.UTC(2023, 2, 20))).toISOString()},          
         ])
     });
 
@@ -839,8 +839,8 @@ describe("getTransactionsByUser", () => {
                         
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([                          
-            {username : "user1", amount :  100, color : "blue", type : "cat1", date : (new Date(2023, 3, 23)).toISOString()},
-            {username : "user1", amount :  402, color : "red", type : "cat2", date : (new Date(2023, 2, 27)).toISOString()},            
+            {username : "user1", amount :  100, color : "blue", type : "cat1", date : (new Date(Date.UTC(2023, 3, 23))).toISOString()},
+            {username : "user1", amount :  402, color : "red", type : "cat2", date : (new Date(Date.UTC(2023, 2, 27))).toISOString()},            
         ])
     });
 
@@ -851,7 +851,7 @@ describe("getTransactionsByUser", () => {
 
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([                                      
-            {username : "user1", amount :  402, color : "red", type : "cat2", date : (new Date(2023, 2, 27)).toISOString()},            
+            {username : "user1", amount :  402, color : "red", type : "cat2", date : (new Date(Date.UTC(2023, 2, 27))).toISOString()},            
         ])
     });
 
@@ -862,8 +862,8 @@ describe("getTransactionsByUser", () => {
 
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([                                                  
-            {username : "user3", amount :   12, color : "green", type : "cat3", date : (new Date(2023, 2, 26)).toISOString()},
-            {username : "user3", amount :   53, color : "green", type : "cat3", date : (new Date(2023, 2, 26)).toISOString()},
+            {username : "user3", amount :   12, color : "green", type : "cat3", date : (new Date(Date.UTC(2023, 2, 26))).toISOString()},
+            {username : "user3", amount :   53, color : "green", type : "cat3", date : (new Date(Date.UTC(2023, 2, 26))).toISOString()},
         ])
     });
 
@@ -874,7 +874,7 @@ describe("getTransactionsByUser", () => {
 
         expect(response.status).toBe(200);
         expect(response.body.data).toStrictEqual([                                                  
-            {username : "user3", amount :   12, color : "green", type : "cat3", date : (new Date(2023, 2, 26)).toISOString()}            
+            {username : "user3", amount :   12, color : "green", type : "cat3", date : (new Date(Date.UTC(2023, 2, 26))).toISOString()}            
         ])
     });
 })
