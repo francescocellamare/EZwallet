@@ -103,8 +103,8 @@ describe("handleDateFilterParams", () => {
         }
         const expectedRespone = {
             date: {
-                $gte: new Date(2023, 3, 30, 0, 0, 0),
-                $lte: new Date(2023, 3, 30, 23, 59, 59)
+                $gte: new Date(Date.UTC(2023, 3, 30, 0, 0, 0)),
+                $lte: new Date(Date.UTC(2023, 3, 30, 23, 59, 59))
             }
         }
         const response = handleDateFilterParams(mockReq, mockRes)
@@ -123,7 +123,7 @@ describe("handleDateFilterParams", () => {
         }
         const expectedRespone = {
             date: {
-                $gte: new Date(2023, 3, 30, 0, 0, 0),
+                $gte: new Date(Date.UTC(2023, 3, 30, 0, 0, 0)),
             }
         }
         const response = handleDateFilterParams(mockReq, mockRes)
@@ -142,7 +142,7 @@ describe("handleDateFilterParams", () => {
         }
         const expectedRespone = {
             date: {
-                $lte: new Date(2023, 3, 30, 23, 59, 59)
+                $lte: new Date(Date.UTC(2023, 3, 30, 23, 59, 59))
             }
         }
         const response = handleDateFilterParams(mockReq, mockRes)
@@ -162,8 +162,8 @@ describe("handleDateFilterParams", () => {
         }
         const expectedRespone = {
             date: {
-                $gte: new Date(2023, 2, 30, 0, 0, 0),
-                $lte: new Date(2023, 3, 30, 23, 59, 59)
+                $gte: new Date(Date.UTC(2023, 2, 30, 0, 0, 0)),
+                $lte: new Date(Date.UTC(2023, 3, 30, 23, 59, 59))
             }
         }
         const response = handleDateFilterParams(mockReq, mockRes)
@@ -1411,7 +1411,7 @@ describe("verifyAuthGroup", () => {
             json: jest.fn()
         }
         jest.spyOn(Group, 'findOne').mockImplementation( () => null)
-        const expectedRespone = { authorized: false, cause: "Unauthorized" }
+        const expectedRespone = { authorized: false, cause: "Group does not exist" }
         const response = await verifyAuthGroup(mockReq, mockRes, group)
         expect(response).toEqual(expectedRespone)
     })

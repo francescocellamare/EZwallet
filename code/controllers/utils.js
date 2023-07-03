@@ -29,9 +29,10 @@ export const handleDateFilterParams = (req) => {
     if(upTo && !re.test(upTo)) throw new Error('Invalid date format');    
 
     if(date){
-        const [year, month, day] = date.split("-");   
-        const dateStart = new Date(Number(year), Number(month)-1, Number(day), 0, 0, 0); 
-        const dateEnd = new Date(Number(year), Number(month)-1, Number(day), 23, 59, 59);         
+        const [year, month, day] = date.split("-"); 
+        if(month > 12 || month < 1 || day > 31 || day < 1) throw new Error('Invalid date format');  
+        const dateStart = new Date(Date.UTC(Number(year), Number(month)-1, Number(day), 0, 0, 0)); 
+        const dateEnd = new Date(Date.UTC(Number(year), Number(month)-1, Number(day), 23, 59, 59));         
         return {
             date : {
                 $gte : dateStart,
@@ -45,12 +46,14 @@ export const handleDateFilterParams = (req) => {
 
         if(from){
             const [year, month, day] = from.split("-");   
-            const dateStart = new Date(Number(year), Number(month)-1, Number(day), 0, 0, 0);
+            if(month > 12 || month < 1 || day > 31 || day < 1) throw new Error('Invalid date format');
+            const dateStart = new Date(Date.UTC(Number(year), Number(month)-1, Number(day), 0, 0, 0));
             filter.date["$gte"] = dateStart
         }
         if(upTo){
             const [year, month, day] = upTo.split("-");   
-            const dateEnd = new Date(Number(year), Number(month)-1, Number(day), 23, 59, 59);
+            if(month > 12 || month < 1 || day > 31 || day < 1) throw new Error('Invalid date format');
+            const dateEnd = new Date(Date.UTC(Number(year), Number(month)-1, Number(day), 23, 59, 59));
             filter.date["$lte"] = dateEnd
         } 
         return filter;
@@ -282,7 +285,7 @@ export async function verifyAuthGroup(req, res, group) {
         return { authorized: false, cause: "Unauthorized"}
     const document = await Group.findOne({name: group}, {members: 1, _id: 0})
     if (!document)
-        return { authorized: false, cause: "Unauthorized"}
+        return { authorized: false, cause: "Group does not exist"}
     const emails = document.members.map(member => member.email)
     return verifyAuth(req, res, {authType: 'Group', emails: emails})
 }

@@ -1025,7 +1025,7 @@ describe("removeFromGroup", () => {
       .set("Cookie", `accessToken=${refreshTokenUser1}; refreshToken=${refreshTokenUser1}`)
       .send({ emails: ["user2@test.com"] })
 
-    expect(response.status).toBe(401)
+    expect(response.status).toBe(400)
   });
 
   test("I16: only one member in the group -> return 400 status with the error message", async () => {

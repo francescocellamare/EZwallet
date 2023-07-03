@@ -206,9 +206,10 @@ export const deleteCategory = async (req, res) => {
         if(!authorized) return res.status(401).json({error: cause})
 
         const { types } = req.body;
+        
 
         // check if all required fields were provided
-        if (!types) return res.status(400).json({ error: "List of categories' types to deleted was not provided" });
+        if (!types || types.length === 0) return res.status(400).json({ error: "List of categories' types to deleted was not provided" });
 
         // check for empty strings
         for (let type of types) {
@@ -636,8 +637,11 @@ export const getTransactionsByGroup = async (req, res) => {
             if (!authorized) return res.status(401).json({ error: cause })
         } else {
             // regular user authentication
-            const { authorized, cause } = await verifyAuthGroup(req, res, name);
-            if (!authorized) return res.status(401).json({ error: cause })
+            const { authorized, cause } = await verifyAuthGroup(req, res, name);                        
+            if (!authorized){
+                if(cause === "Group does not exist") return res.status(400).json({error : cause})
+                else return res.status(401).json({ error: cause })
+            }
         }
 
         // get group members
@@ -751,10 +755,14 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
         const groupName = req.params.name
         const categoryType = req.params.category
 
+
         if (!req.url.match(regexp)) {
             // group authentication                     
-            const { authorized, cause } = await verifyAuthGroup(req, res, groupName);
-            if (!authorized) return res.status(401).json({ error: cause })
+            const { authorized, cause } = await verifyAuthGroup(req, res, groupName);                        
+            if (!authorized){
+                if(cause === "Group does not exist") return res.status(400).json({error : cause})
+                else return res.status(401).json({ error: cause })
+            }
         }
         else {
             // admin authentication                     
@@ -838,7 +846,7 @@ export const getTransactionsByGroupByCategory = async (req, res) => {
 */
 export const deleteTransaction = async (req, res) => {
     try {
-        const id = req.body.id
+        const id = req.body._id
         const username = req.params.username
 
         const userAuthInfo = verifyAuthUser(req, res, username)
@@ -863,7 +871,7 @@ export const deleteTransaction = async (req, res) => {
         if(found.username != username)
             return res.status(400).json({ error: 'transaction not found for the user' })
 
-        const query = { _id: mongoose.Types.ObjectId(req.body.id), username: username }
+        const query = { _id: mongoose.Types.ObjectId(id), username: username }
         const data = await transactions.deleteOne(query);
         if (data.deletedCount === 0)
             return res.status(400).json({ error: "transaction not found" })
