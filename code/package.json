@@ -4,13 +4,14 @@
   "description": "You need to install Node.js and MongoDB and then execute npm install on the command line. This command will install all the dependencies required by the project. Then, you can execute npm start. This command will make the Node.js backend available on the port 3000. You can call the endpoints by using Postman.\r You can also run the tests by executing npm test or npm run test:coverage.\r All the npm commands must be run by using the terminal opened in the root project folder called code (this folder).",
   "main": "server.js",
   "type": "module",
-  "scripts": {
-    "start": "npx nodemon server.js",
-    "test": "jest",
-    "test:coverage": "jest --runInBand --coverage --colors",
-    "test:unit": "npx jest --runInBand --coverage --coverageDirectory=coverage/coverage_unit --colors auth.unit.test.js controller.unit.test.js users.unit.test.js utils.unit.test.js",
-    "test:integration": "npx jest --runInBand --coverage --coverageDirectory=coverage/coverage_integration --colors auth.integration.test.js controller.integration.test.js users.integration.test.js utils.integration.test.js",
-    "test:official": "npx jest --runInBand --coverage --colors --coverageDirectory=coverage/coverage_official --testPathPattern=test_official/.*\\.test\\.js$"
+   "scripts": {
+    "start:dev": "node src/server.js",
+    "test:dev": "jest --coverage"
+  },
+  "jestSonar": {
+    "reportPath":  "coverage",
+    "reportFile":  "test-reporter.xml",
+    "indent":  2
   },
   "keywords": [],
   "author": "",
@@ -45,6 +46,10 @@
     "supertest": "^6.3.3"
   },
   "jest": {
+    "testEnvironment":  "node",
+    "coveragePathIgnorePatterns": [
+        "/node_modules/"
+    ],
     "testTimeout": 30000,
     "setupFiles": [
       "./test_official/setEnv.js"
@@ -55,6 +60,8 @@
       "text",
       "html"
     ],
-    "coverageDirectory": "coverage"
+    "coverageDirectory": "coverage",
+    "testResultsProcessor":  "jest-sonar-reporter"
+
   }
 }
